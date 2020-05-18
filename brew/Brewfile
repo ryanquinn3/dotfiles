@@ -1,0 +1,14 @@
+cask_args appdir: "/Applications"
+
+brew "youtube-dl"
+brew "autojump"
+brew "nvm"
+brew "ffmpeg"
+brew "github/gh/gh"
+brew "pyenv"
+
+cask "google-chrome"
+cask "sublime-text"
+cask "webstorm"
+cask "spotify"
+cask "iterm2"

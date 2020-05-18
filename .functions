@@ -1,0 +1,66 @@
+gacm(){
+  echo "Committing code..."
+  git add --all && git commit -m $1
+}
+
+clean_docker() {
+  if [ ! -z "$1" ]; then
+    images=$(docker images -a | grep $1 | awk '{ print $3 }')
+    if [ ! -z "$images" ]; then
+      docker rmi -f $(docker images -a | grep $1 | awk '{ print $3 }')
+    fi
+  fi
+  docker rm -v $(docker ps -a -q -f status=exited)
+  docker rmi $(docker images -f "dangling=true" -q)
+}
+
+
+dl(){
+  if [[ $1 == *"soundcloud.com"* ]]; then
+    youtube-dl -o "~/Music/%(uploader)s - %(title)s.%(ext)s" $1
+  else
+    youtube-dl -x --audio-format mp3 -o "~/Music/%(title)s.%(ext)s" $1
+  fi
+}
+
+gitdb() {
+  if [ -z "$1" ]
+  then
+    echo "Provide a git branch substring to delete it"
+    exit 0
+  fi
+  git branch | grep -Ei "$1" | grep -Eiv "\*" | while read -r line ; do
+    gb -D $line
+  done
+}
+
+kall() {
+  kubectl get $1 --all-namespaces
+}
+
+find_po() {
+  k get po | grep $1 | awk '{ print $1 }'
+}
+
+open_pr(){
+	local branch="${2:-develop}"
+  gpsup
+  hub pull-request -b $branch $1
+}
+
+# Print current wifi settings
+wifi(){
+  if [ -z "$1" ]
+  then
+     currentnetwork=$(/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | awk '/ SSID/ {print substr($0, index($0, $2))}')
+     echo "SSID: $currentnetwork"
+     security find-generic-password -ga $currentnetwork | tr -d '\n' | grep "password:"
+  else
+     echo "SSID: $1"
+     security find-generic-password -ga $1 | tr -d '\n' | grep "password:"
+  fi
+}
+
+reload_zsh() {
+  source ~/.zshrc
+}

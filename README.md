@@ -1,2 +1,5 @@
 # dotfiles
-Shell setup utilities 
+Shell setup utilities
+
+## Installation
+./install.zsh
