@@ -43,9 +43,9 @@ find_po() {
 }
 
 open_pr(){
-	local branch="${2:-develop}"
+	local branch="${1:-develop}"
   gpsup
-  hub pull-request -b $branch $1
+  hub pull-request -b $branch
 }
 
 # Print current wifi settings

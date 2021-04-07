@@ -7,13 +7,12 @@ export LANG=en_US.UTF-8
 export ZSH="$HOME/.oh-my-zsh"
 export ZSHRC="$HOME/.zshrc"
 export DOCKER_BUILDKIT=1
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.istioctl/bin"
 
 plugins=(git brew kubectl zsh-syntax-highlighting kube-ps1)
-RPROMPT=$RPROMPT'$(kube_ps1)'
 source $ZSH/oh-my-zsh.sh
 export EDITOR='subl -w'
-
+RPROMPT=$RPROMPT'$(kube_ps1)'
 
 
 for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
@@ -34,3 +33,6 @@ source <(npm completion)
 
 # Setup autojump
 [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+
+# GH autocompletion
+eval "$(gh completion -s zsh)"
