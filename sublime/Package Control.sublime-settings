@@ -1,0 +1,25 @@
+{
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		"1Self",
+		"Ansible",
+		"Dockerfile Syntax Highlighting",
+		"Dotfiles Syntax Highlighting",
+		"Github Tools",
+		"GraphQL",
+		"Indent XML",
+		"JsPrettier",
+		"Material Theme",
+		"Package Control",
+		"Pretty JSON",
+		"Pretty YAML",
+		"Rust Enhanced",
+		"Terraform",
+		"TypeScript Syntax",
+		"ZSH"
+	]
+}
