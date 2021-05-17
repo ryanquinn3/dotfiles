@@ -2,7 +2,7 @@
 ZSH_THEME="bureau"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
-
+ZSH_DISABLE_COMPFIX="true"
 export LANG=en_US.UTF-8
 export ZSH="$HOME/.oh-my-zsh"
 export ZSHRC="$HOME/.zshrc"
@@ -24,11 +24,11 @@ unset file
 
 
 eval "$(pyenv init -)"
-
+autoload -Uz compinit
+compinit -i
 # Node tooling
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 source <(npm completion)
 
 # Setup autojump
@@ -36,3 +36,9 @@ source <(npm completion)
 
 # GH autocompletion
 eval "$(gh completion -s zsh)"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/ryanquinn/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ryanquinn/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/ryanquinn/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ryanquinn/google-cloud-sdk/completion.zsh.inc'; fi
