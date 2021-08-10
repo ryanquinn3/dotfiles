@@ -12,6 +12,7 @@ brew "httpie"
 brew "yq"
 brew "jq"
 brew "mysql"
+brew "watch"
 
 cask "google-chrome"
 cask "sublime-text"
