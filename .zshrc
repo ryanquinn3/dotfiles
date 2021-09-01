@@ -8,6 +8,8 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSHRC="$HOME/.zshrc"
 export DOCKER_BUILDKIT=1
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.istioctl/bin"
+autoload -Uz compinit
+compinit
 
 plugins=(git brew kubectl zsh-syntax-highlighting kube-ps1)
 source $ZSH/oh-my-zsh.sh
