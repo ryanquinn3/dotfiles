@@ -20,6 +20,8 @@ ln -sf $DIR/.zshrc ~/.zshrc
 ln -sf $DIR/oh-my-zsh.sh ~/.oh-my-zsh/oh-my-zsh.sh
 
 
+[ ! -d "~/screenshots" ] && mkdir screenshots
+
 echo "Configuring shell..."
 source ~/.zshrc
 echo "Done."

@@ -13,6 +13,7 @@ brew "yq"
 brew "jq"
 brew "mysql"
 brew "watch"
+brew "zsh-syntax-highlighting"
 
 cask "google-chrome"
 cask "sublime-text"
@@ -27,3 +28,6 @@ cask "penc"
 cask "obsidian"
 cask "postman"
 cask "flycut"
+cask "obs"
+
+

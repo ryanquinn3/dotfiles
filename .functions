@@ -64,3 +64,8 @@ wifi(){
 reload_zsh() {
   source ~/.zshrc
 }
+
+ssh_desktop() {
+  DESKTOP_IP=192.168.86.40
+  ssh ryan@$DESKTOP_IP
+}
