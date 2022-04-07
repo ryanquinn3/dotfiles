@@ -14,6 +14,9 @@ clean_docker() {
   docker rmi $(docker images -f "dangling=true" -q)
 }
 
+docker_ps() {
+  docker ps | less -S
+}
 
 dl(){
   if [[ $1 == *"soundcloud.com"* ]]; then
@@ -48,12 +51,16 @@ open_pr(){
   hub pull-request -b $branch
 }
 
+# print current wifi network
+ssid() {
+  echo $(/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | awk '/ SSID/ {print substr($0, index($0, $2))}')
+}
+
 # Print current wifi settings
 wifi(){
   if [ -z "$1" ]
   then
-     currentnetwork=$(/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | awk '/ SSID/ {print substr($0, index($0, $2))}')
-     echo "SSID: $currentnetwork"
+     echo "SSID: $(ssid)"
      security find-generic-password -ga $currentnetwork | tr -d '\n' | grep "password:"
   else
      echo "SSID: $1"
@@ -66,6 +73,7 @@ reload_zsh() {
 }
 
 ssh_desktop() {
-  DESKTOP_IP=192.168.86.40
+  DESKTOP_IP=192.168.86.38
+  echo "Running on wifi $(ssid)"
   ssh ryan@$DESKTOP_IP
 }
