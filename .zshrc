@@ -11,7 +11,7 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/
 autoload -Uz compinit
 compinit
 
-plugins=(git brew kubectl zsh-syntax-highlighting kube-ps1)
+plugins=(git brew kubectl kube-ps1)
 source $ZSH/oh-my-zsh.sh
 export EDITOR='subl -w'
 RPROMPT=$RPROMPT'$(kube_ps1)'
@@ -49,3 +49,5 @@ if [ -f '/Users/ryanquinn/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users
 export PATH="$HOME/.poetry/bin:$PATH"
 
 alias ls="exa"
+
+. /usr/local/opt/asdf/libexec/asdf.sh

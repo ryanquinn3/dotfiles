@@ -68,6 +68,10 @@ wifi(){
   fi
 }
 
+kill_process_on_port() {
+  kill $(lsof -i tcp:$1 | tail -n 1 | awk {'print $2'})
+}
+
 reload_zsh() {
   source ~/.zshrc
 }
