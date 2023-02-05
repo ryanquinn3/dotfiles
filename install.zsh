@@ -5,7 +5,7 @@ DIR=$(cd `dirname $0` && pwd)
 
 function configure_screenshot_storage(){
 	# Setup the screenshots directory and have the OS store all screenshots there
-	[ ! -d "~/screenshots" ] && mkdir screenshots
+	[ ! -d ~/screenshots ] && mkdir ~/screenshots
 	defaults write com.apple.screencapture location ~/screenshots
 	defaults write com.apple.screencapture "show-thumbnail" -bool "false" 
 	killall SystemUIServer
@@ -28,7 +28,7 @@ else
 fi
 
 if [ -n "$(which nvm)" ]; then
-	curl -o- https://raw.githusublbusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 fi
 
 
@@ -47,3 +47,6 @@ echo -e "Updating MacOS UI config... Done“"
 echo "Configuring shell..."
 source ~/.zshrc
 echo "Done."
+
+echo "Installing node..."
+nvm install --lts

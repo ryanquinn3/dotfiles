@@ -2,7 +2,6 @@ cask_args appdir: "/Applications"
 
 brew "youtube-dl"
 brew "autojump"
-brew "nvm"
 brew "ffmpeg"
 brew "gh"
 brew "pyenv"

@@ -50,4 +50,4 @@ export PATH="$HOME/.poetry/bin:$PATH"
 
 alias ls="exa"
 
-if [ -f './usr/local/opt/asdf/libexec/asdf.sh']; then . '/usr/local/opt/asdf/libexec/asdf.sh'; fi
+if [ -f ./usr/local/opt/asdf/libexec/asdf.sh ]; then ./usr/local/opt/asdf/libexec/asdf.sh; fi
