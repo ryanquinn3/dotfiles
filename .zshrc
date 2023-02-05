@@ -34,7 +34,7 @@ export NVM_DIR="$HOME/.nvm"
 source <(npm completion)
 
 # Setup autojump
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+[ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
 
 # GH autocompletion
 eval "$(gh completion -s zsh)"
@@ -50,4 +50,4 @@ export PATH="$HOME/.poetry/bin:$PATH"
 
 alias ls="exa"
 
-. /usr/local/opt/asdf/libexec/asdf.sh
+if [ -f './usr/local/opt/asdf/libexec/asdf.sh']; then . '/usr/local/opt/asdf/libexec/asdf.sh'; fi
