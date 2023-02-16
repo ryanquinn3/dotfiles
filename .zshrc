@@ -24,20 +24,28 @@ for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
 done
 unset file
 
+# only add these if we are not in a codespace
+if [[ -z "$CODESPACES" ]]; then
+    alias ls="exa"
+    eval "$(pyenv init -)"
 
-eval "$(pyenv init -)"
+    # Node tooling
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    source <(npm completion)
+
+    # Setup autojump
+    [ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
+
+    # GH autocompletion
+    eval "$(gh completion -s zsh)"
+fi
+
+
 autoload -Uz compinit
 compinit -i
-# Node tooling
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-source <(npm completion)
 
-# Setup autojump
-[ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
 
-# GH autocompletion
-eval "$(gh completion -s zsh)"
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/ryanquinn/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ryanquinn/google-cloud-sdk/path.zsh.inc'; fi
@@ -48,6 +56,8 @@ if [ -f '/Users/ryanquinn/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users
 
 export PATH="$HOME/.poetry/bin:$PATH"
 
-alias ls="exa"
+
+
+
 
 if [ -f ./usr/local/opt/asdf/libexec/asdf.sh ]; then ./usr/local/opt/asdf/libexec/asdf.sh; fi
