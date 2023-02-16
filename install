@@ -37,16 +37,20 @@ ln -sf $DIR/.functions ~/.functions
 ln -sf $DIR/.zshrc ~/.zshrc
 ln -sf $DIR/oh-my-zsh.sh ~/.oh-my-zsh/oh-my-zsh.sh
 
-echo -ne "Updating MacOS UI config...\033[0K\r“"
-configure_screenshot_storage
-configure_dock_settings
-configure_finder
-echo -e "Updating MacOS UI config... Done“"
+if [[ $OSTYPE == 'darwin'* ]]; then
+  echo -ne "Updating MacOS UI config...\033[0K\r“"
+  configure_screenshot_storage
+  configure_dock_settings
+  configure_finder
+  echo -e "Updating MacOS UI config... Done“"
+fi
 
 
 echo "Configuring shell..."
 source ~/.zshrc
 echo "Done."
 
-echo "Installing node..."
-nvm install --lts
+if ! [ -x "$(command -v node)" ]; then
+  echo "Installing node..."
+  nvm install --lts
+fi
