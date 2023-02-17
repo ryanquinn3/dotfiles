@@ -3,6 +3,10 @@ ZSH_THEME="bureau"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 ZSH_DISABLE_COMPFIX="true"
+
+# Uncomment to add kube settings to prompt
+# USING_KUBE=1
+
 export LANG=en_US.UTF-8
 export ZSH="$HOME/.oh-my-zsh"
 export ZSHRC="$HOME/.zshrc"
@@ -14,7 +18,10 @@ compinit
 plugins=(git brew kubectl kube-ps1)
 source $ZSH/oh-my-zsh.sh
 export EDITOR='subl -w'
-RPROMPT=$RPROMPT'$(kube_ps1)'
+
+if [[ -n "$USING_KUBE" ]]; then
+    RPROMPT=$RPROMPT'$(kube_ps1)'
+fi
 
 
 for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
