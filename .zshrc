@@ -31,16 +31,16 @@ for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
 done
 unset file
 
-# Node tooling
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-source <(npm completion)
+
 
 # only add these if we are not in a codespace
 if [[ -z "$CODESPACES" ]]; then
     alias ls="exa"
     eval "$(pyenv init -)"
-
+    # Node tooling
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    source <(npm completion)
     # Setup autojump
     [ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
 
