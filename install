@@ -45,6 +45,9 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   echo -e "Updating MacOS UI config... Done“"
 fi
 
+# make sure default shell is set to zsh
+chsh -s /usr/bin/zsh $USERNAME
+
 echo "Configuring shell..."
 source ~/.zshrc
 echo "Done."

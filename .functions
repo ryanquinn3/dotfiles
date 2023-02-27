@@ -45,12 +45,6 @@ find_po() {
   k get po | grep $1 | awk '{ print $1 }'
 }
 
-open_pr(){
-	local branch="${1:-develop}"
-  gpsup
-  hub pull-request -b $branch
-}
-
 # print current wifi network
 ssid() {
   echo $(/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | awk '/ SSID/ {print substr($0, index($0, $2))}')
@@ -75,6 +69,8 @@ kill_process_on_port() {
 reload_zsh() {
   source ~/.zshrc
 }
+
+alias rz="reload_zsh"
 
 ssh_desktop() {
   DESKTOP_IP=192.168.86.38
