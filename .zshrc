@@ -63,6 +63,9 @@ if [ -f '/Users/ryanquinn/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users
 
 export PATH="$HOME/.poetry/bin:$PATH"
 
+if [ -x "$(command -v node)" ]; then
+  nvm use node
+fi
 
 
 

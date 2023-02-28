@@ -48,11 +48,12 @@ fi
 # make sure default shell is set to zsh
 chsh -s /usr/bin/zsh $USERNAME
 
-echo "Configuring shell..."
-source ~/.zshrc
-echo "Done."
-
 if ! [ -x "$(command -v node)" ]; then
   echo "Installing node..."
   nvm install --lts
 fi
+
+echo "Configuring shell..."
+source ~/.zshrc
+echo "Done."
+
