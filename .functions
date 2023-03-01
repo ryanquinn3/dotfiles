@@ -26,6 +26,10 @@ dl(){
   fi
 }
 
+syncb() {
+  git fetch origin $1:$1
+}
+
 gitdb() {
   if [ -z "$1" ]
   then
