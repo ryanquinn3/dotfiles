@@ -74,7 +74,10 @@ reload_zsh() {
   source ~/.zshrc
 }
 
-alias rz="reload_zsh"
+cs_ssh() {
+  codespace_name=$(gh codespace list --json name | jq '.[0].name' -r)
+  gh codespace ssh --codespace $codespace_name -- -t 'zsh -l'
+} 
 
 ssh_desktop() {
   DESKTOP_IP=192.168.86.38

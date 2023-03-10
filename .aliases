@@ -1,0 +1,2 @@
+alias gbsort="git branch --sort=-committerdate"
+alias rz="reload_zsh"
