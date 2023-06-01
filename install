@@ -47,7 +47,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
 fi
 
 # make sure default shell is set to zsh
-chsh -s /usr/bin/zsh $USERNAME
+sudo chsh -s /usr/bin/zsh $USERNAME
 
 if ! [ -x "$(command -v node)" ]; then
   echo "Installing node..."
