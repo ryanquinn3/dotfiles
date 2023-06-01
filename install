@@ -35,6 +35,7 @@ fi
 echo "Symlinking dotfiles..."
 ln -sf $DIR/.functions ~/.functions
 ln -sf $DIR/.zshrc ~/.zshrc
+ln -sf $DIR/.aliases ~/.aliases
 ln -sf $DIR/oh-my-zsh.sh ~/.oh-my-zsh/oh-my-zsh.sh
 
 if [[ $OSTYPE == 'darwin'* ]]; then

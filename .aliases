@@ -1,2 +1,3 @@
 alias gbsort="git branch --sort=-committerdate"
 alias rz="reload_zsh"
+alias gcan="git add --all && git commit --amend --no-edit"
