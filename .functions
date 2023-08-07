@@ -86,3 +86,7 @@ ssh_desktop() {
   echo "Running on wifi $(ssid)"
   ssh ryan@$DESKTOP_IP
 }
+
+make_test_spec(){
+   gh run view --log --job=$1 | grep "Print test spec" | grep -o "\.\.\/build.*" >> /tmp/test_spec   
+}
