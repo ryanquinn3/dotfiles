@@ -1,5 +1,9 @@
+# general
 alias gbsort="git branch --sort=-committerdate"
 alias rz="reload_zsh"
 alias gcan="git add --all && git commit --amend --no-edit"
+
+# work specific 
 alias gt="make generate-types"
+alias gtc="(cd ci/type-generation && npm run _generate codegen-configs/client.ts)"
 alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull) && rz"

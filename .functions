@@ -76,10 +76,17 @@ reload_zsh() {
   source ~/.zshrc
 }
 
+current_codespace(){
+  echo $(gh codespace list --json name | jq '.[0].name' -r)
+}
+
 cs_ssh() {
-  codespace_name=$(gh codespace list --json name | jq '.[0].name' -r)
-  gh codespace ssh --codespace $codespace_name -- -t 'zsh -l'
+  gh codespace ssh --codespace $(current_codespace) -- -t 'zsh -l'
 } 
+
+cs_ld(){
+  gh codespace ssh --codespace $(current_codespace) -- -t 'lazydocker'
+}
 
 ssh_desktop() {
   DESKTOP_IP=192.168.86.38
