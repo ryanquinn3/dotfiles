@@ -7,3 +7,5 @@
 3. Run `./install.zsh`
 
 4. Authenticate with github cli via `gh auth login`
+
+5. [Install rust](https://www.rust-lang.org/tools/install)
