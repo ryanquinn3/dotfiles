@@ -76,6 +76,17 @@ reload_zsh() {
   source ~/.zshrc
 }
 
+
+ssh_desktop() {
+  DESKTOP_IP=192.168.86.38
+  echo "Running on wifi $(ssid)"
+  ssh ryan@$DESKTOP_IP
+}
+# work specific
+make_test_spec(){
+   gh run view --log --job=$1 | grep "Print test spec" | grep -o "\.\.\/build.*" >> /tmp/test_spec   
+}
+
 current_codespace(){
   echo $(gh codespace list --json name | jq '.[0].name' -r)
 }
@@ -88,12 +99,9 @@ cs_ld(){
   gh codespace ssh --codespace $(current_codespace) -- -t 'lazydocker'
 }
 
-ssh_desktop() {
-  DESKTOP_IP=192.168.86.38
-  echo "Running on wifi $(ssid)"
-  ssh ryan@$DESKTOP_IP
+commit_ticket(){
+  ticket_url=$1
+  description=$2
+  gacm "[SC-$(echo "$ticket_url" | grep -oP 'story/\K\d+')") $description"
 }
 
-make_test_spec(){
-   gh run view --log --job=$1 | grep "Print test spec" | grep -o "\.\.\/build.*" >> /tmp/test_spec   
-}
