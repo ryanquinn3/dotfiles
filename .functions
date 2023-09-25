@@ -102,6 +102,6 @@ cs_ld(){
 commit_ticket(){
   ticket_url=$1
   description=$2
-  gacm "[SC-$(echo "$ticket_url" | grep -oP 'story/\K\d+')") $description"
+  gacm "[SC-$(echo "$ticket_url" | grep -oP 'story/\K\d+')] $description"
 }
 
