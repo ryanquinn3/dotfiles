@@ -105,3 +105,6 @@ commit_ticket(){
   gacm "[SC-$(echo "$ticket_url" | grep -oP 'story/\K\d+')] $description"
 }
 
+login_link(){
+   docker logs obsidian_web.internal_1 2>/dev/null | grep 'loginLink":' | tail -n 1 | awk '{ print $6 }' | jq -r .loginLink 
+}
