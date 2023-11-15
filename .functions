@@ -108,3 +108,16 @@ commit_ticket(){
 login_link(){
    docker logs obsidian_web.internal_1 2>/dev/null | grep 'loginLink":' | tail -n 1 | awk '{ print $6 }' | jq -r .loginLink 
 }
+
+install_portainer() {
+  volume_name=portainer_data
+  docker volume inspect $volume_name >/dev/null 2>&1 || docker volume create $volume_name
+  docker run -d \
+    -p 8000:8000 \
+    -p 9443:9000 \
+    --name portainer \
+    --restart=always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v $volume_name:/data portainer/portainer-ce:latest \
+    --http-enabled
+}
