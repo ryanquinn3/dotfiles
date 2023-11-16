@@ -110,8 +110,7 @@ login_link(){
 }
 
 install_portainer() {
-  volume_name="portainer_data"
-  docker volume inspect $volume_name >/dev/null 2>&1 || docker volume create $volume_name
+  docker volume inspect portainer_data >/dev/null 2>&1 || docker volume create portainer_data
   docker run -d \
     -p 8000:8000 \
     # conflicts exist on port 9000
@@ -119,6 +118,6 @@ install_portainer() {
     --name portainer \
     --restart=always \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    -v $volume_name:/data portainer/portainer-ce:latest \
+    -v portainer_data:/data portainer/portainer-ce:latest \
     --http-enabled
 }
