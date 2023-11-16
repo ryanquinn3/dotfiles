@@ -11,7 +11,7 @@ export LANG=en_US.UTF-8
 export ZSH="$HOME/.oh-my-zsh"
 export ZSHRC="$HOME/.zshrc"
 export DOCKER_BUILDKIT=1
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.istioctl/bin"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.local/bin"
 autoload -Uz compinit
 compinit
 
