@@ -114,6 +114,7 @@ install_portainer() {
   docker volume inspect $volume_name >/dev/null 2>&1 || docker volume create $volume_name
   docker run -d \
     -p 8000:8000 \
+    # conflicts exist on port 9000
     -p 9443:9000 \
     --name portainer \
     --restart=always \
