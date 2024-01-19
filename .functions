@@ -109,6 +109,16 @@ login_link(){
    docker logs obsidian_web.internal_1 2>/dev/null | grep 'loginLink":' | tail -n 1 | awk '{ print $6 }' | jq -r .loginLink 
 }
 
+lint_changed(){
+  trunk="main"
+  branch_name=$(git rev-parse --abbrev-ref HEAD)
+  main_ancestor=$(git merge-base $branch_name $trunk)
+  changed_files=$(git diff --name-only HEAD..$main_ancestor)
+  num_files_changed=$(echo "$changed_files" | wc -l)
+  echo "Running eslint against $num_files_changed files"
+  npx eslint --fix $(echo "$changed_files")
+}
+
 install_portainer() {
   docker volume inspect portainer_data >/dev/null 2>&1 || docker volume create portainer_data
   docker run -d \
