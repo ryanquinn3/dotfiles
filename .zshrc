@@ -63,9 +63,9 @@ unset file
 
 # only add these if we are not in a codespace
 if [[ -z "$CODESPACES" ]]; then
-   source ./local-config
+   source ~/.local-config
 else
-    source ./codespaces-config
+    source ~/.codespaces-config
 fi
 
 
