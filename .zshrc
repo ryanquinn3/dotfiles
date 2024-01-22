@@ -63,17 +63,9 @@ unset file
 
 # only add these if we are not in a codespace
 if [[ -z "$CODESPACES" ]]; then
-    alias ls="exa"
-    command -v pyenv && eval "$(pyenv init -)"
-    # Node tooling
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    source <(npm completion)
-    # Setup autojump
-    [ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
-
-    # GH autocompletion
-    eval "$(gh completion -s zsh)"
+   source ./local
+else
+    source ./codespaces
 fi
 
 
