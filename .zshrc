@@ -83,11 +83,7 @@ if [ -f '/Users/ryanquinn/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users
 
 export PATH="$HOME/.poetry/bin:$PATH"
 
-nvm use node
-
-
 
 if [ -f ./usr/local/opt/asdf/libexec/asdf.sh ]; then ./usr/local/opt/asdf/libexec/asdf.sh; fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
