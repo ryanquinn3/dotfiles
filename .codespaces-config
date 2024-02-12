@@ -1,2 +1,9 @@
 # config for codespaces
 export GIT_EDITOR=vim
+
+# aliases
+alias gt="make generate-types"
+alias gtc="(cd ci/type-generation && npm run _generate codegen-configs/client.ts)"
+alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull) && rz"
+
+alias web_start="docker-compose up --detach web.internal web-client.internal"
