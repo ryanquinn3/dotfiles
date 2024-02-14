@@ -9,9 +9,9 @@ alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull)
 alias web_start="docker-compose up --detach web.internal web-client.internal"
 
 login_link(){
-   docker logs obsidian_web.internal_1 2>/dev/null | \
+  json_line=$( \
+   docker logs obsidian_web.internal_1 2>/dev/null  | \
    grep 'loginLink":' | \
-   tail -n 1 | \
-   cut -d ' ' -f 6- | \
-  jq -r .loginLink 
+   tail -n 1 )
+  echo "{$json_line}" | jq -r .loginLink
 }
