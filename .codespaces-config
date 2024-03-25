@@ -2,7 +2,7 @@
 export GIT_EDITOR=vim
 
 # aliases
-alias gt="make generate-types"
+alias gt="turbo generate-types"
 alias gtc="(cd ci/type-generation && npm run _generate codegen-configs/client.ts)"
 alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull) && rz"
 
@@ -17,3 +17,7 @@ login_link(){
   echo "{$json_line}" | jq -r .loginLink
 }
 
+
+function rst_container() {
+  docker ps --format '{{.Names}}' | grep $1 | xargs -I {} docker restart {}
+}
