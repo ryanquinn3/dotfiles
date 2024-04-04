@@ -7,10 +7,11 @@ alias gtc="(cd ci/type-generation && npm run _generate codegen-configs/client.ts
 alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull) && rz"
 
 alias web_start="docker-compose up --detach web.internal web-client.internal"
-
+alias rstc="restart_container"
+alias rstcw="restart_container web.internal"
 # Functions
 login_link(){
-  json_line=$( \
+  json_line=$( \  
    docker logs obsidian_web.internal_1 2>/dev/null  | \
    grep 'loginLink":' | \
    tail -n 1 )
@@ -18,6 +19,6 @@ login_link(){
 }
 
 
-function rst_container() {
+function restart_container() {
   docker ps --format '{{.Names}}' | grep $1 | xargs -I {} docker restart {}
 }
