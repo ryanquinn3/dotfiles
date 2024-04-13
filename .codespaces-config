@@ -11,8 +11,7 @@ alias rstc="restart_container"
 alias rstcw="restart_container web.internal"
 # Functions
 login_link(){
-  json_line=$( \  
-   docker logs obsidian_web.internal_1 2>/dev/null  | \
+  json_line=$( docker logs obsidian_web.internal_1 2>/dev/null  | \
    grep 'loginLink":' | \
    tail -n 1 )
   echo "{$json_line}" | jq -r .loginLink
