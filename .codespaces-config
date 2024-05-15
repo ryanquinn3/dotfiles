@@ -9,6 +9,9 @@ alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull)
 alias web_start="docker-compose up --detach web.internal web-client.internal"
 alias rstc="restart_container"
 alias rstcw="restart_container web.internal"
+
+alias web_logs="docker logs -f obsidian_web.internal_1 --tail 100"
+alias wc_logs="docker logs -f obsidian_web-client.internal_1 --tail 100"
 # Functions
 login_link(){
   json_line=$( docker logs obsidian_web.internal_1 2>/dev/null  | \
