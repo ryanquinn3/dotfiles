@@ -8,8 +8,8 @@ alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull)
 
 alias web_start="docker-compose up --detach web.internal web-client.internal"
 alias rstc="restart_container"
-alias rst_cw="restart_container web.internal"
-alias rst_cwc="restart_container web.internal"
+alias rstc_w="restart_container web.internal"
+alias rstc_wc="restart_container obsidian_web-client.internal_1"
 
 alias docker_ps="docker ps -a --format '{{.Names}}'"
 alias logs_web="docker logs -f obsidian_web.internal_1 --tail 100"
