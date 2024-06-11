@@ -14,10 +14,6 @@ clean_docker() {
   docker rmi $(docker images -f "dangling=true" -q)
 }
 
-docker_ps() {
-  docker ps | less -S
-}
-
 dl(){
   if [[ $1 == *"soundcloud.com"* ]]; then
     youtube-dl -o "~/Music/%(uploader)s - %(title)s.%(ext)s" $1
