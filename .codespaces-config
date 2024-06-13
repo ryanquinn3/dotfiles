@@ -17,8 +17,6 @@ alias logs_wc="docker logs -f obsidian_web-client.internal_1 --tail 100"
 
 alias yw="nocorrect yarn workspace"
 
-alias lint_ts="npx eslint --fix $(git diff --name-only | grep '.ts')"
-
 # Functions
 login_link(){
   json_line=$( docker logs obsidian_web.internal_1 2>/dev/null  | \
@@ -32,4 +30,7 @@ function restart_container() {
   docker_ps | grep $1 | xargs -I {} docker restart {}
 }
 
+lint_ts(){
+  npx eslint --fix $(git diff --name-only | grep '.ts')
+}
 
