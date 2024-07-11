@@ -12,8 +12,8 @@ alias rstc_w="restart_container web.internal"
 alias rstc_wc="restart_container obsidian_web-client.internal_1"
 
 alias docker_ps="docker ps -a --format '{{.Names}}'"
-alias logs_web="docker logs -f obsidian_web.internal_1 --tail 100"
-alias logs_wc="docker logs -f obsidian_web-client.internal_1 --tail 100"
+alias logs_web="docker compose logs web.internal --tail 100 --no-log-prefix"
+alias logs_wc="docker compose logs web-client.internal --tail 100 --no-log-prefix"
 
 alias yw="nocorrect yarn workspace"
 
