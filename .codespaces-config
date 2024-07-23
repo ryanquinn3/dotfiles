@@ -19,7 +19,7 @@ alias yw="nocorrect yarn workspace"
 
 # Functions
 login_link(){
-  json_line=$( docker logs obsidian_web.internal_1 2>/dev/null  | \
+  json_line=$(logs_web 2>/dev/null  | \
    grep 'loginLink":' | \
    tail -n 1 )
   echo "{$json_line}" | jq -r .loginLink
