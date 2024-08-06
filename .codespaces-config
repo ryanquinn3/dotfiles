@@ -2,7 +2,7 @@
 export GIT_EDITOR=vim
 
 # aliases
-alias gt="turbo generate-types --filter web --filter web-client"
+alias gt="turbo generate-types --filter @vanta/web --filter @vanta/web-client"
 alias gtc="(cd ci/type-generation && npm run _generate codegen-configs/client.ts)"
 alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull) && rz"
 
