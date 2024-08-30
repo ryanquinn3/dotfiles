@@ -31,6 +31,6 @@ function restart_container() {
 }
 
 lint_ts(){
-  npx eslint --fix $(git diff --name-only | grep '.ts')
+  npx eslint --fix $(git diff --name-only --diff-filter=d | grep '.ts$')
 }
 
