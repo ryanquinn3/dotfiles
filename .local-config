@@ -1,5 +1,6 @@
 # File to be included when running locally on macos
 alias ls="exa"
+export EDITOR='subl -w'
 command -v pyenv && eval "$(pyenv init -)"
 
 # Setup autojump
