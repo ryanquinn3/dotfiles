@@ -1,5 +1,6 @@
 # config for codespaces
-export GIT_EDITOR=vim
+export GIT_EDITOR=code
+export EDITOR=code
 
 # aliases
 alias gt="turbo generate-types --filter @vanta/web --filter @vanta/web-client"
