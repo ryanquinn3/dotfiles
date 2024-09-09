@@ -32,6 +32,8 @@ function restart_container() {
 }
 
 lint_ts(){
+  files_to_lint=$(git diff HEAD --name-only --diff-filter=d | grep -E '.tsx?$')
+  echo "Linting $(echo $files_to_lint | wc -l) files"
   npx eslint --fix $(git diff HEAD --name-only --diff-filter=d | grep -E '.tsx?$' )
 }
 
