@@ -51,10 +51,9 @@ fi
 # make sure default shell is set to zsh
 sudo chsh -s /usr/bin/zsh $USERNAME
 
-if ! [ -x "$(command -v node)" ]; then
-  echo "Installing node..."
-  nvm install --lts
-fi
+echo "Installing node..."
+nvm install --lts
+
 
 echo "Configuring shell..."
 source ~/.zshrc
