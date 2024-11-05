@@ -21,6 +21,12 @@ function configure_finder() {
 	defaults write com.apple.finder "ShowPathbar" -bool "true" && killall Finder
 }
 
+function load_nvm(){
+	export NVM_DIR="/usr/local/share/nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+}
+
 if [ -d ~/.oh-my-zsh ]; then
     echo "Oh my zsh is already installed"
 else
@@ -31,6 +37,7 @@ if [ -n "$(which nvm)" ]; then
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 fi
 
+load_nvm
 
 echo "Symlinking dotfiles..."
 ln -sf $DIR/.functions ~/.functions
