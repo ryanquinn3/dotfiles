@@ -2,9 +2,10 @@
 export GIT_EDITOR="code --wait"
 export EDITOR="code --wait"
 
+WC_PKG="@vanta/web-client"
 # aliases
-alias gt="turbo generate-types --filter @vanta/web --filter @vanta/web-client"
-alias gtc="(cd ci/type-generation && npm run _generate codegen-configs/client.ts)"
+alias gt="turbo generate-types --filter @vanta/web --filter $WC_PKG"
+alias gtc="turbo generate-types --filter $WC_PKG"
 alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull) && rz"
 
 alias web_start="docker-compose up --detach web.internal web-client.internal"
