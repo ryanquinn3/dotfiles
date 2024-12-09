@@ -3,5 +3,6 @@
     "image": {
       "format": "table {{.ID}} \t {{.Image}} \t {{.Names}} \t {{.Status}}"
     }
-  }
+  },
+  "psFormat": "table {{.ID}} \t {{.Image}} \t {{.Names}} \t {{.Status}}"s
 }
