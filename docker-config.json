@@ -1,0 +1,7 @@
+{
+  "cli": {
+    "image": {
+      "format": "table {{.ID}} \t {{.Image}} \t {{.Names}} \t {{.Status}}"
+    }
+  }
+}
