@@ -27,6 +27,9 @@ login_link(){
   echo "{$json_line}" | jq -r .loginLink
 }
 
+function startc(){
+  docker compose up -d "$1.internal"
+}
 
 function restart_container() {
   docker_ps | grep $1 | xargs -I {} docker restart {}
