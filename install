@@ -61,7 +61,7 @@ fi
 sudo chsh -s /usr/bin/zsh $USERNAME
 
 echo "Installing node..."
-nvm install --lts
+nvm install 22.14.0
 
 
 echo "Configuring shell..."
