@@ -35,6 +35,7 @@ function restart_container() {
   docker_ps | grep $1 | xargs -I {} docker restart {}
 }
 
+
 lint_ts(){
   files_to_lint=$(git diff HEAD --name-only --diff-filter=d | grep -E '.tsx?$')
   echo "Linting $(echo $files_to_lint | wc -l) files"
@@ -43,5 +44,9 @@ lint_ts(){
   end=`date +%s`
   runtime=$((end-start))
   echo "Linted in $runtime seconds"
+}
+
+logs(){
+  docker compose logs $1.internal --tail 100 --no-log-prefix
 }
 
