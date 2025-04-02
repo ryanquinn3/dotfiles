@@ -47,6 +47,6 @@ lint_ts(){
 }
 
 logs(){
-  docker compose logs $1.internal --tail 100 --no-log-prefix
+  docker compose logs $1.internal --tail 100 --no-log-prefix $2
 }
 
