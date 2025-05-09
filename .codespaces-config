@@ -1,6 +1,7 @@
 # config for codespaces
 export GIT_EDITOR="code --wait"
 export EDITOR="code --wait"
+export DEV_LOG_FORMAT="json"
 
 WC_PKG="@vanta/web-client"
 # aliases
