@@ -18,6 +18,7 @@ alias docker_ps="docker ps -a --format '{{.Names}}'"
 alias logs_web="docker compose logs web.internal --tail 100 --no-log-prefix"
 alias logs_wc="docker compose logs web-client.internal --tail 100 --no-log-prefix"
 
+alias pr_create="gh pr create --draft --editor --template pull_request_template.md --base main"
 alias yw="nocorrect yarn workspace"
 
 # Functions

@@ -3,3 +3,4 @@ alias gbsort="git branch --sort=-committerdate"
 alias rz="reload_zsh"
 alias gcan="git add --all && git commit --amend --no-edit"
 alias pullhead='git pull origin $(git rev-parse --abbrev-ref HEAD)'
+
