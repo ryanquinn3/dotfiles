@@ -1,6 +1,19 @@
 gacm(){
+  if [ -z "$1" ]; then
+    echo "Please provide a commit message"
+    return 1
+  fi
+
   echo "Committing code..."
-  git add --all && git commit -m $1
+
+  git add --all
+  
+  # if this fails, retry
+  git commit -m $1
+  if [ $? -ne 0 ]; then
+    echo "Pre commit hooks may have failed... retrying..."
+    git commit -m $1
+  fi
 }
 
 clean_docker() {
