@@ -52,3 +52,6 @@ logs(){
   docker compose logs $1.internal --tail 100 --no-log-prefix $2
 }
 
+clc(){
+  unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions 
+}
