@@ -9,7 +9,8 @@ alias gt="turbo generate-types --filter @vanta/web --filter $WC_PKG"
 alias gtc="turbo generate-types --filter $WC_PKG"
 alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull) && rz"
 
-alias web_start="docker-compose up --detach web.internal web-client.internal"
+
+alias start_web="docker-compose up --detach web.internal web-client.internal"
 alias rstc="restart_container"
 alias rstc_w="restart_container web.internal"
 alias rstc_wc="restart_container obsidian_web-client.internal_1"
@@ -20,6 +21,7 @@ alias logs_wc="docker compose logs web-client.internal --tail 100 --no-log-prefi
 
 alias pr_create="gh pr create --draft --editor --template pull_request_template.md --base main"
 alias yw="nocorrect yarn workspace"
+
 
 # Functions
 login_link(){
@@ -37,6 +39,10 @@ function restart_container() {
   docker_ps | grep $1 | xargs -I {} docker restart {}
 }
 
+# new branch from main
+nb(){
+  syncb && gco -b rq/$1 main
+}
 
 lint_ts(){
   files_to_lint=$(git diff HEAD --name-only --diff-filter=d | grep -E '.tsx?$')
@@ -52,6 +58,7 @@ logs(){
   docker compose logs $1.internal --tail 100 --no-log-prefix $2
 }
 
+# Claude code boot up
 clc(){
   unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions 
 }
