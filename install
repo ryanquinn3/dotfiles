@@ -62,6 +62,7 @@ sudo chsh -s /usr/bin/zsh $USERNAME
 
 echo "Installing node..."
 nvm install 22.14.0
+nvm alias default 22.14.0
 
 
 echo "Configuring shell..."
