@@ -12,6 +12,7 @@ gacm(){
   git commit -m $1
   if [ $? -ne 0 ]; then
     echo "Pre commit hooks may have failed... retrying..."
+    git add --all
     git commit -m $1
   fi
 }
