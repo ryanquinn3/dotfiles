@@ -63,6 +63,12 @@ logs(){
   docker compose logs $1.internal --tail 100 --no-log-prefix $2
 }
 
+# emit a docker containers logs as json with some logic to drop annoying fields
+logs_json(){
+
+  logs $1 | jq -R 'fromjson? | select(type == "object") | del(.dd, .networkInfo)'
+}
+
 # Claude code boot up
 clc(){
   unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions 
