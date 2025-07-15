@@ -65,8 +65,7 @@ logs(){
 
 # emit a docker containers logs as json with some logic to drop annoying fields
 logs_json(){
-
-  logs $1 | jq -R 'fromjson? | select(type == "object") | del(.dd, .networkInfo)'
+  logs "$1" "${@:2}" | jq -R 'fromjson? | select(type == "object") | del(.dd, .networkInfo)'
 }
 
 # Claude code boot up
