@@ -72,5 +72,7 @@ clc(){
   unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions 
 }
 
-# activate obsidian venv if it exists
-if [ -f '/workspaces/obsidian/.venv/bin/activate' ]; then source /workspaces/obsidian/.venv/bin/activate; fi
+# check if python is /workspaces/obsidian/.venv/bin and only activate if is not
+if [ "$(which python)" != "/workspaces/obsidian/.venv/bin/python" ]; then
+  source /workspaces/obsidian/.venv/bin/activate
+fi
