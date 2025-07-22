@@ -72,3 +72,6 @@ logs_json(){
 clc(){
   unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions 
 }
+
+# activate obsidian venv if it exists
+if [ -f '/workspaces/obsidian/.venv/bin/activate' ]; then source /workspaces/obsidian/.venv/bin/activate; fi
