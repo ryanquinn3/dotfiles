@@ -64,9 +64,8 @@ logs(){
 
 # emit a docker containers logs as json with some logic to drop annoying fields
 logs_json(){
-  logs "$1" "${@:2}" | jq -R 'fromjson? | select(type == "object") | del(.dd, .networkInfo)'
+  logs "$1" "${@:2}" | jq -R '. as $line | try (fromjson | del(.dd, .networkInfo)) catch $line'
 }
-
 # Claude code boot up
 clc(){
   unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions 
