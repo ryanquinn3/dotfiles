@@ -76,5 +76,13 @@ if [ "$(which python)" != "/workspaces/obsidian/.venv/bin/python" ]; then
   source /workspaces/obsidian/.venv/bin/activate
 fi
 
+function stamp(){
+  if [ -z "$1" ]; then
+    echo "Usage: stamp PR_NUMBER"
+    return 1
+  fi
+   gh pr review --approve $1  
+}
+
 # if zoxide is installed, initialize it
 [ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
