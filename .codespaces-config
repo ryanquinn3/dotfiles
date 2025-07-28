@@ -75,3 +75,6 @@ clc(){
 if [ "$(which python)" != "/workspaces/obsidian/.venv/bin/python" ]; then
   source /workspaces/obsidian/.venv/bin/activate
 fi
+
+# if zoxide is installed, initialize it
+[ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
