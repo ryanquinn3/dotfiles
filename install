@@ -21,6 +21,10 @@ function configure_finder() {
 	defaults write com.apple.finder "ShowPathbar" -bool "true" && killall Finder
 }
 
+function clone_tmux_plugin_manager(){
+	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+}
+
 function load_nvm(){
 	export NVM_DIR="/usr/local/share/nvm"
 	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -46,6 +50,7 @@ ln -sf $DIR/.aliases ~/.aliases
 ln -sf $DIR/.codespaces-config ~/.codespaces-config
 ln -sf $DIR/.local-config ~/.local-config
 ln -sf $DIR/oh-my-zsh.sh ~/.oh-my-zsh/oh-my-zsh.sh
+ln -sf $DIR/.tmux.conf ~/.tmux.conf
 mkdir -p ~/.docker
 ln -sf $DIR/docker-config.json ~/.docker/config.json
 
