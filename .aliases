@@ -7,4 +7,4 @@ alias pullhead='git pull origin $(git rev-parse --abbrev-ref HEAD)'
 alias cat="bat"
 
 
-alias l="exa --group-directories-first --icons --long --color=always --icons=always --no-user"
+alias l="eza --group-directories-first --icons --long --color=always --icons=always --no-user -a"

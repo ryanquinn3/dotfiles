@@ -47,6 +47,7 @@ function setup_oh_my_zsh() {
 	else
 		sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	fi
+	setup_oh_my_zsh_plugins
 }
 
 ### end Oh My Zsh
