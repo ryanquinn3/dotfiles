@@ -21,6 +21,11 @@ function configure_finder() {
 	defaults write com.apple.finder "ShowPathbar" -bool "true" && killall Finder
 }
 
+function setup_tmux() {
+	mkdir -p ~/.tmux/plugins
+	clone_tmux_plugin_manager
+}
+
 function clone_tmux_plugin_manager(){
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
@@ -30,17 +35,40 @@ function load_nvm(){
 	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 }
+### Oh My Zsh
 
-if [ -d ~/.oh-my-zsh ]; then
-    echo "Oh my zsh is already installed"
-else
-	sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-fi
+function setup_oh_my_zsh_plugins() {
+	git clone --depth 1 https://github.com/unixorn/fzf-zsh-plugin.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-zsh-plugin
+}
+
+function setup_oh_my_zsh() {
+	if [ -d ~/.oh-my-zsh ]; then
+			echo "Oh my zsh is already installed"
+	else
+		sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	fi
+}
+
+### end Oh My Zsh
+
+### apt packages
+function install_apt_packages() {
+	sudo apt-get update
+	sudo apt-get install -y \
+		fzf \
+		bat \
+		eza \
+		fd-find \
+		procps
+}
+
+### end apt packages
 
 if [ -n "$(which nvm)" ]; then
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 fi
 
+setup_tmux
 load_nvm
 
 echo "Symlinking dotfiles..."
@@ -60,6 +88,12 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   configure_dock_settings
   configure_finder
   echo -e "Updating MacOS UI config... Done“"
+fi
+
+if [[ $OSTYPE == 'linux-gnu'* ]]; then
+	echo -ne "Installing apt packages...\033[0K\r"
+	install_apt_packages
+	echo -e "Installing apt packages... Done"
 fi
 
 # make sure default shell is set to zsh
