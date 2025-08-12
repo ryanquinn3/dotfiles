@@ -55,9 +55,9 @@ if [[ -n "$USING_KUBE" ]]; then
 fi
 
 # fzf
-export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git "
+export FZF_DEFAULT_COMMAND="$SHELL -c 'fd --hidden --strip-cwd-prefix --exclude .git'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --exclude .git'"
 
 
 for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
