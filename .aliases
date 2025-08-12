@@ -4,7 +4,7 @@ alias rz="reload_zsh"
 alias gcan="git add --all && git commit --amend --no-edit"
 alias pullhead='git pull origin $(git rev-parse --abbrev-ref HEAD)'
 
-alias cat="bat"
+alias cat="batcat"
 
 
 alias l="eza --group-directories-first --icons --long --color=always --icons=always --no-user -a"
