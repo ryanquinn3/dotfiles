@@ -95,6 +95,8 @@ if [[ $OSTYPE == 'linux-gnu'* ]]; then
 	echo -ne "Installing apt packages...\033[0K\r"
 	install_apt_packages
 	echo -e "Installing apt packages... Done"
+	mkdir -p ~/.fzf/shell
+	ln -s  /usr/share/doc/fzf/examples/key-bindings.zsh ~/.fzf/shell/key-bindings.zsh
 fi
 
 # make sure default shell is set to zsh
