@@ -43,6 +43,10 @@ export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin
 autoload -Uz compinit
 compinit
 
+# fzf
+[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+[ -f /usr/share/doc/fzf/examples/completions.zsh ] && source /usr/share/doc/fzf/examples/completions.zsh
+
 plugins=(git brew kubectl kube-ps1 fzf-zsh-plugin)
 source $ZSH/oh-my-zsh.sh
 
@@ -102,5 +106,4 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
 
-# fzf
-eval "$(fzf --zsh)"
+
