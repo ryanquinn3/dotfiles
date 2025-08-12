@@ -43,12 +43,17 @@ export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin
 autoload -Uz compinit
 compinit
 
-plugins=(git brew kubectl kube-ps1)
+plugins=(git brew kubectl kube-ps1 fzf-zsh-plugin)
 source $ZSH/oh-my-zsh.sh
 
 if [[ -n "$USING_KUBE" ]]; then
     RPROMPT=$RPROMPT'$(kube_ps1)'
 fi
+
+# fzf
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git "
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
 
 
 for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
@@ -97,3 +102,5 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
 
+# fzf
+eval "$(fzf --zsh)"
