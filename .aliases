@@ -9,4 +9,4 @@ alias cat="batcat"
 
 alias l="eza --group-directories-first --icons --long --color=always --icons=always --no-user -a"
 
-alias gcb='git branch --all | fzf | xargs git checkout'
+alias gcb='git branch --sort=-committerdate | fzf | xargs git checkout'
