@@ -24,9 +24,9 @@ alias yw="nocorrect yarn workspace"
 
 alias fd="fdfind"
 # fzf
-export FZF_DEFAULT_COMMAND="$SHELL -c 'fdfind --hidden --strip-cwd-prefix --exclude .git -I'"
+export FZF_DEFAULT_COMMAND="$SHELL -c 'fdfind --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="$SHELL -c 'fdfind --type=d --hidden --strip-cwd-prefix --exclude .git -I'"
+export FZF_ALT_C_COMMAND="$SHELL -c 'fdfind --type=d --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
 
 
 # Functions
