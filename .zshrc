@@ -47,7 +47,7 @@ compinit
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completions.zsh ] && source /usr/share/doc/fzf/examples/completions.zsh
 
-plugins=(git brew kubectl kube-ps1 fzf-zsh-plugin)
+plugins=(git brew kubectl kube-ps1 fzf-zsh-plugin fzf-tab)
 source $ZSH/oh-my-zsh.sh
 
 if [[ -n "$USING_KUBE" ]]; then
