@@ -95,3 +95,8 @@ function stamp(){
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
+
+# If using system node, switch to default
+if [[ "$(nvm current)" == "system" ]]; then
+  nvm use default >/dev/null
+fi
