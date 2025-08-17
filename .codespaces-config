@@ -14,7 +14,7 @@ alias start_web="docker-compose up --detach web.internal web-client.internal"
 alias rstc="restart_container"
 alias rstc_w="restart_container web.internal"
 alias rstc_wc="restart_container obsidian_web-client.internal_1"
-
+alias cat="batcat"
 alias docker_ps="docker ps -a --format '{{.Names}}'"
 alias logs_web="docker compose logs web.internal --tail 100 --no-log-prefix"
 alias logs_wc="docker compose logs web-client.internal --tail 100 --no-log-prefix"
@@ -28,6 +28,7 @@ export FZF_DEFAULT_COMMAND="$SHELL -c 'fdfind --hidden --strip-cwd-prefix --excl
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$SHELL -c 'fdfind --type=d --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
 
+_1LEFT="[codespace]"
 
 # Functions
 login_link(){
@@ -91,5 +92,4 @@ function stamp(){
    gh pr review --approve $1  
 }
 
-# if zoxide is installed, initialize it
-[ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
+

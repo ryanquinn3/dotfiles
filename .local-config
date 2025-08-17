@@ -1,10 +1,20 @@
+USE_PYENV=0
 # File to be included when running locally on macos
-alias ls="exa"
+alias ls="eza"
+alias cat="bat"
 export EDITOR='subl -w'
-command -v pyenv && eval "$(pyenv init -)"
+
+if [ "$USE_PYENV" -eq 1 ]; then
+  command -v pyenv && eval "$(pyenv init -)"
+fi
+
+_1LEFT="macbookpro"
 
 # Setup autojump
 [ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
 
 # GH autocompletion
 eval "$(gh completion -s zsh)"
+
+# fzf
+source <(fzf --zsh)
