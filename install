@@ -14,6 +14,7 @@ function configure_screenshot_storage(){
 function configure_dock_settings(){
 	defaults write com.apple.dock "autohide" -bool "true"
 	defaults write com.apple.dock "orientation" -string "left"
+	defaults write com.apple.dock expose-group-apps -bool true
 	killall Dock
 }
 
@@ -40,6 +41,7 @@ function load_nvm(){
 function setup_oh_my_zsh_plugins() {
 	git clone --depth 1 https://github.com/unixorn/fzf-zsh-plugin.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-zsh-plugin
 	git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab
+	git clone https://github.com/junegunn/fzf-git.sh.git ~/fzf-git.sh
 }
 
 function setup_oh_my_zsh() {
@@ -49,6 +51,11 @@ function setup_oh_my_zsh() {
 		sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	fi
 	setup_oh_my_zsh_plugins
+}
+
+function install_homebrew_for_linux(){
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	sudo apt-get install build-essential
 }
 
 ### end Oh My Zsh
@@ -81,6 +88,9 @@ ln -sf $DIR/.codespaces-config ~/.codespaces-config
 ln -sf $DIR/.local-config ~/.local-config
 ln -sf $DIR/oh-my-zsh.sh ~/.oh-my-zsh/oh-my-zsh.sh
 ln -sf $DIR/.tmux.conf ~/.tmux.conf
+ln -sf $DIR/.gitconfig ~/.gitconfig
+mkdir -p ~/.config/aerospace
+ln -sf $DIR/aerospace.toml ~/.config/aerospace/aerospace.toml
 mkdir -p ~/.docker
 ln -sf $DIR/docker-config.json ~/.docker/config.json
 
@@ -93,6 +103,8 @@ if [[ $OSTYPE == 'darwin'* ]]; then
 fi
 
 if [[ $OSTYPE == 'linux-gnu'* ]]; then
+	echo -ne "Installing homebrew...\033[0K\r"
+	install_homebrew_for_linux
 	echo -ne "Installing apt packages...\033[0K\r"
 	install_apt_packages
 	echo -e "Installing apt packages... Done"
