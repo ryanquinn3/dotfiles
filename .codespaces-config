@@ -4,17 +4,19 @@ export EDITOR="code --wait"
 export DEV_LOG_FORMAT="json"
 
 WC_PKG="@vanta/web-client"
+DOT_FILES="/workspaces/.codespaces/.persistedshare/dotfiles"
 # aliases
 alias gt="turbo generate-types --filter @vanta/web --filter $WC_PKG"
 alias gtc="turbo generate-types --filter $WC_PKG"
-alias syncdot="(cd /workspaces/.codespaces/.persistedshare/dotfiles && git pull) && rz"
+alias syncdot="(cd $DOT_FILES && git pull) && rz"
 
+alias brew_bundle="(cd $DOT_FILES && brew bundle --file brew/BrewFile) && rz"
 
 alias start_web="docker-compose up --detach web.internal web-client.internal"
 alias rstc="restart_container"
 alias rstc_w="restart_container web.internal"
 alias rstc_wc="restart_container obsidian_web-client.internal_1"
-alias cat="batcat"
+alias cat="bat"
 alias docker_ps="docker ps -a --format '{{.Names}}'"
 alias logs_web="docker compose logs web.internal --tail 100 --no-log-prefix"
 alias logs_wc="docker compose logs web-client.internal --tail 100 --no-log-prefix"
@@ -22,11 +24,10 @@ alias logs_wc="docker compose logs web-client.internal --tail 100 --no-log-prefi
 alias pr_create="gh pr create --draft --editor --template pull_request_template.md --base main"
 alias yw="nocorrect yarn workspace"
 
-alias fd="fdfind"
 # fzf
-export FZF_DEFAULT_COMMAND="$SHELL -c 'fdfind --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
+export FZF_DEFAULT_COMMAND="$SHELL -c 'fd --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="$SHELL -c 'fdfind --type=d --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
+export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
 
 _1LEFT="[codespace]"
 

@@ -10,8 +10,6 @@ fi
 
 _1LEFT="macbookpro"
 
-# Setup autojump
-[ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
 
 # GH autocompletion
 eval "$(gh completion -s zsh)"
