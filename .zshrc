@@ -46,10 +46,9 @@ compinit
 # fzf
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completions.zsh ] && source /usr/share/doc/fzf/examples/completions.zsh
-# on mac this will work but wont for ubuntu
-fzf_init=$(fzf --zsh 2>/dev/null)
-if [ -n "$fzf_init" ]; then
-  source <(echo "$fzf_init")
+# safely detect when fzf has the --zsh command
+if fzf --help 2>&1 | grep -q -- '--zsh'; then
+    source <<<"$(fzf --zsh)"
 fi
 
 plugins=(git brew kubectl kube-ps1 fzf-tab)
