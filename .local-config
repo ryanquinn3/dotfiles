@@ -9,7 +9,11 @@ if [ "$USE_PYENV" -eq 1 ]; then
 fi
 
 _1LEFT="macbookpro"
+precmd(){
+  print -Pn '\e]0;[macbookpro]:%~\a'
+}
 
+precmd_functions+=(precmd)
 
 # GH autocompletion
 eval "$(gh completion -s zsh)"

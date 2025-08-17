@@ -57,6 +57,9 @@ fi
 plugins=(git brew kubectl kube-ps1 fzf-tab)
 source $ZSH/oh-my-zsh.sh
 
+# Override bureaus right prompt
+_1RIGHT="%~ [%*]"
+
 if [[ -n "$USING_KUBE" ]]; then
     RPROMPT=$RPROMPT'$(kube_ps1)'
 fi
