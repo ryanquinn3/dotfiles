@@ -48,7 +48,10 @@ compinit
 [ -f /usr/share/doc/fzf/examples/completions.zsh ] && source /usr/share/doc/fzf/examples/completions.zsh
 # safely detect when fzf has the --zsh command
 if fzf --help 2>&1 | grep -q -- '--zsh'; then
-    source <<<"$(fzf --zsh)"
+  fzf_init="$(fzf --zsh 2>/dev/null)"
+  if [[ -n $fzf_init ]]; then
+    source <(echo "$fzf_init")
+  fi
 fi
 
 plugins=(git brew kubectl kube-ps1 fzf-tab)
@@ -79,7 +82,6 @@ fi
 # Node tooling
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-nvm use default
 source <(npm completion)
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
