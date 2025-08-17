@@ -56,6 +56,7 @@ function setup_oh_my_zsh() {
 function install_homebrew_for_linux(){
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 	sudo apt-get install build-essential
+	(cd $DIR && ./bin/install-apps.sh)
 }
 
 ### end Oh My Zsh
@@ -74,26 +75,14 @@ fi
 setup_tmux
 load_nvm
 
-echo "Symlinking dotfiles..."
-ln -sf $DIR/.functions ~/.functions
-ln -sf $DIR/.zshrc ~/.zshrc
-ln -sf $DIR/.aliases ~/.aliases
-ln -sf $DIR/.codespaces-config ~/.codespaces-config
-ln -sf $DIR/.local-config ~/.local-config
-ln -sf $DIR/oh-my-zsh.sh ~/.oh-my-zsh/oh-my-zsh.sh
-ln -sf $DIR/.tmux.conf ~/.tmux.conf
-ln -sf $DIR/.gitconfig ~/.gitconfig
-mkdir -p ~/.config/aerospace
-ln -sf $DIR/aerospace.toml ~/.config/aerospace/aerospace.toml
-mkdir -p ~/.docker
-ln -sf $DIR/docker-config.json ~/.docker/config.json
 
 if [[ $OSTYPE == 'darwin'* ]]; then
-  echo -ne "Updating MacOS UI config...\033[0K\r“"
+	stow -t "$HOME" aerospace
+  echo -ne "Updating MacOS UI config...\033[0K\r"
   configure_screenshot_storage
   configure_dock_settings
   configure_finder
-  echo -e "Updating MacOS UI config... Done“"
+  echo -e "Updating MacOS UI config... Done"
 fi
 
 if [[ $OSTYPE == 'linux-gnu'* ]]; then
@@ -105,6 +94,14 @@ if [[ $OSTYPE == 'linux-gnu'* ]]; then
 	mkdir -p ~/.fzf/shell
 	ln -s  /usr/share/doc/fzf/examples/key-bindings.zsh ~/.fzf/shell/key-bindings.zsh
 fi
+
+echo "Symlinking dotfiles..."
+stow -t "$HOME" zsh
+stow -t "$HOME" docker
+stow -t "$HOME" tmux
+stow -t "$HOME" git
+stow -t "$HOME" fd
+
 
 # make sure default shell is set to zsh
 sudo chsh -s /usr/bin/zsh $USERNAME

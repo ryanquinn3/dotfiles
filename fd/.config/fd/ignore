@@ -1,0 +1,12 @@
+.git
+node_modules
+Library
+.npm
+.vscode
+Pictures
+.nvm
+.zsh_sessions
+.cache
+.oh-my-zsh/plugins
+Movies
+Music

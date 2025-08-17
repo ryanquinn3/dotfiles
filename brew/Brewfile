@@ -10,6 +10,7 @@ brew "fzf"
 brew "fd"
 brew "zoxide"
 brew "git-delta"
+brew "stow"
 
 
 if RUBY_PLATFORM =~ /darwin/
