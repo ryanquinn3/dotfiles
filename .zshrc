@@ -46,8 +46,10 @@ compinit
 # fzf
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completions.zsh ] && source /usr/share/doc/fzf/examples/completions.zsh
+# on mac this will work but wont for ubuntu
+source <(fzf --zsh) || true
 
-plugins=(git brew kubectl kube-ps1 fzf-zsh-plugin fzf-tab   )
+plugins=(git brew kubectl kube-ps1 fzf-tab)
 source $ZSH/oh-my-zsh.sh
 
 if [[ -n "$USING_KUBE" ]]; then
@@ -102,7 +104,5 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
 
-stty -ixon
-setopt noflowcontrol
-bindkey -r '^S'
-
+# if zoxide is installed, initialize it
+[ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
