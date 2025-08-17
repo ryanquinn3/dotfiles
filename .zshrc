@@ -110,3 +110,5 @@ export PATH="$HOME/gems/bin:$PATH"
 
 # if zoxide is installed, initialize it
 [ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
+
+source ~/fzf-git.sh/fzf-git.sh
