@@ -15,6 +15,3 @@ _1LEFT="macbookpro"
 
 # GH autocompletion
 eval "$(gh completion -s zsh)"
-
-# fzf
-source <(fzf --zsh)
