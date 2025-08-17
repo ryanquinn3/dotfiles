@@ -29,7 +29,7 @@ export FZF_DEFAULT_COMMAND="$SHELL -c 'fd --hidden --strip-cwd-prefix --exclude 
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
 
-_1LEFT="[codespace]:${PWD}"
+_1LEFT="[codespace]"
 
 # Functions
 login_link(){
