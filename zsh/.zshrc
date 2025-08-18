@@ -60,7 +60,7 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --no-ignore-vcs'"
 
 
-plugins=(git brew kubectl kube-ps1 fzf-tab)
+plugins=(git brew kubectl kube-ps1 fzf-tab zsh-yarn-completions)
 source $ZSH/oh-my-zsh.sh
 
 # Override bureaus right prompt
