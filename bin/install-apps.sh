@@ -1,6 +1,6 @@
-#! /bin/bash
+#!/bin/bash
 
-set -eo
+set -eo pipefail
 
 brew bundle --file brew/Brewfile
 

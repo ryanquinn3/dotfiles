@@ -25,6 +25,7 @@ if RUBY_PLATFORM =~ /darwin/
   brew "mysql"
   brew "ripgrep"
   brew "tree"
+  brew "FelixKratz/formulae/borders"
   
   # casks
   cask "google-chrome"
@@ -47,6 +48,7 @@ if RUBY_PLATFORM =~ /darwin/
   cask "nikitabobko/tap/aerospace"
   cask "ghostty"
   cask "arc"
+  
 end
 
 
