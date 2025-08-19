@@ -12,4 +12,4 @@ alias l="eza --group-directories-first --icons --long --color=always --icons=alw
 alias gcb='git branch --sort=-committerdate | fzf | xargs git checkout'
 
 # fix mouse // disable mouse reporting
-alias fm="print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'"
+# alias fm="print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'"
