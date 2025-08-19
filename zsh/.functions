@@ -106,7 +106,7 @@ cs_ssh() {
   local ec=$?
   # disable all mouse modes if stdout is a terminal
   if [[ -t 1 ]]; then
-    printf '\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
+     print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
   fi
   return $ec
 } 
