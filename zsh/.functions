@@ -103,12 +103,6 @@ current_codespace(){
 
 cs_ssh() {
   gh codespace ssh --codespace $(current_codespace) -- -t 'zsh -l'
-  # local ec=$?
-  # # disable all mouse modes if stdout is a terminal
-  # if [[ -t 1 ]]; then
-  #    print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
-  # fi
-  # return $ec
 } 
 
 cs_ld(){
