@@ -10,3 +10,6 @@ alias pullhead='git pull origin $(git rev-parse --abbrev-ref HEAD)'
 alias l="eza --group-directories-first --icons --long --color=always --icons=always --no-user -a"
 
 alias gcb='git branch --sort=-committerdate | fzf | xargs git checkout'
+
+# fix mouse // disable mouse reporting
+alias fm='printf \"\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l\"'
