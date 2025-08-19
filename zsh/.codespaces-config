@@ -93,7 +93,10 @@ function stamp(){
 }
 
 if [[ -n $SSH_TTY ]]; then
-  function TRAPEXIT() { printf "\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l" }
+  TRAPEXIT() {
+    # send "mouse off" sequences safely
+    print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
+  }
 fi
 
 mkdir -p ~/.oh-my-zsh/completions
@@ -105,5 +108,6 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 echo "Checking node version"
 # If using system node, switch to default
 if [[ "$(nvm current)" == "system" ]]; then
+  echo "switching to default node version"
   nvm use default >/dev/null
 fi
