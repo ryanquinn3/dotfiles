@@ -60,6 +60,17 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --no-ignore-vcs'"
 
 
+# Node tooling
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+source <(npm completion)
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# If using system node, switch to default
+if [[ "$(nvm current)" == "system" ]]; then
+  nvm use default >/dev/null
+fi
+
 plugins=(git brew kubectl kube-ps1 fzf-tab zsh-yarn-completions)
 source $ZSH/oh-my-zsh.sh
 
@@ -96,11 +107,7 @@ else
     source ~/.codespaces-config
 fi
 
-# Node tooling
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-source <(npm completion)
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 
 autoload -Uz compinit
 compinit -i

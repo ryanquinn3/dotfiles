@@ -98,9 +98,4 @@ docker completion zsh > ~/.oh-my-zsh/completions/_docker
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 
-echo "Checking node version"
-# If using system node, switch to default
-if [[ "$(nvm current)" == "system" ]]; then
-  echo "switching to default node version"
-  nvm use default >/dev/null
-fi
+
