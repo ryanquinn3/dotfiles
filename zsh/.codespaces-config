@@ -92,10 +92,6 @@ function stamp(){
    gh pr review --approve $1  
 }
 
-if [[ -n $SSH_TTY ]]; then
-  TRAPEXIT() { printf '%b' '\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'; }
-fi
-
 mkdir -p ~/.oh-my-zsh/completions
 docker completion zsh > ~/.oh-my-zsh/completions/_docker
 
