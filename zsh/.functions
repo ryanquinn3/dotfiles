@@ -103,6 +103,9 @@ current_codespace(){
 
 cs_ssh() {
   gh codespace ssh --codespace $(current_codespace) -- -t 'zsh -l'
+  local ec=$?
+  [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
+  return $ec
 } 
 
 cs_ld(){
