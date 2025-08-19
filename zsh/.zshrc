@@ -71,6 +71,14 @@ if [[ -n "$USING_KUBE" ]]; then
 fi
 
 
+if [[ -n "$VSCODE_GIT_IPC_HANDLE"  ]]; then
+  export GIT_EDITOR="code --wait"
+  export EDITOR="code --wait"
+else
+  export GIT_EDITOR="vim"
+  export EDITOR="vim"
+fi
+
 
 for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
 	if [[ -r "$file" ]] && [[ -f "$file" ]]; then
