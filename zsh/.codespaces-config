@@ -77,7 +77,7 @@ logs_json(){
 }
 # Claude code boot up
 clc(){
-  unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions 
+  unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions "$@"
 }
 
 # check if python is /workspaces/obsidian/.venv/bin and only activate if is not
