@@ -17,3 +17,19 @@ precmd_functions+=(precmd)
 
 # GH autocompletion
 eval "$(gh completion -s zsh)"
+
+# disable mouse reporting
+function fix_mouse(){
+  print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
+}
+
+alias fm="fix_mouse"
+
+cs_ssh() {
+  # store all args passed to function but default to 'tmux'
+  local args=("${@:-tmux}")
+  gh codespace ssh --codespace $(current_codespace) -- -t "${args[@]}"
+  local ec=$?
+  [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
+  return $ec
+} 
