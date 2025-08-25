@@ -40,19 +40,8 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSHRC="$HOME/.zshrc"
 export DOCKER_BUILDKIT=1
 export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.local/bin"
-autoload -Uz compinit
-compinit
 
-# fzf
-[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
-[ -f /usr/share/doc/fzf/examples/completions.zsh ] && source /usr/share/doc/fzf/examples/completions.zsh
-# safely detect when fzf has the --zsh command
-if fzf --help 2>&1 | grep -q -- '--zsh'; then
-  fzf_init="$(fzf --zsh 2>/dev/null)"
-  if [[ -n $fzf_init ]]; then
-    source <(echo "$fzf_init")
-  fi
-fi
+fpath=(~/.zsh/completions $fpath)
 
 # fzf
 export FZF_DEFAULT_COMMAND="$SHELL -c 'fd --hidden --strip-cwd-prefix --no-ignore-vcs'"
@@ -63,7 +52,6 @@ export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --n
 # Node tooling
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-source <(npm completion)
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # If using system node, switch to default
@@ -72,14 +60,7 @@ if [[ "$(nvm current)" == "system" ]]; then
 fi
 
 plugins=(git brew kubectl kube-ps1 fzf-tab zsh-yarn-completions)
-source $ZSH/oh-my-zsh.sh
 
-# Override bureaus right prompt
-_1RIGHT="%~ [%*]"
-
-if [[ -n "$USING_KUBE" ]]; then
-    RPROMPT=$RPROMPT'$(kube_ps1)'
-fi
 
 
 if [[ -n "$VSCODE_GIT_IPC_HANDLE"  ]]; then
@@ -107,30 +88,18 @@ else
     source ~/.codespaces-config
 fi
 
+source $ZSH/oh-my-zsh.sh
 
+# Override bureaus right prompt
+_1RIGHT="%~ [%*]"
 
-autoload -Uz compinit
-compinit -i
-
-
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/ryanquinn/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ryanquinn/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/ryanquinn/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ryanquinn/google-cloud-sdk/completion.zsh.inc'; fi
+if [[ -n "$USING_KUBE" ]]; then
+    RPROMPT=$RPROMPT'$(kube_ps1)'
+fi
 
 
 export PATH="$HOME/.poetry/bin:$PATH"
 
-
-if [ -f ./usr/local/opt/asdf/libexec/asdf.sh ]; then ./usr/local/opt/asdf/libexec/asdf.sh; fi
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-# Ruby 
-export GEM_HOME="$HOME/gems"
-export PATH="$HOME/gems/bin:$PATH"
 
 # if zoxide is installed, initialize it
 [ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"

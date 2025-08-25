@@ -92,14 +92,16 @@ function stamp(){
    gh pr review --approve $1  
 }
 
-# if ~/.oh-my-zsh/completions/_docker doesnt exist and docker command exists
-if command -v docker &> /dev/null && [ ! -f ~/.oh-my-zsh/completions/_docker ]; then
-  docker completion zsh > ~/.oh-my-zsh/completions/_docker
+custom_comp_dir=~/.zsh/completions
+
+# if $custom_comp_dir/_docker doesnt exist and docker command exists
+if command -v docker &> /dev/null && [ ! -f $custom_comp_dir/_docker ]; then
+  docker completion zsh > $custom_comp_dir/_docker
 fi
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# if ~/.oh-my-zsh/completions/_turbo doesnt exist and turbo command exists
-if command -v turbo &> /dev/null && [ ! -f ~/.oh-my-zsh/completions/_turbo ]; then
-  turbo completion zsh > ~/.oh-my-zsh/completions/_turbo
+# if $custom_comp_dir/_turbo doesnt exist and turbo command exists
+if command -v turbo &> /dev/null && [ ! -f $custom_comp_dir/_turbo ]; then
+  turbo completion zsh > $custom_comp_dir/_turbo
 fi
