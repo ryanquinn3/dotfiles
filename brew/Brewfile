@@ -12,6 +12,8 @@ brew "zoxide"
 brew "git-delta"
 brew "stow"
 
+cask "font-hack-nerd-font"
+
 
 if RUBY_PLATFORM =~ /darwin/
   brew "ffmpeg"

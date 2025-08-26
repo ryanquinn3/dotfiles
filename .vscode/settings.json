@@ -1,0 +1,9 @@
+{
+  "files.associations": {
+    "config": "ini",
+    "**/zsh/**": "shellscript"
+  },
+   "terminal.integrated.fontFamily": "Hack Nerd Font",
+  "terminal.integrated.fontSize": 13
+}
+
