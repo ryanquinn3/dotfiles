@@ -78,6 +78,7 @@ else
   export EDITOR="vim"
 fi
 
+source $ZSH/oh-my-zsh.sh
 
 for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
 	if [[ -r "$file" ]] && [[ -f "$file" ]]; then
@@ -86,7 +87,7 @@ for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
 done
 unset file
 
-source $ZSH/oh-my-zsh.sh
+
 
 # only add these if we are not in a codespace
 if [[ -z "$CODESPACES" ]]; then
