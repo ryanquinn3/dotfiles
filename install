@@ -56,13 +56,15 @@ function setup_oh_my_zsh() {
 	setup_oh_my_zsh_plugins
 }
 
+### end Oh My Zsh
+
 function install_homebrew_for_linux(){
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 	sudo apt-get install build-essential
 	(cd $DIR && ./bin/install-apps.sh)
 }
 
-### end Oh My Zsh
+
 
 ### apt packages
 function install_apt_packages() {
@@ -70,6 +72,10 @@ function install_apt_packages() {
 }
 
 ### end apt packages
+
+function install_npm_globals() {
+	npm i -g  @anthropic-ai/claude-code
+}
 
 if [ -n "$(which nvm)" ]; then
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
@@ -96,6 +102,7 @@ if [[ $OSTYPE == 'linux-gnu'* ]]; then
 	echo -e "Installing apt packages... Done"
 	mkdir -p ~/.fzf/shell
 	ln -s  /usr/share/doc/fzf/examples/key-bindings.zsh ~/.fzf/shell/key-bindings.zsh
+	
 fi
 
 echo "Symlinking dotfiles..."
@@ -106,8 +113,9 @@ echo "Symlinking dotfiles..."
 sudo chsh -s /usr/bin/zsh $USERNAME
 
 echo "Installing node..."
-nvm install 22.14.0
-nvm alias default 22.14.0
+nvm install 22.18.0
+nvm alias default 22.18.0
+
 
 
 echo "Configuring shell..."
