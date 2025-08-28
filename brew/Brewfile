@@ -12,6 +12,7 @@ brew "zoxide"
 brew "git-delta"
 brew "stow"
 brew "lnav"
+brew "graphviz"
 
 cask "font-hack-nerd-font"
 
