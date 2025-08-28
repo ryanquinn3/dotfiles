@@ -50,11 +50,6 @@ export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin
 
 fpath=(~/.zsh/completions $fpath)
 
-# fzf
-source <(fzf --zsh)
-export FZF_DEFAULT_COMMAND="$SHELL -c 'fd --hidden --strip-cwd-prefix --no-ignore-vcs'"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --no-ignore-vcs'"
 
 
 # Node tooling
@@ -97,6 +92,11 @@ else
     source ~/.codespaces-config
 fi
 
+# fzf
+source <(fzf --zsh)
+export FZF_DEFAULT_COMMAND="$SHELL -c 'fd --hidden --strip-cwd-prefix --no-ignore-vcs'"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --no-ignore-vcs'"
 
 
 # # Override bureaus right prompt
