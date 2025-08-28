@@ -11,7 +11,7 @@ alias syncdot="(cd $DOT_FILES && git pull) && rz"
 
 alias brew_bundle="(cd $DOT_FILES && brew bundle --file brew/BrewFile) && rz"
 
-alias start_web="docker-compose up --detach web.internal web-client.internal"
+alias start_web="docker compose up --detach web.internal web-client.internal"
 alias rstc="restart_container"
 alias rstc_w="restart_container web.internal"
 alias rstc_wc="restart_container obsidian_web-client.internal_1"
