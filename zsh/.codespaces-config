@@ -70,7 +70,7 @@ logs(){
 
 # emit a docker containers logs as json with some logic to drop annoying fields
 logs_json(){
-  logs "$1" "${@:2}" | jq -R '. as $line | try (fromjson | del(.dd, .networkInfo)) catch $line'
+  logs "$1" "${@:2}" | jq -R '. as $line | try (fromjson | del(.dd, .networkInfo)) catch { message: $line }'
 }
 # Claude code boot up
 clc(){
