@@ -77,6 +77,28 @@ clc(){
   unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions "$@"
 }
 
+function logs_ts(){
+  local service=$1
+  if [[ -z "$service" ]]; then
+    echo "Usage: logs_ts <service-name>"
+    return 1
+  fi
+  docker compose logs "$service.internal" --no-log-prefix -f \
+  | grep --line-buffered '^{' \
+  | jq --unbuffered -c '. + {timestamp: (now | strflocaltime("%Y-%m-%dT%H:%M:%S%Z"))}' 
+}
+
+function logs_lnav(){
+  local service=$1
+  if [[ -z "$service" ]]; then
+    echo "Usage: logs_lnav <service-name>"
+    return 1
+  fi
+  logs_ts "$service" | lnav
+}
+
+ 
+
 # check if python is /workspaces/obsidian/.venv/bin and only activate if is not
 if [ "$(which python)" != "/workspaces/obsidian/.venv/bin/python" ]; then
   source /workspaces/obsidian/.venv/bin/activate
