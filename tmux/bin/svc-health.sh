@@ -34,11 +34,11 @@ ms=$(awk -v s="$secs" 'BEGIN{printf("%d", s*1000 + 0.5)}')
 
 if [[ "$code" == "200" ]]; then
   if (( ms > THRESHOLD_MS )); then
-    echo "#[fg=yellow]⚠ ${NAME}"
+    echo "#[fg=yellow]⚠ ${NAME} #[default]"
   else
-    echo "#[fg=green]✅ ${NAME}"
+    echo "#[fg=green]🟢 ${NAME} #[default]"
   fi
 else
-  echo "#[fg=red]❌ ${NAME}"
+  echo "#[fg=red]🔴 ${NAME} #[default]"
 fi
 
