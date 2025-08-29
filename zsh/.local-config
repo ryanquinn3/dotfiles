@@ -27,3 +27,12 @@ cs_ssh() {
   [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
   return $ec
 } 
+
+push(){
+  if [[ -z "$1" ]]; then
+    echo "Usage: push <commit-message>"
+    return 1
+  fi
+  gacm "$1"
+  gp
+}

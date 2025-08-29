@@ -1,0 +1,80 @@
+{
+  "$schema": "https://lnav.org/schemas/format-v1.schema.json",
+  "winston_json_log": {
+    "title": "Winston JSON",
+    "description": "Parses Node.js Winston JSON logs (timestamp/level/message plus arbitrary metadata).",
+    "url": "https://github.com/winstonjs/winston",
+    "json": true,
+
+    // // Match typical Winston file names (optional; remove if you don't want path-based filtering)
+    // "file-pattern": ".*-logs.jsonlines$",
+
+    // --- Core field mapping for JSON-lines logs ---
+    "timestamp-field": "timestamp",
+    // "timestamp-format": [
+    //   "%Y-%m-%dT%H:%M:%S.%LZ",
+    //   "%Y-%m-%dT%H:%M:%S.%L%z",
+    //   "%Y-%m-%dT%H:%M:%SZ",
+    //   "%Y-%m-%d %H:%M:%S"
+    // ],
+    "level-field": "level",
+    "body-field": "message",
+
+    // If you often attach an operation/request id (optional):
+    // "opid-field": "requestId",
+
+    // Show any extra JSON keys that aren't in the line-format as folded fields
+    "hide-extra": true,
+
+    // Map Winston levels to lnav levels
+    "level": {
+      "error": "^(error)$",
+      "warning": "^(warn|warning)$",
+      "info": "^(info|http)$",
+      "debug": "^(debug|verbose|silly)$"
+    },
+
+    // How lnav renders each line in the main view
+    "line-format": [
+      { "field": "__timestamp__", "timestamp-format": "%Y-%m-%d %H:%M:%S" },
+      " ",
+      { "field": "__level__", "min-width": 7 },
+      " ",
+      { "field": "message" }
+      // You can include optional extras inline, e.g.:
+      // "  ",
+      // { "field": "reqId", "abbrev": true, "min-width": 8 }
+    ],
+
+    // Typed value hints for nicer UI/SQL (all optional)
+    "value": {
+      "message": { "kind": "string" },
+      "level": { "kind": "string", "identifier": true },
+      "timestamp": { "kind": "string" }
+
+      //   // Common Winston metadata keys you might emit:
+      //   "label": { "kind": "string", "identifier": true },
+      //   "logger": { "kind": "string", "identifier": true },
+      //   "module": { "kind": "string", "identifier": true },
+      //   "service": { "kind": "string", "identifier": true },
+      //   "requestId": { "kind": "string", "identifier": true },
+      //   "traceId": { "kind": "string", "identifier": true },
+      //   "spanId": { "kind": "string", "identifier": true },
+      //   "stack": { "kind": "string", "hidden": true }, // keep stack expanded below
+      //   "err": { "kind": "json", "hidden": true } // allow structured errors
+    },
+
+    // Sample lines for detection/tests
+    "sample": [
+      {
+        "line": "{\"level\":\"info\",\"message\":\"service started\",\"timestamp\":\"2025-08-28T12:34:56.789Z\",\"service\":\"payments\",\"env\":\"prod\"}"
+      },
+      {
+        "line": "{\"level\":\"warn\",\"message\":\"cache slow\",\"timestamp\":\"2025-08-28T12:35:00.123Z\",\"op\":\"GET\",\"ms\":123}"
+      },
+      {
+        "line": "{\"level\":\"error\",\"message\":\"db failure\",\"timestamp\":\"2025-08-28T12:35:02.456Z\",\"err\":{\"code\":\"ECONNREFUSED\",\"host\":\"db\"}}"
+      }
+    ]
+  }
+}

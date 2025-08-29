@@ -1,12 +1,14 @@
 #!/bin/zsh
 
-stow -t "$HOME" zsh
-stow -t "$HOME" docker
-stow -t "$HOME" tmux
-stow -t "$HOME" git
-stow -t "$HOME" fd
+function run_stow(){
+  for dir in $@; do
+    stow -t "$HOME" $dir
+  done
+}
+
+run_stow zsh docker tmux git fd lnav
+
 
 if [[ $OSTYPE == 'darwin'* ]]; then
-  stow -t "$HOME" aerospace
-  stow -t "$HOME" ghostty
+  run_stow aerospace ghostty
 fi
