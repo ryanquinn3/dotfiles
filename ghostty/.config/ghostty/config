@@ -2,3 +2,18 @@
 font-family = "JetBrains Mono"
 font-size = 13
 
+
+# tmux remappers
+# ctrl+s = \x13
+
+# switch windows (1-4)
+keybind = super+1=text:\x13\x31
+keybind = super+2=text:\x13\x32
+keybind = super+3=text:\x13\x33
+keybind = super+4=text:\x13\x34
+
+# split pane vertical
+keybind = super+\=text:\x13\x7c
+
+# close pane
+keybind = super+w=text:\x13\x78

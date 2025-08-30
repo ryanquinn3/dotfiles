@@ -62,6 +62,8 @@ function install_homebrew_for_linux(){
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 	sudo apt-get install build-essential
 	(cd $DIR && ./bin/install-apps.sh)
+	gh extension install dlvhdr/gh-dash
+
 }
 
 
