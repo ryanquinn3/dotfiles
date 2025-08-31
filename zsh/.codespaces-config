@@ -1,6 +1,7 @@
 # config for codespaces
 
 export DEV_LOG_FORMAT="json"
+export DOCKER_CONFIG=$HOME/.docker
 
 WC_PKG="@vanta/web-client"
 DOT_FILES="/workspaces/.codespaces/.persistedshare/dotfiles"
