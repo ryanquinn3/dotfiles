@@ -2,8 +2,6 @@
   name = 'ryanquinn3'
   email = 'ryan3q@gmail.com'
 
-[core]
-  editor = 'code --wait'
 [init]
   defaultBranch = 'main'
   autoSetupRemote = true
@@ -20,3 +18,10 @@
 
 [diff]
   colorMoved = default
+
+[delta]
+  navigate = true
+  side-by-side = true
+  hyperlinks = true
+  hyperlinks-file-link-format = "vscode://file/{path}:{line}"
+
