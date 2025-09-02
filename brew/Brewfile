@@ -29,8 +29,10 @@ if RUBY_PLATFORM =~ /darwin/
   brew "mysql"
   brew "ripgrep"
   brew "tree"
+  brew "tailscale"
   brew "FelixKratz/formulae/borders"
-  
+  brew "felixkratz/formulae/sketchybar"
+
   # casks
   cask "google-chrome"
   cask "sublime-text"
