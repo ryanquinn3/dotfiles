@@ -6,11 +6,11 @@ function run_stow(){
   done
 }
 
-run_stow zsh docker tmux git-common fd lnav
+run_stow zsh docker tmux git-common fd lnav bin
 
 
 if [[ $OSTYPE == 'darwin'* ]]; then
-  run_stow aerospace ghostty personal
+  run_stow aerospace ghostty personal sketchybar
 fi
 
 if [[ $OSTYPE == 'linux-gnu'* ]]; then

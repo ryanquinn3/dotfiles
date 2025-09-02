@@ -2,6 +2,8 @@ USE_PYENV=0
 # File to be included when running locally on macos
 alias ls="eza"
 alias cat="bat"
+
+export DOTFILES=$HOME/repos/dotfiles
 export EDITOR='subl -w'
 
 if [ "$USE_PYENV" -eq 1 ]; then
