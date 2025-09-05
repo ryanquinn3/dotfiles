@@ -162,9 +162,8 @@ automatically-unhide-macos-hidden-apps = false
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
 
-    alt-g = 'exec-and-forget open -n /Applications/Ghostty.app'
-    alt-a = 'exec-and-forget open -n /Applications/Arc.app'
-    alt-c = 'exec-and-forget open -n /Applications/Visual Studio Code.app'
+    alt-a = 'exec-and-forget ~/.config/aerospace/focus-app.sh company.thebrowser.Browser Arc'
+    alt-s = 'exec-and-forget ~/.config/aerospace/focus-app.sh com.tinyspeck.slackmacgap Slack'
 
 
 # 'service' binding mode declaration.
