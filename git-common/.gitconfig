@@ -2,7 +2,7 @@
     path = ~/.config/git/common.gitconfig
 
 [include]
-    path = ~/.config/git/codespaces.gitconfig
+    path = ~/.config/git/codespace.gitconfig
 
 [include]
     path = ~/.config/git/personal.gitconfig
