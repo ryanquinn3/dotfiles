@@ -10,6 +10,8 @@ alias gt="turbo generate-types --filter @vanta/web --filter $WC_PKG"
 alias gtc="turbo generate-types --filter $WC_PKG"
 alias syncdot="(cd $DOT_FILES && git pull) && rz"
 
+alias tbr="_run_turbo_task"
+
 alias brew_bundle="(cd $DOT_FILES && brew bundle --file brew/BrewFile) && rz"
 
 alias start_web="docker compose up --detach web.internal web-client.internal"
@@ -126,3 +128,40 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 if command -v turbo &> /dev/null && [ ! -f $custom_comp_dir/_turbo ]; then
   turbo completion zsh > $custom_comp_dir/_turbo
 fi
+
+
+
+# Fast turbo task runner with fzf selection
+# Caches task list in temp file for performance
+# Output format: $PACKAGE_NAME#$TASK_NAME
+# Ignores the "//" package
+# To refresh cache: rm /tmp/.turbo_tasks_cache
+function _run_turbo_task() {
+  local cache_file="/tmp/.turbo_tasks_cache"
+
+  # Check if cache exists
+  if [[ -f "$cache_file" ]]; then
+    # Use cached tasks
+    local flat_tasks
+    flat_tasks=$(<"$cache_file")
+  else
+    # Generate fresh task list and cache it
+    local task_json
+    task_json=$(turbo query "query { packages { items { name tasks { items { name} }} } }")
+
+    local flat_tasks
+    flat_tasks=$(echo "$task_json" | jq -r '.data.packages.items[] | select(.name != "//") | .name as $pkg | .tasks.items[].name | "\($pkg)#\(.)"')
+
+    # Cache the result
+    echo "$flat_tasks" > "$cache_file"
+  fi
+
+  # Use fzf to select and run task
+  local selected_task
+  selected_task=$(echo "$flat_tasks" | fzf)
+
+  if [[ -n "$selected_task" ]]; then
+    turbo "$selected_task"
+  fi
+}
+
