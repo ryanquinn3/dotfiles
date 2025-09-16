@@ -19,10 +19,11 @@ gacm(){
 
 function _change_branch(){
   git branch --sort=-committerdate | \
-  fzf --preview 'git show --color=always {-1}' \
-      --bind 'enter:become(git checkout {-1})' \
-      --height 40% --layout reverse | \
-  xargs git checkout
+  fzf  --border rounded --ansi \
+       --preview 'git show --color=always --compact-summary {-1}' \
+      --bind 'enter:become(git checkout {-1})'
+     
+
 }
 
 clean_docker() {
