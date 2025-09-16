@@ -1,0 +1,15 @@
+#!/bin/env bash
+
+check_pr_status() {
+    local counts
+    counts=$(gh pr checks --json bucket  $1 | jq 'group_by(.bucket) | map({bucket: .[0].bucket, count: length}) | from_entries')
+
+    local fail_count
+    fail_count=$(echo "$counts" | jq -r '.fail // 0')
+
+    if [[ $fail_count -gt 0 ]]; then
+        echo "Checks ❌"
+    else
+        echo "Check ✅"
+    fi
+}
