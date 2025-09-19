@@ -159,11 +159,18 @@ function _run_turbo_task() {
 
   # Use fzf to select and run task
   local selected_task
-  selected_task=$(echo "$flat_tasks" | fzf)
+  selected_task=$(print -r -- "$flat_tasks" | fzf)
 
-  if [[ -n "$selected_task" ]]; then
-    history -s "turbo $selected_task"
+   if [[ -n "$selected_task" ]]; then
+    # what you actually execute (properly quoted)
     turbo "$selected_task"
+
+    # what you store in history (escaped so ↑ works)
+    local hist_cmd="turbo ${selected_task}"
+    hist_cmd=${hist_cmd//\\/\\\\}  # escape backslashes first
+    hist_cmd=${hist_cmd//\#/\\#}   # escape '#'
+    hist_cmd=${hist_cmd//\!/\\!}   # escape '!'
+    print -s -- "$hist_cmd"        # append to zsh history without expansion
   fi
 }
 
