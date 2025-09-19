@@ -164,6 +164,7 @@ automatically-unhide-macos-hidden-apps = false
 
     alt-a = 'exec-and-forget ~/.config/aerospace/focus-app.sh company.thebrowser.Browser Arc'
     alt-s = 'exec-and-forget ~/.config/aerospace/focus-app.sh com.tinyspeck.slackmacgap Slack'
+    alt-m = 'exec-and-forget ~/.config/aerospace/focus-app.sh com.apple.MobileSMS Messages'
     alt-r = 'reload-config'
 
 # 'service' binding mode declaration.
