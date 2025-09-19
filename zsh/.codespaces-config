@@ -162,12 +162,14 @@ function _run_turbo_task() {
   selected_task=$(echo "$flat_tasks" | fzf)
 
   if [[ -n "$selected_task" ]]; then
+    history -s "turbo $selected_task"
     turbo "$selected_task"
   fi
 }
 
 function _run_just(){
   recipe=$(just | bat | fzf | awk '{ print $1 }')
+   history -s "just $recipe"
   just $recipe
 }
 
