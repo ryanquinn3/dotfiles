@@ -13,9 +13,11 @@ brew "git-delta"
 brew "stow"
 brew "lnav"
 brew "graphviz"
-
 cask "font-hack-nerd-font"
 
+if RUBY_PLATFORM =~ /linux/
+  brew "codex"
+end
 
 if RUBY_PLATFORM =~ /darwin/
   brew "ffmpeg"
