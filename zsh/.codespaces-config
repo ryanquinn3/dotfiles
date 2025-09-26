@@ -148,7 +148,8 @@ function _run_turbo_task() {
   else
     # Generate fresh task list and cache it
     local task_json
-    task_json=$(turbo query "query { packages { items { name tasks { items { name} }} } }")
+    # pipe stderr to /dev/null to avoid noisy output
+    task_json=$(turbo query "query { packages { items { name tasks { items { name} }} } }" 2>/dev/null)
 
     local flat_tasks
     flat_tasks=$(echo "$task_json" | jq -r '.data.packages.items[] | select(.name != "//") | .name as $pkg | .tasks.items[].name | "\($pkg)#\(.)"')

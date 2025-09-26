@@ -23,7 +23,6 @@ function _change_branch(){
        --preview 'git show --color=always --compact-summary {-1}' \
       --bind 'enter:become(git checkout {-1})'
      
-
 }
 
 clean_docker() {
