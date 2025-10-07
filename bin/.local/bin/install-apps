@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 
-(cd $DOTFILES && brew bundle --file brew/Brewfile)
+(cd $DOTFILES/brew && brew bundle install)
 

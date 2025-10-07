@@ -17,3 +17,5 @@ keybind = super+\=text:\x13\x7c
 
 # close pane
 keybind = super+w=text:\x13\x78
+
+minimum-contrast = 1.2

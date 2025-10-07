@@ -76,9 +76,9 @@ fi
 
 # fzf
 source <(fzf --zsh)
-export FZF_DEFAULT_COMMAND="$SHELL -c 'fd --hidden --strip-cwd-prefix --no-ignore-vcs'"
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --no-ignore-vcs"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --no-ignore-vcs'"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --no-ignore-vcs"
 export FZF_CTRL_T_OPTS="
   --walker-skip .git,node_modules,target
   --preview 'bat -n --color=always {}'
@@ -92,7 +92,7 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept --preview 'bat -n --color=always {}'
+zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
 # zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 # preview directory's content with exa when completing cd
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'tree -C $realpath | head -200'
