@@ -33,10 +33,10 @@ function clone_tmux_plugin_manager(){
 }
 
 function load_nvm(){
-	# if NVM_DIR is already set skip
-	[ -n "$NVM_DIR" ] && return
 	
-	export NVM_DIR="/usr/local/share/nvm"
+	# if NVM_DIR is already set, use that otherwise set it  to /usr/local/share/nvm
+	[ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
+	
 	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 }
@@ -126,8 +126,13 @@ setup_oh_my_zsh
 sudo chsh -s $(which zsh) $USERNAME
 
 echo "Installing node..."
-nvm install 22.18.0
-nvm alias default 22.18.0
+# if node version is not equal to "v22.18.0", install it
+if [ "$(node -v 2>/dev/null)" != "v22.18.0" ]; then
+	nvm install 22.18.0
+	nvm alias default 22.18.0
+fi
+
+
 
 
 
