@@ -1,7 +1,6 @@
 cask_args appdir: "/Applications"
 
 # Common formulas
-brew "tmux"
 brew "watch"
 brew "zsh-syntax-highlighting"
 brew "eza"
@@ -17,6 +16,7 @@ brew "codex"
 cask "font-hack-nerd-font"
 
 if RUBY_PLATFORM =~ /darwin/
+  brew "tmux" # tmux is already installed in codespaces
   brew "ffmpeg"
   brew "gh"
   brew "pyenv"

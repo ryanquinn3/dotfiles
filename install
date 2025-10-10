@@ -63,7 +63,8 @@ function setup_oh_my_zsh() {
 function install_homebrew_for_linux(){
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 	sudo apt-get install build-essential
-	(cd $DIR && ./bin/install-apps.sh)
+	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+	(cd $DIR/brew && brew bundle install)
 	gh extension install dlvhdr/gh-dash
 
 }
@@ -111,6 +112,10 @@ fi
 
 
 echo "Symlinking dotfiles..."
+
+# if ~/.zshrc exists, delete it
+[ -f ~/.zshrc ] && rm ~/.zshrc
+
 ./stow.sh
 setup_oh_my_zsh
 
