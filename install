@@ -1,4 +1,4 @@
-#! /bin/zsh
+#!/usr/bin/env zsh
 set -e
 
 DIR=$(cd `dirname $0` && pwd)
@@ -28,6 +28,7 @@ function setup_tmux() {
 }
 
 function clone_tmux_plugin_manager(){
+	[ -d ~/.tmux/plugins/tpm ] && return
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
@@ -50,6 +51,7 @@ function setup_oh_my_zsh() {
 	if [ -d ~/.oh-my-zsh ]; then
 			echo "Oh my zsh is already installed"
 	else
+	  echo "Installing Oh My Zsh..."
 		sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	fi
 	mkdir -p ~/.zsh/completions
@@ -107,12 +109,13 @@ if [[ $OSTYPE == 'linux-gnu'* ]]; then
 	
 fi
 
+
 echo "Symlinking dotfiles..."
 ./stow.sh
-
+setup_oh_my_zsh
 
 # make sure default shell is set to zsh
-sudo chsh -s /usr/bin/zsh $USERNAME
+sudo chsh -s $(which zsh) $USERNAME
 
 echo "Installing node..."
 nvm install 22.18.0
