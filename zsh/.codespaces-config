@@ -6,8 +6,8 @@ export DOCKER_CONFIG=$HOME/.docker
 WC_PKG="@vanta/web-client"
 DOT_FILES="/workspaces/.codespaces/.persistedshare/dotfiles"
 # aliases
-alias gt="turbo generate-types --filter @vanta/web --filter $WC_PKG"
-alias gtc="turbo generate-types --filter $WC_PKG"
+alias gt="turbo generate-types --output-logs error-only --filter @vanta/web --filter $WC_PKG"
+alias gtc="turbo generate-types --output-logs error-only --filter $WC_PKG"
 alias syncdot="(cd $DOT_FILES && git pull) && rz"
 
 alias tbr="_run_turbo_task"
