@@ -16,7 +16,7 @@ brew "codex"
 cask "font-hack-nerd-font"
 
 if RUBY_PLATFORM =~ /linux/
-  brew "atlassian/tap/homebrew-acli"
+  brew "acli", tap: "atlassian/homebrew-acli"
 end
 
 if RUBY_PLATFORM =~ /darwin/
