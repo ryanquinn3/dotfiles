@@ -1,0 +1,4 @@
+#!/usr/env bash
+gh codespace ssh --config > ~/.ssh/codespaces
+host=$(cat ~/.ssh/codespaces | awk '/^Host / {print $2; exit}')
+infocmp -x xterm-ghostty | ssh $host -- tic -x -
