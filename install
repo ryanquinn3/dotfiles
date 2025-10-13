@@ -126,11 +126,10 @@ setup_oh_my_zsh
 sudo chsh -s $(which zsh) $USERNAME
 
 echo "Installing node..."
-# if node version is not equal to "v22.18.0", install it
-if [ "$(node -v 2>/dev/null)" != "v22.18.0" ]; then
-	nvm install 22.18.0
-	nvm alias default 22.18.0
-fi
+
+nvm install 22.18.0
+nvm alias default 22.18.0
+
 
 
 

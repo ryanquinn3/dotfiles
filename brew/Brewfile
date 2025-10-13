@@ -15,6 +15,10 @@ brew "graphviz"
 brew "codex"
 cask "font-hack-nerd-font"
 
+if RUBY_PLATFORM =~ /linux/
+  brew "atlassian/tap/homebrew-acli"
+end
+
 if RUBY_PLATFORM =~ /darwin/
   brew "tmux" # tmux is already installed in codespaces
   brew "ffmpeg"
