@@ -80,7 +80,7 @@ logs_json(){
 }
 # Claude code boot up
 clc(){
-  unset GITHUB_TOKEN && unset ANTHROPIC_API_KEY && claude --dangerously-skip-permissions "$@"
+  GITHUB_TOKEN= ANTHROPIC_API_KEY= claude --dangerously-skip-permissions "$@"
 }
 
 function logs_ts(){
