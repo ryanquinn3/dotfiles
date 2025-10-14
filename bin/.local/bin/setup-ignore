@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+target_dir=".ryanquinn"
+
+# ensure we are in a git repo
+git rev-parse --is-inside-work-tree &> /dev/null || { echo "Not in a git repo"; exit 1; }
+
+# if target_dir exists, print and exit
+if [ -d "$target_dir" ]; then
+  echo "$target_dir already exists, nothing to do"
+  exit 0
+fi
+echo "$target_dir" >> .git/info/exclude
+mkdir -p "$target_dir"
+echo "Created $target_dir and added to .git/info/exclude"
