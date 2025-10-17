@@ -1,5 +1,4 @@
 #!/usr/bin/env zsh
-set -e
 
 DIR=$(cd `dirname $0` && pwd)
 
@@ -120,6 +119,7 @@ echo "Symlinking dotfiles..."
 [ -f ~/.zshrc ] && rm ~/.zshrc
 
 ./stow.sh
+tic -x ~/ghostty.terminfo
 setup_oh_my_zsh
 
 # make sure default shell is set to zsh
@@ -129,8 +129,6 @@ echo "Installing node..."
 
 nvm install 22.18.0
 nvm alias default 22.18.0
-
-
 
 
 
