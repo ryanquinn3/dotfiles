@@ -1,7 +1,4 @@
 # config for codespaces
-if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
-    export TERM=xterm-256color
-fi
 export DEV_LOG_FORMAT="json"
 export DOCKER_CONFIG=$HOME/.docker
 
