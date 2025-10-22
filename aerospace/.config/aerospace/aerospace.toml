@@ -165,6 +165,7 @@ automatically-unhide-macos-hidden-apps = false
     alt-a = 'exec-and-forget ~/.config/aerospace/focus-app.sh company.thebrowser.Browser Arc'
     alt-s = 'exec-and-forget ~/.config/aerospace/focus-app.sh com.tinyspeck.slackmacgap Slack'
     alt-m = 'exec-and-forget ~/.config/aerospace/focus-app.sh com.apple.MobileSMS Messages'
+    alt-p = 'exec-and-forget ~/.config/aerospace/focus-app.sh com.openai.chat ChatGPT'
     alt-r = 'reload-config'
 
 # 'service' binding mode declaration.
@@ -194,5 +195,10 @@ run = "layout floating"
 
 [[on-window-detected]]
 if.app-id = 'com.apple.MobileSMS'
+check-further-callbacks = true
+run = "layout floating"
+
+[[on-window-detected]]
+if.app-id = 'com.openai.chat'
 check-further-callbacks = true
 run = "layout floating"

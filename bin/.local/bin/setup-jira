@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+echo $JIRA_API_TOKEN | acli jira auth login --site "vanta.atlassian.net" --email "ryan.quinn@vanta.com" --token
