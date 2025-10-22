@@ -46,6 +46,7 @@ Format your response as follows:
 First, provide the corrected documentation with all grammar fixes applied inside <corrected_documentation> tags.
 
 Then, provide your improvement suggestions inside <improvement_suggestions> tags. For each suggestion, include:
+- A unique identifier for the suggestion such as `SUG-1` so that it can be referenced in a follow up message by the user.
 - The specific section or line you're referring to
 - What the issue is
 - Your recommended improvement
