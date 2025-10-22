@@ -1,3 +1,11 @@
+---
+title: "Documentation Review and Improvement"
+description: "Review documentation for grammar and clarity issues, providing corrections and improvement suggestions"
+tags: ["documentation", "review", "grammar", "clarity", "technical-writing"]
+usage: "For reviewing and improving technical documentation, code comments, README files, and user guides"
+input_variables: ["DOCUMENTATION"]
+output_format: "corrected_documentation + improvement_suggestions"
+---
 You will be reviewing and improving documentation for grammar and clarity. Here is the documentation to review:
 
 <documentation>
