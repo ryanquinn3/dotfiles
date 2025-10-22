@@ -14,5 +14,5 @@ if [[ $OSTYPE == 'darwin'* ]]; then
 fi
 
 if [[ $OSTYPE == 'linux-gnu'* ]]; then
-  run_stow codespace
+  run_stow codespace claude
 fi
