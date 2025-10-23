@@ -1,0 +1,39 @@
+#!/usr/bin/env zsh
+
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Approve a PR
+# @raycast.mode silent
+# @raycast.description Approve a GitHub pull request by PR number
+#
+# Optional parameters:
+# @raycast.packageName GitHub
+# @raycast.icon images/github-logo.png
+# @raycast.iconDark images/github-logo-iconDark.png
+#
+# @raycast.argument1 { "type": "text", "placeholder": "PR Number or URL", "optional": false }
+#
+# Credits
+# @raycast.author Ryan Quinn
+# @raycast.authorURL https://github.com/ryanquinn3
+
+# example URL https://github.com/VantaInc/obsidian/pull/102710
+
+if [[ -z "$1" ]]; then
+  echo "Usage: stamp PR_NUMBER_OR_URL"
+  return 1
+fi
+
+if [[ "$1" == *"/pull/"* ]]; then
+  PR_NUMBER=$(echo "$1" | awk -F'/pull/' '{print $2}' | cut -d'/' -f1)
+else
+  PR_NUMBER="$1"
+fi
+
+# get repo from url or default to VantaInc/obsidian
+REPO="VantaInc/obsidian"
+if [[ "$1" == *"/pull/"* ]]; then
+  REPO=$(echo "$1" | awk -F'/pull/' '{print $1}' | awk -F'/' '{print $4"/"$5}')
+fi
+
+gh pr review --repo $REPO --approve $PR_NUMBER
