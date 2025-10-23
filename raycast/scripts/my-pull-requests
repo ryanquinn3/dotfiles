@@ -1,0 +1,26 @@
+#!/usr/bin/env zsh
+
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Show Open Pull Requests
+# @raycast.mode fullOutput
+# @raycast.description Display (detailed) GitHub pull requests
+#
+# Optional parameters:
+# @raycast.packageName GitHub
+# @raycast.icon images/github-logo.png
+# @raycast.iconDark images/github-logo-iconDark.png
+#
+# Credits
+# @raycast.author Ryan Quinn
+# @raycast.authorURL https://github.com/ryanquinn3
+
+template="{{range .}}#{{.number}} - {{.title}}\nLink: {{.url}}\nOpened: {{.createdAt | timeago }}\nMerge Status: {{.mergeStateStatus}}\n\n\n{{end}}"
+
+prs=$(gh pr list --repo VantaInc/obsidian --author @me --state open --json number,title,url,createdAt,mergeStateStatus,mergeable --template "$template")
+
+if [ -z "$prs" ]; then
+  echo "No open pull requests found."
+else
+  echo "$prs"
+fi
