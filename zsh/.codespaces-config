@@ -130,6 +130,10 @@ if command -v turbo &> /dev/null && [ ! -f $custom_comp_dir/_turbo ]; then
   turbo completion zsh > $custom_comp_dir/_turbo
 fi
 
+function new_prompt(){
+  [ -z "$1" ] && { echo "Usage: new_prompt NAME"; return 1; }
+  touch .ryanquinn3/$1.md
+}
 
 
 # Fast turbo task runner with fzf selection
