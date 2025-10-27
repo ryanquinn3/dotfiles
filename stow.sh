@@ -16,7 +16,7 @@ fi
 if [[ $OSTYPE == 'linux-gnu'* ]]; then
   run_stow codespace claude
   if [ -f ~/.docker/config.json ]; then
-    jq -s '.[0] * .[1]' ~/.docker/config.json $DOT_FILES/docker/.docker/config.json > /tmp/merged_docker_config.json
+    jq -s '.[0] + .[1]' ~/.docker/config.json $DOT_FILES/docker/.docker/config.json > /tmp/merged_docker_config.json
     mv /tmp/merged_docker_config.json $HOME/.docker/config.json
   else
     run_stow docker
