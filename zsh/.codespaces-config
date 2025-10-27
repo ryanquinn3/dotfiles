@@ -3,7 +3,7 @@ export DEV_LOG_FORMAT="json"
 export DOCKER_CONFIG=$HOME/.docker
 
 WC_PKG="@vanta/web-client"
-DOT_FILES="/workspaces/.codespaces/.persistedshare/dotfiles"
+export DOT_FILES="/workspaces/.codespaces/.persistedshare/dotfiles"
 # aliases
 alias gt="turbo generate-types --output-logs errors-only --filter @vanta/web --filter $WC_PKG"
 alias gtc="turbo generate-types --output-logs errors-only --filter $WC_PKG"
