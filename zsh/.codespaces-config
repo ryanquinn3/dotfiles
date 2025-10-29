@@ -170,7 +170,7 @@ function _run_turbo_task() {
 
    if [[ -n "$selected_task" ]]; then
     # what you actually execute (properly quoted)
-    turbo "$selected_task"
+    turbo "$selected_task" --output-logs="errors-only"
 
     # what you store in history (escaped so ↑ works)
     local hist_cmd="turbo ${selected_task}"
