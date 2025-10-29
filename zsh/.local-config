@@ -28,6 +28,16 @@ cs_ssh() {
   local ec=$?
   [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
   return $ec
+}
+
+gitpod_ssh() {
+  # store all args passed to function but default to 'tmux'
+  local args=("${@:-'tmux'}")
+  gitpod_env=$(gitpod env list -o json | jq -r '.[0].id')
+  gitpod env ssh "$gitpod_env" -- -t "${args[@]}"
+  local ec=$?
+  [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
+  return $ec
 } 
 
 push(){
