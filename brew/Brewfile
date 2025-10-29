@@ -12,7 +12,7 @@ brew "git-delta"
 brew "stow"
 brew "lnav"
 brew "graphviz"
-brew "codex"
+brew "hurl"
 cask "font-hack-nerd-font"
 
 if RUBY_PLATFORM =~ /linux/
