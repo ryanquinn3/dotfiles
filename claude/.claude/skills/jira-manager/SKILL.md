@@ -38,8 +38,7 @@ Ask the user for missing information (use AskUserQuestion tool if multiple items
 
 **Optional but recommended:**
 - Parent epic ID (e.g., PROD-4584)
-- Assignee email/ID
-- Labels
+- Assignee email/ID. Default to `--assignee @me`.
 
 ### 3. Parse the Description Content
 
@@ -129,7 +128,7 @@ Build a complete creation JSON with all fields populated:
   "summary": "Ticket title here",
   "type": "Story",
   "parent": "PROJ-123",
-  "assignee": "user@company.com",
+  "assignee": "user@company.com", /* you should default this to "@me" unless otherwise specified */
   "labels": ["feature", "backend"],
   "description": {
     "version": 1,
@@ -151,30 +150,9 @@ Create the ticket in one operation using the complete JSON:
 acli jira workitem create --from-json "/path/to/{project}-ticket-create.json"
 ```
 
-Capture the ticket ID from the output (e.g., PROD-4634).
+Capture the ticket ID from the output (e.g., PROD-4634) then remove the ticket-create.json file.
 
-### 7. Save Reference Files
-
-After successful creation, save organized reference files:
-
-1. **`{TICKET-ID}.md`** - Clean markdown version (for human readability)
-2. **`{TICKET-ID}-adf.json`** - Pure ADF description (reusable for other tickets)
-3. **`{TICKET-ID}-create.json`** - Complete creation payload (used to create the ticket)
-4. **`{TICKET-ID}-edit.json`** - Edit payload (for future updates)
-
-**Edit payload structure:**
-```json
-{
-  "issues": ["{TICKET-ID}"],
-  "description": {
-    "version": 1,
-    "type": "doc",
-    "content": [/* ADF nodes */]
-  }
-}
-```
-
-### 8. Confirm and Provide Links
+### 7. Confirm and Provide Links
 
 Report success with:
 - Ticket ID and URL (e.g., https://vanta.atlassian.net/browse/PROD-4634)
@@ -244,11 +222,6 @@ Agent: Perfect. I'll now:
 
 Agent: Done! Created ticket PROD-4634:
 - URL: https://vanta.atlassian.net/browse/PROD-4634
-- Files created:
-  - .ryanquinn3/PROD-4634.md (markdown version)
-  - .ryanquinn3/PROD-4634-adf.json (ADF format)
-  - .ryanquinn3/PROD-4634-create.json (creation payload - what was used)
-  - .ryanquinn3/PROD-4634-edit.json (edit payload - for future updates)
 
 The ticket has rich formatting with code blocks, links, and proper headings.
 ```
