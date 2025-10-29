@@ -84,8 +84,8 @@ function install_npm_globals() {
 	npm i -g  @anthropic-ai/claude-code
 }
 
-if [ -n "$(which nvm)" ]; then
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+if [ -f "$HOME/.nvm" ]; then
+	PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash'
 fi
 
 setup_tmux
@@ -122,15 +122,15 @@ echo "Symlinking dotfiles..."
 tic -x ~/ghostty.terminfo
 setup_oh_my_zsh
 
-# make sure default shell is set to zsh
-sudo chsh -s $(which zsh) $USERNAME
+
 
 echo "Installing node..."
 
 nvm install 22.18.0
 nvm alias default 22.18.0
 
-
+# make sure default shell is set to zsh
+sudo chsh -s $(which zsh) $USERNAME
 
 
 echo "Configuring shell..."
