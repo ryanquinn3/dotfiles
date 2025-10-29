@@ -29,16 +29,22 @@ This shows all available fields including the ADF structure for descriptions. Sa
 
 ### 2. Gather Required Information
 
+Get the current users email address.
+
+```bash
+acli jira auth status | grep Email 
+```
+
 Ask the user for missing information (use AskUserQuestion tool if multiple items needed):
 
 **Required:**
 - Project key (e.g., PROD, ENG)
-- Issue type (Story, Task, Bug, Epic)
+- Issue type (Story, Task, Bug, Epic). Default should be assumed to be "Story" unless otherwise stated.
 - Summary/Title (short, descriptive)
+- Assignee email. Ask the user who should be assigned the ticket. Provide their email address an option. Allow user to specify no assignee. Allow user to write in an email address.
 
 **Optional but recommended:**
 - Parent epic ID (e.g., PROD-4584)
-- Assignee email/ID. Default to `--assignee @me`.
 
 ### 3. Parse the Description Content
 
