@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# read from stdin and store in variable called input
+input=$(cat)
+[ -z "$input" ] && { echo "No input provided."; exit 0; }
+source $HOME/.nvm/nvm.sh
+prompt="Your task is to rewrite the input text in a clear and familiar way. Respond with the corrected final version only. Input: \\n\\n\\n $input"
+codex exec --skip-git-repo-check "$prompt" 2>/dev/null || exit 0
