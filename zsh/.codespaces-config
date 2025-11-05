@@ -25,6 +25,9 @@ alias cat="bat"
 alias logs_web="docker compose logs web.internal --tail 100 --no-log-prefix"
 alias logs_wc="docker compose logs web-client.internal --tail 100 --no-log-prefix"
 
+# dont let homebrew version mess with system python
+alias python3="/usr/bin/python3"
+
 alias pr_create="gh pr create --draft --editor --template pull_request_template.md --base main"
 
 # fzf
