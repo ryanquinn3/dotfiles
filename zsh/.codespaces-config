@@ -2,6 +2,8 @@
 export DEV_LOG_FORMAT="json"
 export DOCKER_CONFIG=$HOME/.docker
 
+export DEV_WORKSPACE_DIR=".ryanquinn3"
+
 WC_PKG="@vanta/web-client"
 
 [ -z "$DOT_FILES" ] && export DOT_FILES="/workspaces/.codespaces/.persistedshare/dotfiles"
@@ -186,5 +188,13 @@ function _run_just(){
   recipe=$(just | bat | fzf | awk '{ print $1 }')
    history -s "just $recipe"
   just $recipe
+}
+
+function dev-workspace-push(){
+  aws-vault exec devadmin -- aws s3 sync ".$DEV_WORKSPACE_DIR" "s3://vanta-dev-codespace-assets/$DEV_WORKSPACE_DIR"
+}
+  
+function dev-workspace-pull(){
+  aws-vault exec devadmin -- aws s3 sync "s3://vanta-dev-codespace-assets/$DEV_WORKSPACE_DIR" ".$DEV_WORKSPACE_DIR"
 }
 
