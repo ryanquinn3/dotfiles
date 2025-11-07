@@ -8,6 +8,9 @@ WC_PKG="@vanta/web-client"
 
 [ -z "$DOT_FILES" ] && export DOT_FILES="/workspaces/.codespaces/.persistedshare/dotfiles"
 
+# use personal gh token for gh cli
+alias pgh="GH_TOKEN=$GH_GIST_TOKEN gh"
+
 # aliases
 alias gt="turbo generate-types --output-logs errors-only --filter @vanta/web --filter $WC_PKG"
 alias gtc="turbo generate-types --output-logs errors-only --filter $WC_PKG"
