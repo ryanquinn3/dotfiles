@@ -5,6 +5,7 @@ export DOCKER_CONFIG=$HOME/.docker
 export CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1
 
 export DEV_WORKSPACE_DIR=".ryanquinn3"
+export CODESPACE_DISPLAY_NAME=$(echo "$CODESPACE_NAME" | grep -oP '^[^-]+-[^-]+' || echo "$CODESPACE_NAME")
 
 WC_PKG="@vanta/web-client"
 
