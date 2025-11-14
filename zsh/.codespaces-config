@@ -9,6 +9,8 @@ export CODESPACE_DISPLAY_NAME=$(echo "$CODESPACE_NAME" | grep -oP '^[^-]+-[^-]+'
 
 WC_PKG="@vanta/web-client"
 
+[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
+
 [ -z "$DOT_FILES" ] && export DOT_FILES="/workspaces/.codespaces/.persistedshare/dotfiles"
 
 # use personal gh token for gh cli
