@@ -165,6 +165,28 @@ Report success with:
 - Summary of what was created
 - Location of saved files for future reference
 
+### 8. Add Attachments (Optional)
+
+If the user requests files to be attached to the ticket, use the attachment script.
+
+**Quick Usage:**
+```bash
+# Set API token if not already set
+export JIRA_API_TOKEN='your-api-token-here'
+
+# Attach a file to the created ticket
+./scripts/attach-to-jira.sh TICKET_ID FILE_PATH
+```
+
+**📋 For complete attachment documentation, see:** [ATTACHMENT_REFERENCE.md](ATTACHMENT_REFERENCE.md)
+
+This includes:
+- Detailed usage examples and parameters
+- Troubleshooting guide and error handling
+- Supported file types and size limits
+- API token setup instructions
+- Advanced usage patterns
+
 ## Common Patterns to Recognize
 
 When parsing descriptions, look for these markdown patterns and convert to ADF:
@@ -191,6 +213,14 @@ If ticket creation fails:
 4. Validate JSON structure matches the schema from `--generate-json`
 5. Check that all required fields are present
 6. Verify ADF structure is properly formatted
+
+If attachment upload fails:
+1. Check file exists and is readable
+2. Verify file size is under limit (usually 10MB)
+3. Ensure `JIRA_API_TOKEN` is set and valid
+4. Check file type is allowed by Jira instance
+5. Verify user has attachment permissions on the issue
+6. Confirm ticket ID exists and is accessible
 
 ## Example Interaction
 
@@ -230,6 +260,26 @@ Agent: Done! Created ticket PROD-4634:
 - URL: https://vanta.atlassian.net/browse/PROD-4634
 
 The ticket has rich formatting with code blocks, links, and proper headings.
+```
+
+### Example with Attachments
+
+```
+User: Create a ticket from .ryanquinn3/feature-description.md and attach the schema file
+
+Agent: I'll create the ticket first, then attach the schema file.
+
+[Creates ticket as before - gets PROD-4634]
+
+Agent: Now attaching schema file...
+
+[Runs: ./scripts/attach-to-jira.sh PROD-4634 .ryanquinn3/schema.json]
+
+Agent: Done! Created ticket PROD-4634 with attachment:
+- URL: https://vanta.atlassian.net/browse/PROD-4634
+- Attached: schema.json (ID: 12345)
+
+The ticket has rich formatting with code blocks, links, proper headings, and your schema file attached.
 ```
 
 ## Tips for Best Results
