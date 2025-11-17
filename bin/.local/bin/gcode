@@ -15,4 +15,4 @@ find_latest_vscode_ipc() {
 
 VSCODE_BIN=$(l -r --sort=accessed --oneline --icons=never $(fd -g -p '**/bin/remote-cli/code' /vscode/bin) | head -n 1)
 
-VSCODE_IPC_HOOK_CLI="$(find_latest_vscode_ipc)" $VSCODE_BIN $@
+VSCODE_IPC_HOOK_CLI="$(find_latest_vscode_ipc)" $VSCODE_BIN --reuse-window $@
