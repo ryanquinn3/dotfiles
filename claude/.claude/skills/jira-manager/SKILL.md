@@ -167,25 +167,51 @@ Report success with:
 
 ### 8. Add Attachments (Optional)
 
-If the user requests files to be attached to the ticket, use the attachment script.
+If the user requests files to be attached to the ticket, use the Jira REST API directly with curl.
 
-**Quick Usage:**
+**Attachment Command:**
 ```bash
-# Set API token if not already set
-export JIRA_API_TOKEN='your-api-token-here'
+# Extract credentials from acli
+JIRA_SITE=$(acli jira auth status | grep "Site:" | awk '{print $2}')
+JIRA_EMAIL=$(acli jira auth status | grep "Email:" | awk '{print $2}')
 
-# Attach a file to the created ticket
-./scripts/attach-to-jira.sh TICKET_ID FILE_PATH
+# Attach the file
+curl -X POST \
+  "https://${JIRA_SITE}/rest/api/3/issue/TICKET_ID/attachments" \
+  -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+  -H "X-Atlassian-Token: no-check" \
+  -F "file=@/path/to/file" \
+  --silent --show-error
 ```
 
-**📋 For complete attachment documentation, see:** [ATTACHMENT_REFERENCE.md](ATTACHMENT_REFERENCE.md)
+**Example - Attach a file to PROD-4721:**
+```bash
+JIRA_SITE=$(acli jira auth status | grep "Site:" | awk '{print $2}')
+JIRA_EMAIL=$(acli jira auth status | grep "Email:" | awk '{print $2}')
 
-This includes:
-- Detailed usage examples and parameters
-- Troubleshooting guide and error handling
-- Supported file types and size limits
-- API token setup instructions
-- Advanced usage patterns
+curl -X POST \
+  "https://${JIRA_SITE}/rest/api/3/issue/PROD-4721/attachments" \
+  -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+  -H "X-Atlassian-Token: no-check" \
+  -F "file=@.ryanquinn3/implementation-plan.md" \
+  --silent --show-error
+```
+
+**How it works:**
+- Extracts Jira site URL from `acli jira auth status`
+- Extracts user email from `acli jira auth status`
+- Uses `JIRA_API_TOKEN` from environment (must be set)
+- Authenticates with Basic auth (email:token)
+- Uploads file via multipart form data
+
+**Prerequisites:**
+- `JIRA_API_TOKEN` must be set as environment variable
+- User must be authenticated with acli (`acli jira auth status` succeeds)
+- File must exist at the specified path
+
+**Success output:** JSON with attachment details (id, filename, size)
+
+**Note:** A convenience script is also available at `scripts/attach-to-jira.sh` in this skill's directory, but using the inline curl approach above ensures portability across all environments.
 
 ## Common Patterns to Recognize
 
@@ -273,7 +299,16 @@ Agent: I'll create the ticket first, then attach the schema file.
 
 Agent: Now attaching schema file...
 
-[Runs: ./scripts/attach-to-jira.sh PROD-4634 .ryanquinn3/schema.json]
+[Extracts credentials and runs curl command:]
+JIRA_SITE=$(acli jira auth status | grep "Site:" | awk '{print $2}')
+JIRA_EMAIL=$(acli jira auth status | grep "Email:" | awk '{print $2}')
+
+curl -X POST \
+  "https://${JIRA_SITE}/rest/api/3/issue/PROD-4634/attachments" \
+  -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+  -H "X-Atlassian-Token: no-check" \
+  -F "file=@.ryanquinn3/schema.json" \
+  --silent --show-error
 
 Agent: Done! Created ticket PROD-4634 with attachment:
 - URL: https://vanta.atlassian.net/browse/PROD-4634

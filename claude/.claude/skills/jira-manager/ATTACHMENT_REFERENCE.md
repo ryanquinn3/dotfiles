@@ -4,11 +4,37 @@ This document provides detailed instructions for adding file attachments to exis
 
 ## Overview
 
-Since the `acli` command-line tool doesn't support creating attachments on work items, we use the Jira REST API directly through a custom bash script.
+Since the `acli` command-line tool doesn't support creating attachments on work items, we use the Jira REST API directly with curl commands.
 
-## Script Location
+## Two Approaches
 
-**Path:** `scripts/attach-to-jira.sh` (relative to the jira-manager skill directory)
+### 1. Inline Curl (Recommended - Portable)
+
+Use curl commands directly for maximum portability across any system:
+
+```bash
+# Extract credentials from acli
+JIRA_SITE=$(acli jira auth status | grep "Site:" | awk '{print $2}')
+JIRA_EMAIL=$(acli jira auth status | grep "Email:" | awk '{print $2}')
+
+# Attach the file
+curl -X POST \
+  "https://${JIRA_SITE}/rest/api/3/issue/TICKET_ID/attachments" \
+  -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+  -H "X-Atlassian-Token: no-check" \
+  -F "file=@/path/to/file" \
+  --silent --show-error
+```
+
+**Benefits:**
+- Works on any system, any directory
+- No dependencies on script location
+- Easy to customize inline
+- Clear and transparent
+
+### 2. Convenience Script (Optional)
+
+A bash script wrapper is available at `scripts/attach-to-jira.sh` relative to this skill's directory. This provides validation, error handling, and formatted output, but requires knowing the script's location on your system.
 
 ## Prerequisites
 
@@ -24,12 +50,63 @@ Since the `acli` command-line tool doesn't support creating attachments on work 
 
 3. **Permissions**: User must have attachment permissions on the target ticket
 
-## Usage
+## Inline Curl Usage (Recommended)
+
+### Basic Example
+
+```bash
+# Set up variables
+TICKET_ID="PROD-4634"
+FILE_PATH=".ryanquinn3/schema.json"
+JIRA_SITE=$(acli jira auth status | grep "Site:" | awk '{print $2}')
+JIRA_EMAIL=$(acli jira auth status | grep "Email:" | awk '{print $2}')
+
+# Attach file
+curl -X POST \
+  "https://${JIRA_SITE}/rest/api/3/issue/${TICKET_ID}/attachments" \
+  -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+  -H "X-Atlassian-Token: no-check" \
+  -F "file=@${FILE_PATH}" \
+  --silent --show-error
+```
+
+### Multiple Files Example
+
+```bash
+TICKET_ID="PROD-4634"
+JIRA_SITE=$(acli jira auth status | grep "Site:" | awk '{print $2}')
+JIRA_EMAIL=$(acli jira auth status | grep "Email:" | awk '{print $2}')
+
+# Attach multiple files
+for file in wireframes.pdf requirements.md api-spec.yaml; do
+  curl -X POST \
+    "https://${JIRA_SITE}/rest/api/3/issue/${TICKET_ID}/attachments" \
+    -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+    -H "X-Atlassian-Token: no-check" \
+    -F "file=@${file}" \
+    --silent --show-error
+done
+```
+
+### Single-Line Quick Attach
+
+```bash
+# Quick one-liner for attaching a file
+JIRA_SITE=$(acli jira auth status | grep "Site:" | awk '{print $2}') JIRA_EMAIL=$(acli jira auth status | grep "Email:" | awk '{print $2}') && curl -X POST "https://${JIRA_SITE}/rest/api/3/issue/PROD-4634/attachments" -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" -H "X-Atlassian-Token: no-check" -F "file=@schema.json"
+```
+
+## Script Usage (Optional)
+
+If you prefer using the convenience script:
 
 ### Basic Syntax
 ```bash
 ./scripts/attach-to-jira.sh TICKET_ID FILE_PATH [JIRA_BASE_URL] [JIRA_EMAIL]
 ```
+
+**Note:** You'll need to locate where the script is installed on your system. Common locations:
+- `~/.claude/skills/jira-manager/scripts/attach-to-jira.sh`
+- Custom skill installation directories
 
 ### Parameters
 
@@ -37,48 +114,48 @@ Since the `acli` command-line tool doesn't support creating attachments on work 
 |-----------|----------|-------------|---------|
 | `TICKET_ID` | Yes | Jira ticket ID (e.g., PROD-4634) | - |
 | `FILE_PATH` | Yes | Path to file to attach | - |
-| `JIRA_BASE_URL` | No | Jira instance URL | https://vanta.atlassian.net |
+| `JIRA_BASE_URL` | No | Jira instance URL | From `acli auth status` |
 | `JIRA_EMAIL` | No | User email for authentication | From `acli auth status` |
 
-### Usage Examples
+### Script-Based Examples
 
 #### Basic Usage
 ```bash
 # Attach a schema file to ticket PROD-4634
-./scripts/attach-to-jira.sh PROD-4634 .ryanquinn3/schema.json
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 .ryanquinn3/schema.json
 ```
 
 #### Multiple Files
 ```bash
 # Attach multiple files to the same ticket
-./scripts/attach-to-jira.sh PROD-4634 ./wireframes.pdf
-./scripts/attach-to-jira.sh PROD-4634 ./requirements.md
-./scripts/attach-to-jira.sh PROD-4634 ./api-spec.yaml
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./wireframes.pdf
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./requirements.md
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./api-spec.yaml
 ```
 
 #### Custom Configuration
 ```bash
 # With custom Jira URL and email
-./scripts/attach-to-jira.sh ENG-123 ./document.pdf https://company.atlassian.net user@company.com
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh ENG-123 ./document.pdf https://company.atlassian.net user@company.com
 ```
 
 #### Common File Types
 ```bash
 # Documentation
-./scripts/attach-to-jira.sh PROD-4634 ./README.md
-./scripts/attach-to-jira.sh PROD-4634 ./DESIGN.md
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./README.md
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./DESIGN.md
 
 # Code files
-./scripts/attach-to-jira.sh PROD-4634 ./schema.graphql
-./scripts/attach-to-jira.sh PROD-4634 ./config.json
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./schema.graphql
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./config.json
 
 # Images and mockups
-./scripts/attach-to-jira.sh PROD-4634 ./mockup.png
-./scripts/attach-to-jira.sh PROD-4634 ./flow-diagram.svg
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./mockup.png
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./flow-diagram.svg
 
 # Documents
-./scripts/attach-to-jira.sh PROD-4634 ./requirements.pdf
-./scripts/attach-to-jira.sh PROD-4634 ./specifications.docx
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./requirements.pdf
+/home/vscode/.claude/skills/jira-manager/scripts/attach-to-jira.sh PROD-4634 ./specifications.docx
 ```
 
 ## Script Features
@@ -192,11 +269,22 @@ HTTP 404: Issue does not exist
 acli jira workitem create --from-json "./prod-ticket-create.json"
 # Returns: PROD-4634
 
-# 2. Attach supporting files
-./scripts/attach-to-jira.sh PROD-4634 .ryanquinn3/schema.json
-./scripts/attach-to-jira.sh PROD-4634 ./wireframes.png
+# 2. Extract credentials once
+JIRA_SITE=$(acli jira auth status | grep "Site:" | awk '{print $2}')
+JIRA_EMAIL=$(acli jira auth status | grep "Email:" | awk '{print $2}')
 
-# 3. Clean up temp files
+# 3. Attach supporting files
+curl -X POST "https://${JIRA_SITE}/rest/api/3/issue/PROD-4634/attachments" \
+  -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+  -H "X-Atlassian-Token: no-check" \
+  -F "file=@.ryanquinn3/schema.json" --silent --show-error
+
+curl -X POST "https://${JIRA_SITE}/rest/api/3/issue/PROD-4634/attachments" \
+  -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+  -H "X-Atlassian-Token: no-check" \
+  -F "file=@./wireframes.png" --silent --show-error
+
+# 4. Clean up temp files
 rm ./prod-ticket-create.json
 ```
 
@@ -218,28 +306,49 @@ For reference, the script uses the Jira REST API v3 endpoint:
 
 ## Advanced Usage
 
-### Batch Attachment Script
+### Batch Attachment Function (Portable)
 For attaching multiple files at once:
 
 ```bash
 #!/bin/bash
-TICKET_ID="$1"
-shift
-for file in "$@"; do
-    ./scripts/attach-to-jira.sh "$TICKET_ID" "$file"
-done
+# Portable batch attach function
+attach_files() {
+    local ticket_id="$1"
+    shift
+
+    # Extract credentials once
+    local jira_site=$(acli jira auth status | grep "Site:" | awk '{print $2}')
+    local jira_email=$(acli jira auth status | grep "Email:" | awk '{print $2}')
+
+    # Attach each file
+    for file in "$@"; do
+        echo "Attaching $file to $ticket_id..."
+        curl -X POST \
+            "https://${jira_site}/rest/api/3/issue/${ticket_id}/attachments" \
+            -u "${jira_email}:${JIRA_API_TOKEN}" \
+            -H "X-Atlassian-Token: no-check" \
+            -F "file=@${file}" \
+            --silent --show-error
+    done
+}
+
+# Usage
+attach_files PROD-4634 file1.txt file2.pdf file3.json
 ```
 
-Usage:
-```bash
-./batch-attach.sh PROD-4634 file1.txt file2.pdf file3.json
-```
-
-### Conditional Attachment
+### Conditional Attachment (Portable)
 Only attach if file exists:
 
 ```bash
-if [[ -f "./optional-file.txt" ]]; then
-    ./scripts/attach-to-jira.sh PROD-4634 ./optional-file.txt
+FILE="./optional-file.txt"
+if [[ -f "$FILE" ]]; then
+    JIRA_SITE=$(acli jira auth status | grep "Site:" | awk '{print $2}')
+    JIRA_EMAIL=$(acli jira auth status | grep "Email:" | awk '{print $2}')
+    curl -X POST \
+        "https://${JIRA_SITE}/rest/api/3/issue/PROD-4634/attachments" \
+        -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+        -H "X-Atlassian-Token: no-check" \
+        -F "file=@${FILE}" \
+        --silent --show-error
 fi
 ```
