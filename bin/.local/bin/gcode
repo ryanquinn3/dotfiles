@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Run vscode remote cli from separate terminal session outside of the vscode integrated terminal
+
+find_latest_vscode_ipc() {
+  local file
+  file=$(ls -t /tmp/vscode-ipc-* 2>/dev/null | head -n 1)
+  if [[ -n "$file" ]]; then
+    echo "$file"
+  else
+    echo "No matching files found." >&2
+    return 1
+  fi
+}
+
+VSCODE_BIN=$(l -r --sort=accessed --oneline --icons=never $(fd -g -p '**/bin/remote-cli/code' /vscode/bin) | head -n 1)
+
+VSCODE_IPC_HOOK_CLI="$(find_latest_vscode_ipc)" $VSCODE_BIN $@
