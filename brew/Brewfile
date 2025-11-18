@@ -34,6 +34,7 @@ if RUBY_PLATFORM =~ /darwin/
   brew "ripgrep"
   brew "tree"
   brew "tailscale"
+  brew "procs"
   brew "FelixKratz/formulae/borders"
   brew "felixkratz/formulae/sketchybar"
 
