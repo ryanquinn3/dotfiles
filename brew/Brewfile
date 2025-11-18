@@ -13,6 +13,7 @@ brew "stow"
 brew "lnav"
 brew "graphviz"
 brew "hurl"
+brew "procs"
 cask "font-hack-nerd-font"
 
 if RUBY_PLATFORM =~ /linux/
@@ -34,7 +35,7 @@ if RUBY_PLATFORM =~ /darwin/
   brew "ripgrep"
   brew "tree"
   brew "tailscale"
-  brew "procs"
+  
   brew "FelixKratz/formulae/borders"
   brew "felixkratz/formulae/sketchybar"
 
