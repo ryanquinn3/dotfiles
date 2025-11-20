@@ -12,7 +12,6 @@ brew "git-delta"
 brew "stow"
 brew "lnav"
 brew "graphviz"
-brew "hurl"
 brew "procs"
 cask "font-hack-nerd-font"
 
