@@ -180,17 +180,17 @@ function _run_turbo_task() {
   # Use fzf to select and run task
   local selected_task
   selected_task=$(print -r -- "$flat_tasks" | fzf)
-
+  # tasks will look like "@vanta/{package}#{task-name}"
+  # want to run turbo $TASK_NAME --filter=@vanta/{package}
+  TASK_NAME="${selected_task##*#}"
+  PACKAGE_NAME="${selected_task%%#*}"
    if [[ -n "$selected_task" ]]; then
-    # what you actually execute (properly quoted)
-    turbo "$selected_task" --output-logs="errors-only"
 
-    # what you store in history (escaped so ↑ works)
-    local hist_cmd="turbo ${selected_task}"
-    hist_cmd=${hist_cmd//\\/\\\\}  # escape backslashes first
-    hist_cmd=${hist_cmd//\#/\\#}   # escape '#'
-    hist_cmd=${hist_cmd//\!/\\!}   # escape '!'
-    print -s -- "$hist_cmd"        # append to zsh history without expansion
+    # what you actually execute (properly quoted)
+    local command="turbo "$TASK_NAME" --filter="$PACKAGE_NAME" --output-logs=\"errors-only\""
+    eval $command
+    
+    print -s -- "$command"        # append to zsh history without expansion
   fi
 }
 
