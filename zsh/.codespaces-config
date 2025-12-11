@@ -203,7 +203,7 @@ function _run_just(){
 
 function dev-workspace-push(){
   aws-vault exec devadmin -- bash -c '
-    aws s3 sync ".${DEV_WORKSPACE_DIR}" "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}"
+    aws s3 sync "${DEV_WORKSPACE_DIR}" "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}"
     find /workspaces/obsidian -type d -name ".ai-dev" | while read dir; do
       rel_path="${dir#/workspaces/obsidian/}"
       aws s3 sync "$dir" "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}/ai-dev/$rel_path"
@@ -213,7 +213,7 @@ function dev-workspace-push(){
   
 function dev-workspace-pull(){
   aws-vault exec devadmin -- bash -c '
-    aws s3 sync "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}" ".${DEV_WORKSPACE_DIR}" --exclude "ai-dev/*"
+    aws s3 sync "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}" "${DEV_WORKSPACE_DIR}" --exclude "ai-dev/*"
 
     # List ai-dev prefixes and sync each back to original location
     for prefix in $(aws s3 ls "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}/ai-dev/" | awk "{print \$2}"); do
