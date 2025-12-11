@@ -4,7 +4,8 @@ export DOCKER_CONFIG=$HOME/.docker
 
 export CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1
 
-export DEV_WORKSPACE_DIR=".ryanquinn3"
+export DEV_WORKSPACE_DIR_NAME="ryanquinn3"
+export DEV_WORKSPACE_DIR=".${DEV_WORKSPACE_DIR_NAME}"
 export CODESPACE_DISPLAY_NAME=$(echo "$CODESPACE_NAME" | grep -oP '^[^-]+-[^-]+' || echo "$CODESPACE_NAME")
 
 WC_PKG="@vanta/web-client"
@@ -202,21 +203,21 @@ function _run_just(){
 
 function dev-workspace-push(){
   aws-vault exec devadmin -- bash -c '
-    aws s3 sync ".'"$DEV_WORKSPACE_DIR"'" "s3://vanta-dev-codespace-assets/'"$DEV_WORKSPACE_DIR"'"
+    aws s3 sync ".${DEV_WORKSPACE_DIR}" "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}"
     find /workspaces/obsidian -type d -name ".ai-dev" | while read dir; do
       rel_path="${dir#/workspaces/obsidian/}"
-      aws s3 sync "$dir" "s3://vanta-dev-codespace-assets/'"$DEV_WORKSPACE_DIR"'/ai-dev/$rel_path"
+      aws s3 sync "$dir" "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}/ai-dev/$rel_path"
     done
   '
 }
   
 function dev-workspace-pull(){
   aws-vault exec devadmin -- bash -c '
-    aws s3 sync "s3://vanta-dev-codespace-assets/'"$DEV_WORKSPACE_DIR"'" ".'"$DEV_WORKSPACE_DIR"'" --exclude "ai-dev/*"
+    aws s3 sync "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}" ".${DEV_WORKSPACE_DIR}" --exclude "ai-dev/*"
 
     # List ai-dev prefixes and sync each back to original location
-    for prefix in $(aws s3 ls "s3://vanta-dev-codespace-assets/'"$DEV_WORKSPACE_DIR"'/ai-dev/" | awk "{print \$2}"); do
-      aws s3 sync "s3://vanta-dev-codespace-assets/'"$DEV_WORKSPACE_DIR"'/ai-dev/$prefix" "/workspaces/obsidian/$prefix"
+    for prefix in $(aws s3 ls "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}/ai-dev/" | awk "{print \$2}"); do
+      aws s3 sync "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}/ai-dev/$prefix" "/workspaces/obsidian/$prefix"
     done
   '
 }
