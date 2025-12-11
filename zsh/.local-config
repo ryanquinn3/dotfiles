@@ -23,18 +23,20 @@ alias fm="fix_mouse"
 
 cs_ssh() {
   # store all args passed to function but default to 'tmux'
-  local args=("${@:-'tmux'}")
+  local args=("${@:-'tmux new-session -A -s main'}")
   gh codespace ssh --codespace $(current_codespace) -- -t "${args[@]}"
   local ec=$?
   [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
   return $ec
 }
 
-gitpod_ssh() {
+ona_ssh() {
   # store all args passed to function but default to 'tmux'
-  local args=("${@:-'tmux'}")
+  local args=("${@:-'tmux new-session -A -s main'}")
   gitpod_env=$(gitpod env list -o json | jq -r '.[0].id')
-  gitpod env ssh "$gitpod_env" -- -t "${args[@]}"
+  gitpod_host="${gitpod_env}.gitpod.environment"
+  echo "Connecting to ${gitpod_host}..."
+  ssh "${gitpod_host}" -t "${args[@]}"
   local ec=$?
   [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
   return $ec
