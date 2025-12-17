@@ -72,7 +72,7 @@ nb(){
     return 1
   fi
   # if branch name doesnt start with rq/, prepend it, set to other variale
-  [[ "$1" != rq/* ]] then;
+  if [[ "$1" != rq/* ]]; then
     branch_name="rq/$1"
   else
     branch_name="$1"
