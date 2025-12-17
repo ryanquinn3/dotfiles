@@ -6,9 +6,6 @@ alias cat="bat"
 export DOTFILES=$HOME/repos/dotfiles
 export EDITOR='subl -w'
 
-if [ "$USE_PYENV" -eq 1 ]; then
-  command -v pyenv && eval "$(pyenv init -)"
-fi
 
 
 # GH autocompletion
@@ -22,25 +19,34 @@ function fix_mouse(){
 alias fm="fix_mouse"
 
 cs_ssh() {
-  # store all args passed to function but default to 'tmux'
-  local args=("${@:-'tmux new-session -A -s main'}")
-  gh codespace ssh --codespace $(current_codespace) -- -t "${args[@]}"
+
+  gh codespace ssh --codespace $(current_codespace) -- -t "tmux new-session -A -s main"
   local ec=$?
   [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
   return $ec
 }
 
 ona_ssh() {
-  # store all args passed to function but default to 'tmux'
-  local args=("${@:-'tmux new-session -A -s main'}")
-  gitpod_env=$(gitpod env list -o json | jq -r '.[0].id')
+  gitpod_env=$( gitpod config context list -f Environment)
+  if [[ -z "$gitpod_env" ]]; then
+    echo "No active Gitpod environments in context. Set one with gitpod config context modify default --environment-id $ENV"
+    return 1
+  fi
+  
+  if [[ $(gitpod env get -f phase) != "running" ]]; then
+    echo "Starting Gitpod environment..."
+    gitpod env start
+  fi
+
   gitpod_host="${gitpod_env}.gitpod.environment"
   echo "Connecting to ${gitpod_host}..."
-  ssh "${gitpod_host}" -t "${args[@]}"
+  # Connect via SSH and attach to main tmux session
+  ssh "${gitpod_host}" -t tmux new-session -A -s main
+  # When ssh session ends, disable mouse reporting so that terminal behaves correctly
   local ec=$?
   [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
   return $ec
-} 
+}
 
 push(){
   if [[ -z "$1" ]]; then
