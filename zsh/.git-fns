@@ -82,3 +82,25 @@ git_smart_squash() {
   
   echo "Ready to commit. Use 'git commit' to finalize."
 }
+
+# List local branches with commits that are not pushed to origin
+unpushed() {
+  # Fetch latest metadata from origin to ensure accuracy
+  git fetch origin --quiet
+
+  echo "Branches with local commits not on origin:"
+  echo "----------------------------------------"
+
+  # Iterate through all local branches
+  git for-each-ref --format='%(refname:short) %(upstream:short)' refs/heads | while read local remote; do
+    if [ -z "$remote" ]; then
+      echo "[NEW] $local (No remote tracking branch found)"
+    else
+      # Check if local is ahead of remote
+      ahead=$(git rev-list --count "$remote..$local")
+      if [ "$ahead" -gt 0 ]; then
+        echo "[$ahead ahead] $local"
+      fi
+    fi
+  done
+}
