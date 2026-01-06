@@ -15,9 +15,8 @@ brew "procs"
 cask "font-hack-nerd-font"
 
 if RUBY_PLATFORM =~ /linux/
-  tap "atlassian/homebrew-acli"
-  brew "acli"
-end
+  brew "atlassian/homebrew-acli/acli"
+end``
 
 if RUBY_PLATFORM =~ /darwin/
   brew "tmux" # tmux is already installed in codespaces
