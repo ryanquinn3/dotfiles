@@ -21,9 +21,10 @@ end
 
 if RUBY_PLATFORM =~ /darwin/
   brew "tmux" # tmux is already installed in codespaces
+  brew "awscli"
   brew "ffmpeg"
   brew "gh"
-  brew "pyenv"
+  brew "uv"
   brew "k9s"
   brew "redis"
   brew "httpie"
@@ -60,5 +61,4 @@ if RUBY_PLATFORM =~ /darwin/
   cask "arc"
   cask "superwhisper"
 end
-
 

@@ -21,4 +21,3 @@ keybind = super+\=text:\x13\x7c
 keybind = super+w=text:\x13\x78
 
 minimum-contrast = 1.2
-keybind = shift+enter=text:\x1b\r

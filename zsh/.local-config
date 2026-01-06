@@ -41,7 +41,7 @@ ona_ssh() {
   gitpod_host="${gitpod_env}.gitpod.environment"
   echo "Connecting to ${gitpod_host}..."
   # Connect via SSH and attach to main tmux session
-  ssh "${gitpod_host}" -t tmux new-session -A -s main
+  ssh -tt "${gitpod_host}" "tmux new-session -A -s main"
   # When ssh session ends, disable mouse reporting so that terminal behaves correctly
   local ec=$?
   [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'

@@ -25,3 +25,5 @@
   hyperlinks = true
   hyperlinks-file-link-format = "vscode://file/{path}:{line}"
 
+[alias]
+    squash-all = "!f() { zsh -ic \"git_smart_squash $1\"; }; f"
