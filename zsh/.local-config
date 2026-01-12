@@ -3,7 +3,7 @@ USE_PYENV=0
 alias ls="eza"
 alias cat="bat"
 
-export DOTFILES=$HOME/repos/dotfiles
+export DOT_FILES=$HOME/repos/dotfiles
 export EDITOR='subl -w'
 
 

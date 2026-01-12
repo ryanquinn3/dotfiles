@@ -1,16 +1,15 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
 
+
+ZSHRC_PROFILE="1"
+# if $ZSHRC_PROFILE is set, source it at start
+[ -n "$ZSHRC_PROFILE" ] && zmodload zsh/zprof
 # ZSH config
-ZSH_THEME="powerlevel10k/powerlevel10k"
+# ZSH_THEME="powerlevel10k/powerlevel10k"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 ZSH_DISABLE_COMPFIX="true"
-
+export ZSH_CACHE_DIR="$HOME/.oh-my-zsh/cache"
+export ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
 ##########
 # HISTORY
 ##########
@@ -39,9 +38,6 @@ setopt SHARE_HISTORY
 # Execute commands using history (e.g.: using !$) immediately:
 unsetopt HIST_VERIFY
 
-# Uncomment to add kube settings to prompt
-# USING_KUBE=1
-
 export LANG=en_US.UTF-8
 export ZSH="$HOME/.oh-my-zsh"
 export ZSHRC="$HOME/.zshrc"
@@ -51,18 +47,10 @@ export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin
 fpath=(~/.zsh/completions $fpath)
 
 
-
 # Node tooling
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+eval "$(fnm env --use-on-cd --shell zsh)"
 
-# If using system node, switch to default
-if [[ "$(nvm current)" == "system" ]]; then
-  nvm use default >/dev/null
-fi
-
-plugins=(git brew kubectl kube-ps1 fzf-tab zsh-yarn-completions)
+plugins=(git brew fzf-tab zsh-yarn-completions)
 source $ZSH/oh-my-zsh.sh
 
 if [[ -n "$VSCODE_GIT_IPC_HANDLE"  ]]; then
@@ -117,15 +105,6 @@ else
     source ~/.codespaces-config
 fi
 
-
-# # Override bureaus right prompt
-# _1RIGHT="%~ [%*]"
-
-if [[ -n "$USING_KUBE" ]]; then
-    RPROMPT=$RPROMPT'$(kube_ps1)'
-fi
-
-
 export PATH="$HOME/.poetry/bin:$PATH"
 
 
@@ -134,5 +113,4 @@ export PATH="$HOME/.poetry/bin:$PATH"
 
 source ~/fzf-git.sh/fzf-git.sh
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+eval "$(starship init zsh)"

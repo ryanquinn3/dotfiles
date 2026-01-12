@@ -12,11 +12,13 @@ brew "git-delta"
 brew "stow"
 brew "lnav"
 brew "procs"
+brew "starship"
+brew "fnm"
 cask "font-hack-nerd-font"
 
 if RUBY_PLATFORM =~ /linux/
   brew "atlassian/homebrew-acli/acli"
-end``
+end
 
 if RUBY_PLATFORM =~ /darwin/
   brew "tmux" # tmux is already installed in codespaces
