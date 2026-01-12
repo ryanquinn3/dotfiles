@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# if claude mcp get glean_default returns non-zero, then configure glean
+if ! claude mcp get glean_default &> /dev/null; then
+  echo "Configuring Glean for Claude..."
+  claude mcp add glean_default https://vanta-be.glean.com/mcp/default \
+   --transport http \
+   --scope user
+fi
+# Configure Glean for Claude usage
+
+# install superpowers plugin
+claude -p "/plugin marketplace add obra/superpowers-marketplace"
+claude -p "/plugin install superpowers@superpowers-marketplace"
