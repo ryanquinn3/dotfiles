@@ -12,7 +12,7 @@ $git_status\
 $rust\
 $nodejs\
 $python\
-[](fg:sapphire bg:lavender)\
+[](fg:green bg:lavender)\
 $time\
 [ ](fg:lavender)\
 $cmd_duration\
