@@ -100,10 +100,7 @@ logs(){
 logs_json(){
   logs "$1" "${@:2}" | jq -R '. as $line | try (fromjson | del(.dd, .networkInfo)) catch { message: $line }'
 }
-# Claude code boot up
-clc(){
-  GITHUB_TOKEN= ANTHROPIC_API_KEY= claude --dangerously-skip-permissions --permission-mode plan "$@"
-}
+
 
 function logs_ts(){
   local service=$1

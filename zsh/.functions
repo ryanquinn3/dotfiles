@@ -1,5 +1,9 @@
 source ~/.git-fns
 
+# Claude code boot up
+clc(){
+  GITHUB_TOKEN= ANTHROPIC_API_KEY= claude --dangerously-skip-permissions --permission-mode plan "$@"
+}
 
 clean_docker() {
   if [ ! -z "$1" ]; then
