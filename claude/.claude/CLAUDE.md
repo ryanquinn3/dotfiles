@@ -11,6 +11,13 @@ Example directory: `packages/my-package/src/my-dir/.ai-dev/plans/2025-12-01-supp
 
 **DO NOT** put plans in `~/.claude/plans`!!
 
+### Markdown Preferences
+
+When writing markdown files, follow these rules:
+
+- Prefer mermaid for visualizations 
+- Use HTML table syntax instead of markdown tables
+
 ### Notes and research
 
 For all other markdown files (proposals, explorations, research, diagrams), use the top level `.ryanquinn3` directory. Find an appropriate sub-directory based on the context of the conversation.
