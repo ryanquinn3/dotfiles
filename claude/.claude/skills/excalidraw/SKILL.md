@@ -5,21 +5,10 @@ description: "Use when working with *.excalidraw or *.excalidraw.json files, use
 
 # Excalidraw Subagent Delegation
 
-## Overview
+## Iron Law
 
-**Core principle:** Main agents NEVER read Excalidraw files directly. Always delegate to subagents to isolate context consumption.
-
-Excalidraw files are JSON with high token cost but low information density. Single files range from 4k-22k tokens (largest can exceed read tool limits). Reading multiple diagrams quickly exhausts context budget (7 files = 67k tokens = 33% of budget).
-
-## The Problem
-
-Excalidraw JSON structure:
-- Each shape has 20+ properties (x, y, width, height, strokeColor, seed, version, etc.)
-- Most properties are visual metadata (positioning, styling, roughness)
-- Actual content: text labels and element relationships (<10% of file)
-- **Signal-to-noise ratio is extremely low**
-
-Example: 14-element diagram = 596 lines, 16K, ~4k tokens. 79-element diagram = 2,916 lines, 88K, ~22k tokens (exceeds read limit).
+**Main agents NEVER read Excalidraw files. No exceptions. Always delegate via Task tool.**
+Excalidraw JSON has extreme verbosity (4k-22k tokens per file) with <10% signal. Subagents isolate this cost.
 
 ## When to Use
 
@@ -29,193 +18,133 @@ Example: 14-element diagram = 596 lines, 16K, ~4k tokens. 79-element diagram = 2
 - User mentions: "flowchart", "architecture diagram", "Excalidraw file"
 - Architecture/design documentation tasks involving visual artifacts
 
-**Use delegation even for:**
-- "Small" files (smallest is 4k tokens - still significant)
-- "Quick checks" (checking component names still loads full JSON)
-- Single file operations (isolation prevents context pollution)
-- Modifications (don't need full format understanding in main context)
+**Use delegation even for** "small" files (4k tokens minimum), "quick checks", single file ops, modifications.
+
+## Critical Format Rules
+
+Subagents must know these before writing/modifying Excalidraw JSON:
+
+1. **Labels need TWO elements** - `label` property broken in raw JSON. Shape needs `boundElements: [{type:"text", id:"x-text"}]` + separate text element with `containerId: "x"`
+2. **NEVER use diamond shapes** - Arrow connections broken in raw JSON. Use styled rectangles instead (coral for orchestrators, orange+dashed for decisions)
+3. **Elbow arrows need THREE properties** - `roughness: 0`, `roundness: null`, `elbowed: true` for 90-degree corners
+4. **Arrow x,y = source shape edge, not center** - Bottom: `(x + width/2, y + height)`, Right: `(x + width, y + height/2)`, etc.
+5. **Arrow width/height = bounding box of points** - `width = max(abs(p[0]))`, `height = max(abs(p[1]))`
+6. **Stagger multiple arrows from same edge** - Spread at 20%-80% across edge width
+
+Default color palette (most common):
+
+<table>
+<tr><th>Type</th><th>BG</th><th>Stroke</th></tr>
+<tr><td>Frontend</td><td><code>#a5d8ff</code></td><td><code>#1971c2</code></td></tr>
+<tr><td>Backend/API</td><td><code>#d0bfff</code></td><td><code>#7048e8</code></td></tr>
+<tr><td>Database</td><td><code>#b2f2bb</code></td><td><code>#2f9e44</code></td></tr>
+<tr><td>Storage</td><td><code>#ffec99</code></td><td><code>#f08c00</code></td></tr>
+<tr><td>External</td><td><code>#ffc9c9</code></td><td><code>#e03131</code></td></tr>
+<tr><td>Orchestration</td><td><code>#ffa8a8</code></td><td><code>#c92a2a</code></td></tr>
+</table>
+
+## Reference Files
+
+Subagents should read these before working on Excalidraw files:
+
+<table>
+<tr><th>File</th><th>Purpose</th><th>Used By</th></tr>
+<tr><td><code>references/json-format.md</code></td><td>Element types, required properties, label binding, grouping</td><td>Create, Modify</td></tr>
+<tr><td><code>references/arrows.md</code></td><td>Routing algorithm, edge formulas, patterns, staggering, bindings</td><td>Create, Modify</td></tr>
+<tr><td><code>references/colors.md</code></td><td>Default + AWS/Azure/GCP/K8s palettes</td><td>Create</td></tr>
+<tr><td><code>references/examples.md</code></td><td>Full 3-tier JSON example, layout patterns, complexity guidelines</td><td>Create</td></tr>
+<tr><td><code>references/validation.md</code></td><td>Pre-flight algorithm, checklists, common bugs + fixes</td><td>Create, Modify</td></tr>
+</table>
 
 ## Delegation Pattern
 
-### Main Agent Responsibilities
+### Main Agent NEVER / ALWAYS
 
-**NEVER:**
-- ❌ Use Read tool on *.excalidraw files
-- ❌ Parse Excalidraw JSON in main context
-- ❌ Load multiple diagrams for comparison
-- ❌ Inspect file to "understand the format"
+**NEVER:** Read .excalidraw files, parse Excalidraw JSON, load multiple diagrams, inspect files to "understand the format"
 
-**ALWAYS:**
-- ✅ Delegate ALL Excalidraw operations to subagents
-- ✅ Provide clear task description to subagent
-- ✅ Request text-only summaries (not raw JSON)
-- ✅ Keep diagram analysis isolated from main work
+**ALWAYS:** Delegate via Task tool, provide clear task description, request text-only summaries (not raw JSON), keep diagram analysis isolated
 
-### Subagent Task Templates
-
-#### Read/Understand Operation
-```
-Task: Extract and explain the components in [file.excalidraw.json]
-
-Approach:
-1. Read the Excalidraw JSON
-2. Extract only text elements (ignore positioning/styling)
-3. Identify relationships between components
-4. Summarize architecture/flow
-
-Return:
-- List of components/services with descriptions
-- Connection/dependency relationships
-- Key insights about the architecture
-- DO NOT return raw JSON or verbose element details
-```
-
-#### Modify Operation
-```
-Task: Add [component] to [file.excalidraw.json], connected to [existing-component]
-
-Approach:
-1. Read file to identify existing elements
-2. Find [existing-component] and its position
-3. Create new element JSON for [component]
-4. Add arrow elements for connections
-5. Write updated file
-
-Return:
-- Confirmation of changes made
-- Position of new element
-- IDs of created elements
-```
+### Subagent Templates
 
 #### Create Operation
 ```
 Task: Create new Excalidraw diagram showing [description]
 
-Approach:
-1. Design layout for [number] components
-2. Create rectangle elements with text labels
-3. Add arrows showing relationships
-4. Use consistent styling (colors, fonts)
-5. Write to [file.excalidraw.json]
+Context: Excalidraw JSON requires TWO elements per label (shape + text), elbow arrows need roughness:0/roundness:null/elbowed:true, NEVER use diamonds. Arrow x,y starts at shape edge not center.
 
-Return:
-- Confirmation of file created
-- Summary of components included
-- File location
+Steps:
+1. Read references/json-format.md, references/arrows.md, references/colors.md, references/examples.md
+2. Analyze codebase to identify components and relationships
+3. Plan layout (vertical flow most common: rows at y=100,230,380,530,680)
+4. Generate elements with proper label bindings and arrow routing
+5. Validate against references/validation.md before writing
+6. Write to [file.excalidraw.json]
+
+Return: File location + component summary
+```
+
+#### Modify Operation
+```
+Task: Add/update [component] in [file.excalidraw.json]
+
+Context: Excalidraw JSON requires TWO elements per label (shape + text), elbow arrows need roughness:0/roundness:null/elbowed:true, NEVER use diamonds. Arrow x,y starts at shape edge not center.
+
+Steps:
+1. Read references/json-format.md and references/arrows.md
+2. Read existing file, identify elements and positions
+3. Make changes preserving existing element structure
+4. Validate against references/validation.md before writing
+5. Write updated file
+
+Return: Confirmation + changes made
+```
+
+#### Read/Understand Operation
+```
+Task: Extract and explain the components in [file.excalidraw.json]
+
+Steps:
+1. Read the Excalidraw JSON
+2. Extract text elements (ignore positioning/styling)
+3. Identify relationships between components
+4. Summarize architecture/flow
+
+Return: Component list + relationships. DO NOT return raw JSON.
 ```
 
 #### Compare Operation
 ```
-Task: Compare architecture approaches in [file1] vs [file2]
+Task: Compare architecture in [file1] vs [file2]
 
-Approach:
+Steps:
 1. Read both files
 2. Extract text labels from each
 3. Identify structural differences
 4. Compare component relationships
 
-Return:
-- Key differences in architecture
-- Components unique to each approach
-- Relationship/flow differences
-- DO NOT return full element details from both files
+Return: Key differences only. DO NOT return raw element details.
 ```
 
-## Common Rationalizations (STOP and Delegate Instead)
+## Anti-Rationalization
 
-| Excuse | Reality | What to Do |
-|--------|---------|------------|
-| "Direct reading is most efficient" | Consumes 4k-22k tokens unnecessarily | Delegate to subagent |
-| "It's token-efficient to read directly" | Baseline tests showed 9-45% budget used | Always delegate |
-| "This is optimal for one-time analysis" | "One-time" still pollutes main context | Subagent isolation |
-| "The JSON is straightforward" | Simplicity ≠ token efficiency | Delegate anyway |
-| "I need to understand the format" | Format understanding not needed in main agent | Subagent handles format |
-| "Within reasonable bounds" (18k tokens) | "Reasonable" is subjective rationalization | Hard rule: delegate |
-| "Just a quick check of components" | "Quick check" still loads full JSON | Extract text via subagent |
-| "File is small (16K)" | 4k tokens is NOT small | Size threshold doesn't matter |
+<table>
+<tr><th>Thought</th><th>Reality</th></tr>
+<tr><td>"Direct reading is most efficient"</td><td>Consumes 4k-22k tokens, use subagent</td></tr>
+<tr><td>"It's a small file / quick check"</td><td>Minimum 4k tokens, still pollutes context</td></tr>
+<tr><td>"I need to understand the format"</td><td>Format knowledge belongs in subagent, not main context</td></tr>
+<tr><td>"The JSON is straightforward"</td><td>Problem is verbosity not complexity: 79 elements x ~280 tokens = 22k</td></tr>
+<tr><td>"Just parsing text labels"</td><td>Still loads full JSON to extract 10% signal</td></tr>
+<tr><td>"Within reasonable bounds"</td><td>"Reasonable" is rationalization. Hard rule: delegate</td></tr>
+</table>
 
-## Red Flags - STOP and Delegate
+**All of these mean: use Task tool with subagent instead.**
 
-Catch yourself about to:
-- Use Read tool on .excalidraw file
-- "Quickly check" what components exist
-- "Understand the structure" before modifying
-- Load file to "see what's there"
-- Compare multiple diagrams side-by-side
-- Parse JSON to "extract just the text"
+## Token Analysis
 
-**All of these mean: Use Task tool with subagent instead.**
-
-## Quick Reference
-
-| Operation | Main Agent Action | Subagent Returns |
-|-----------|-------------------|------------------|
-| **Understand diagram** | Delegate with "Extract and explain" template | Component list + relationships |
-| **Modify diagram** | Delegate with "Add [X] connected to [Y]" template | Confirmation + changes made |
-| **Create diagram** | Delegate with "Create showing [description]" template | File location + summary |
-| **Compare diagrams** | Delegate with "Compare [A] vs [B]" template | Key differences (not raw JSON) |
-
-## Token Analysis (Why This Matters)
-
-Real data from baseline testing:
-
-| Scenario | Without Delegation | With Delegation | Savings |
-|----------|-------------------|-----------------|---------|
-| Single large file | 22k tokens (45% budget) | ~500 tokens (subagent summary) | 98% |
-| Two-file comparison | 18k tokens (9% budget) | ~800 tokens (diff summary) | 96% |
-| Modification task | 14k tokens (7% budget) | ~300 tokens (confirmation) | 98% |
-
-**Context pollution impact:**
-- Reading all 7 project diagrams: 67k tokens (33% of 200k budget)
-- With delegation: ~2k tokens (isolated in subagents)
-- **Savings: 97% context budget preserved**
-
-## Implementation Example
-
-**❌ BAD (Direct Read):**
-```
-User: "What architecture is shown in detailed-architecture.excalidraw.json?"
-Agent: Let me read that file... [reads 22k tokens into main context]
-```
-
-**✅ GOOD (Subagent Delegation):**
-```
-User: "What architecture is shown in detailed-architecture.excalidraw.json?"
-Agent: I'll use a subagent to extract the architecture details.
-
-[Dispatches Task tool with general-purpose subagent]
-Task: Extract and explain components in .ryanquinn3/ticketing/detailed-architecture.excalidraw.json
-
-[Receives ~500 token summary with component list and relationships]
-[Responds to user with architecture explanation, main context preserved]
-```
-
-## Why "Straightforward JSON" Doesn't Matter
-
-Agents often rationalize: "The format is simple, I can just read it."
-
-**The problem isn't complexity - it's verbosity:**
-- Simple structure with 20+ properties per element
-- Repetitive metadata (seed, version, nonce, roughness)
-- Positioning data (x, y, width, height) not semantically useful
-- Visual styling (strokeColor, opacity, fillStyle) irrelevant to content
-
-**Token cost comes from volume, not complexity.**
-
-Even "straightforward" JSON consumes 4k-22k tokens because:
-- 79 elements × ~280 tokens/element = 22k tokens
-- Most tokens are metadata noise
-- Only text labels and relationships matter (~10% of content)
-
-## The Iron Law
-
-**Main agents NEVER read Excalidraw files. No exceptions.**
-
-Not for:
-- "Quick checks"
-- "Small files"
-- "Understanding format"
-- "One-time analysis"
-- "Optimal efficiency"
-
-**Always delegate. Isolation is free via subagents.**
+<table>
+<tr><th>Scenario</th><th>Without Delegation</th><th>With Delegation</th><th>Savings</th></tr>
+<tr><td>Single large file</td><td>22k tokens (45% budget)</td><td>~500 tokens (summary)</td><td>98%</td></tr>
+<tr><td>Two-file comparison</td><td>18k tokens</td><td>~800 tokens (diff)</td><td>96%</td></tr>
+<tr><td>Modification task</td><td>14k tokens</td><td>~300 tokens (confirmation)</td><td>98%</td></tr>
+<tr><td>All 7 project diagrams</td><td>67k tokens (33% budget)</td><td>~2k tokens</td><td>97%</td></tr>
+</table>
