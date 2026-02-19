@@ -302,8 +302,11 @@ flowchart TD
         Decision
     end
 ```
+**Node shape selection**
+1. Check if the node has a semantic match to one of the new shapes in the table below.
+2. If not, fallback to the Basic Node Shapes set.
 
-**Node Shapes:**
+**Basic Node Shapes (classic shorthand):**
 - `[Text]` : Rectangle (process)
 - `([Text])` : Stadium (start/end)
 - `{Text}` : Diamond (decision)
@@ -311,6 +314,61 @@ flowchart TD
 - `[(Text)]` : Cylinder (database)
 - `((Text))` : Circle
 - `>Text]` : Asymmetric (flag)
+
+**Complete List of New Shapes (v11.3.0+):**
+
+Use the `@{ shape: <short-name> }` syntax, e.g. `A@{ shape: bolt, label: "Lightning" }`.
+
+<table>
+<tr><th>Semantic Name</th><th>Shape Name</th><th>Short Name</th><th>Description</th></tr>
+<tr><td>Bang</td><td>Bang</td><td><code>bang</code></td><td>Bang</td></tr>
+<tr><td>Card</td><td>Notched Rectangle</td><td><code>notch-rect</code></td><td>Represents a card</td></tr>
+<tr><td>Cloud</td><td>Cloud</td><td><code>cloud</code></td><td>Cloud</td></tr>
+<tr><td>Collate</td><td>Hourglass</td><td><code>hourglass</code></td><td>Collate operation</td></tr>
+<tr><td>Com Link</td><td>Lightning Bolt</td><td><code>bolt</code></td><td>Communication link</td></tr>
+<tr><td>Comment</td><td>Curly Brace</td><td><code>brace</code></td><td>Adds a comment</td></tr>
+<tr><td>Comment Right</td><td>Curly Brace</td><td><code>brace-r</code></td><td>Adds a comment (right)</td></tr>
+<tr><td>Comment (both)</td><td>Curly Braces</td><td><code>braces</code></td><td>Adds a comment (both sides)</td></tr>
+<tr><td>Data Input/Output</td><td>Lean Right</td><td><code>lean-r</code></td><td>Input or output</td></tr>
+<tr><td>Data Input/Output</td><td>Lean Left</td><td><code>lean-l</code></td><td>Output or input</td></tr>
+<tr><td>Database</td><td>Cylinder</td><td><code>cyl</code></td><td>Database storage</td></tr>
+<tr><td>Decision</td><td>Diamond</td><td><code>diam</code></td><td>Decision-making step</td></tr>
+<tr><td>Delay</td><td>Half-Rounded Rectangle</td><td><code>delay</code></td><td>Represents a delay</td></tr>
+<tr><td>Direct Access Storage</td><td>Horizontal Cylinder</td><td><code>h-cyl</code></td><td>Direct access storage, queues</td></tr>
+<tr><td>Disk Storage</td><td>Lined Cylinder</td><td><code>lin-cyl</code></td><td>Disk storage</td></tr>
+<tr><td>Display</td><td>Curved Trapezoid</td><td><code>curv-trap</code></td><td>Represents a display</td></tr>
+<tr><td>Divided Process</td><td>Divided Rectangle</td><td><code>div-rect</code></td><td>Divided process</td></tr>
+<tr><td>Document</td><td>Document</td><td><code>doc</code></td><td>Represents a document</td></tr>
+<tr><td>Event</td><td>Rounded Rectangle</td><td><code>rounded</code></td><td>Represents an event</td></tr>
+<tr><td>Extract</td><td>Triangle</td><td><code>tri</code></td><td>Extraction process</td></tr>
+<tr><td>Fork/Join</td><td>Filled Rectangle</td><td><code>fork</code></td><td>Fork or join in process flow</td></tr>
+<tr><td>Internal Storage</td><td>Window Pane</td><td><code>win-pane</code></td><td>Internal storage</td></tr>
+<tr><td>Junction</td><td>Filled Circle</td><td><code>f-circ</code></td><td>Junction point</td></tr>
+<tr><td>Lined Document</td><td>Lined Document</td><td><code>lin-doc</code></td><td>Lined document</td></tr>
+<tr><td>Lined/Shaded Process</td><td>Lined Rectangle</td><td><code>lin-rect</code></td><td>Lined process</td></tr>
+<tr><td>Loop Limit</td><td>Trapezoidal Pentagon</td><td><code>notch-pent</code></td><td>Loop limit step</td></tr>
+<tr><td>Manual File</td><td>Flipped Triangle</td><td><code>flip-tri</code></td><td>Manual file operation</td></tr>
+<tr><td>Manual Input</td><td>Sloped Rectangle</td><td><code>sl-rect</code></td><td>Manual input step</td></tr>
+<tr><td>Manual Operation</td><td>Trapezoid Base Top</td><td><code>trap-t</code></td><td>Represents a manual task</td></tr>
+<tr><td>Multi-Document</td><td>Stacked Document</td><td><code>docs</code></td><td>Multiple documents</td></tr>
+<tr><td>Multi-Process</td><td>Stacked Rectangle</td><td><code>st-rect</code></td><td>Multiple processes</td></tr>
+<tr><td>Odd</td><td>Odd</td><td><code>odd</code></td><td>Odd shape</td></tr>
+<tr><td>Paper Tape</td><td>Flag</td><td><code>flag</code></td><td>Paper tape</td></tr>
+<tr><td>Prepare Conditional</td><td>Hexagon</td><td><code>hex</code></td><td>Preparation or condition step</td></tr>
+<tr><td>Priority Action</td><td>Trapezoid Base Bottom</td><td><code>trap-b</code></td><td>Priority action</td></tr>
+<tr><td>Process</td><td>Rectangle</td><td><code>rect</code></td><td>Standard process</td></tr>
+<tr><td>Start</td><td>Circle</td><td><code>circle</code></td><td>Starting point</td></tr>
+<tr><td>Start (small)</td><td>Small Circle</td><td><code>sm-circ</code></td><td>Small starting point</td></tr>
+<tr><td>Stop</td><td>Double Circle</td><td><code>dbl-circ</code></td><td>Stop point</td></tr>
+<tr><td>Stop</td><td>Framed Circle</td><td><code>fr-circ</code></td><td>Stop point (framed)</td></tr>
+<tr><td>Stored Data</td><td>Bow Tie Rectangle</td><td><code>bow-rect</code></td><td>Stored data</td></tr>
+<tr><td>Subprocess</td><td>Framed Rectangle</td><td><code>fr-rect</code></td><td>Subprocess</td></tr>
+<tr><td>Summary</td><td>Crossed Circle</td><td><code>cross-circ</code></td><td>Summary</td></tr>
+<tr><td>Tagged Document</td><td>Tagged Document</td><td><code>tag-doc</code></td><td>Tagged document</td></tr>
+<tr><td>Tagged Process</td><td>Tagged Rectangle</td><td><code>tag-rect</code></td><td>Tagged process</td></tr>
+<tr><td>Terminal Point</td><td>Stadium</td><td><code>stadium</code></td><td>Terminal point</td></tr>
+<tr><td>Text Block</td><td>Text Block</td><td><code>text</code></td><td>Text block</td></tr>
+</table>
 
 **Directions:**
 - `TD` / `TB` : Top to bottom
