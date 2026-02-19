@@ -1,6 +1,7 @@
 ---
 name: excalidraw
-description: "Use when working with *.excalidraw or *.excalidraw.json files, user mentions diagrams/flowcharts, or requests architecture visualization - delegates all Excalidraw operations to subagents to prevent context exhaustion from verbose JSON (single files: 4k-22k tokens, can exceed read limits)"
+context: fork
+description: "Use when working with *.excalidraw or *.excalidraw.json files or user explicitly mentions excalidraw - delegates all Excalidraw operations to subagents to prevent context exhaustion from verbose JSON (single files: 4k-22k tokens, can exceed read limits)"
 ---
 
 # Excalidraw Subagent Delegation
