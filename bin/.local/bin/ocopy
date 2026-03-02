@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# 1. Read input from stdin
+# 2. Base64 encode it (required for OSC 52)
+# 3. Strip out any newlines added by the base64 command
+content=$(base64 | tr -d '\n')
+
+# 4. Print the escape sequence:
+# \e]52;  -> The OSC 52 prefix
+# c;      -> Use the 'clipboard' selection (p is for primary/middle-click)
+# %s      -> The base64 content
+# \a      -> The Bell character (terminator)
+printf "\e]52;c;%s\a" "$content"

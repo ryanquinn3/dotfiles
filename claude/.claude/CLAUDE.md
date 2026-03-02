@@ -7,8 +7,17 @@ In all interactions, be extremely concise and sacrifice grammar for the sake of 
 ### Never use em-dashes
 
 
-### Prefer LSP
-When doing code navigation in typescript, if an LSP is available it prefer that to manually grepping.
+### Code Intelligence
+
+Prefer LSP over Grep/Read for code navigation — it's faster, precise, and avoids reading entire files:
+- `workspaceSymbol` to find where something is defined
+- `findReferences` to see all usages across the codebase
+- `goToDefinition` / `goToImplementation` to jump to source
+- `hover` for type info without reading the file
+
+Use Grep only when LSP isn't available or for text/pattern searches (comments, strings, config).
+
+After writing or editing code, check LSP diagnostics and fix errors before proceeding.
 
 ### Plan Files
 
@@ -23,7 +32,8 @@ Example directory: `packages/my-package/src/my-dir/.ai-dev/plans/2025-12-01-supp
 When writing markdown files, follow these rules:
 
 - Prefer mermaid for visualizations 
-- Use HTML table syntax instead of markdown tables
+- Use HTML table syntax instead of markdown tables.
+- HTML table `th` and `td` elements should have `style="border: 1pt solid #000; padding: 5pt;"` by default.
 
 ### Notes and research
 
