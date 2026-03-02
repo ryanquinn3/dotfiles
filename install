@@ -81,7 +81,7 @@ function install_apt_packages() {
 ### end apt packages
 
 function install_npm_globals() {
-	npm i -g  @anthropic-ai/claude-code
+	# npm i -g  @anthropic-ai/claude-code
 }
 
 if [ -f "$HOME/.nvm" ]; then
