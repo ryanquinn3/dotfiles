@@ -99,7 +99,7 @@ unset file
 
 
 # only add these if we are not in a codespace
-if [[ -z "$CODESPACES" ]]; then
+if [[ -z "$IS_ON_ONA" ]]; then
    source ~/.local-config
 else
     source ~/.codespaces-config
