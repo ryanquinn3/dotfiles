@@ -1,3 +1,6 @@
+if [ -f /etc/profile.d/ona-secrets.sh ]; then
+  source /etc/profile.d/ona-secrets.sh
+fi
 # config for codespaces
 export DEV_LOG_FORMAT="json"
 export DOCKER_CONFIG=$HOME/.docker
