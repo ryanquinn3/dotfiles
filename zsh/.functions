@@ -69,13 +69,13 @@ make_test_spec(){
    gh run view --log --job=$1 | grep "Print test spec" | grep -o "\.\.\/build.*" >> /tmp/test_spec   
 }
 
-current_codespace(){
-  echo $(gh codespace list --json name | jq '.[0].name' -r)
+install_gh_extensions(){
+  install_gh_extension dlvhdr/gh-dash
+  install_gh_extension dlvhdr/gh-enhance
 }
 
-
-cs_ld(){
-  gh codespace ssh --codespace $(current_codespace) -- -t 'lazydocker'
+install_gh_extension(){
+  gh extension list | grep $1 || gh extension install $1
 }
 
 commit_ticket(){
