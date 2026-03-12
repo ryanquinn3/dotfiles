@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LIMIT="${LIMIT:-50}"
+SLEEP="${SLEEP:-30}"
+
+overall() {
+  # Priority: failure > cancelled > timed_out > action_required > startup_failure > skipped > in_progress > queued > success > other
+  # (tweak if you want different semantics)
+  awk '
+    BEGIN {
+      pr["failure"]=1
+      pr["cancelled"]=2
+      pr["timed_out"]=3
+      pr["action_required"]=4
+      pr["startup_failure"]=5
+      pr["skipped"]=6
+      pr["in_progress"]=7
+      pr["queued"]=8
+      pr["success"]=9
+    }
+    {
+      s=$1
+      if (!(s in pr)) pr[s]=50
+      if (pr[s] < bestp) { bestp=pr[s]; best=s }
+    }
+    END { print (best=="" ? "unknown" : best) }
+  '
+}
+
+while true; do
+  clear
+  branch="$(git branch --show-current 2>/dev/null || echo "unknown")"
+  echo "CI · ${branch}"
+
+  runs_json="$(gh run list --branch "$branch" --limit "$LIMIT" --json name,status,conclusion 2>/dev/null || echo '[]')"
+
+  if [[ "$runs_json" == "[]" ]]; then
+    echo "overall: no runs"
+  else
+    # Build a newline list of states, one per run, using conclusion if present else status
+    states="$(echo "$runs_json" | jq -r '.[] | (.conclusion // .status)')"
+
+    echo "overall: $(printf "%s\n" "$states" | overall)"
+
+    echo ""
+    echo "counts (last $LIMIT):"
+    printf "%s\n" "$states" \
+      | sort \
+      | uniq -c \
+      | awk '{printf "  %-12s %d\n", $2, $1}'
+
+    # Only print failures section if any exist
+    failed="$(echo "$runs_json" | jq -r '.[] | select(.conclusion=="failure") | .name')"
+    if [[ -n "$failed" ]]; then
+      echo ""
+      echo "failed:"
+      printf "%s\n" "$failed" | sed 's/^/  - /'
+    fi
+  fi
+
+  echo ""
+  echo "updated: $(date +%H:%M:%S) · every ${SLEEP}s"
+  sleep "$SLEEP"
+done
