@@ -225,9 +225,14 @@ function dev-workspace-archive(){
       return 1
     fi
 
-    local latest_mtime
-    latest_mtime=$(find "${dirs[@]}" -type f -printf '%T@\n' | sort -n | tail -1)
-    local timestamp=$(date -d "@${latest_mtime}" +%Y-%m-%dT%H-%M-%S)
+    zmodload zsh/stat
+    local latest_mtime=0
+    local m
+    for f in $(find "${dirs[@]}" -type f); do
+      m=$(zstat +mtime "$f")
+      (( m > latest_mtime )) && latest_mtime=$m
+    done
+    local timestamp=$(strftime '%Y-%m-%dT%H-%M-%S' "$latest_mtime")
     local archive="$DEV_ARCHIVE_DIR/${timestamp}.tar.gz"
 
     if [[ -f "$archive" ]]; then
