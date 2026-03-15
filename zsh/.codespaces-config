@@ -212,8 +212,6 @@ function _run_just(){
 
 function dev-workspace-archive(){
   mkdir -p "$DEV_ARCHIVE_DIR"
-  local timestamp=$(date +%Y-%m-%dT%H-%M-%S)
-  local archive="$DEV_ARCHIVE_DIR/ai-dev-${timestamp}.tar.gz"
 
   (
     cd /workspaces/obsidian
@@ -227,11 +225,20 @@ function dev-workspace-archive(){
       return 1
     fi
 
-    tar czf "$archive" --exclude="node_modules" "${dirs[@]}"
-  )
+    local latest_mtime
+    latest_mtime=$(find "${dirs[@]}" -type f -printf '%T@\n' | sort -n | tail -1)
+    local timestamp=$(date -d "@${latest_mtime}" +%Y-%m-%dT%H-%M-%S)
+    local archive="$DEV_ARCHIVE_DIR/${timestamp}.tar.gz"
 
-  ln -sf "$archive" "$DEV_ARCHIVE_DIR/latest"
-  echo "$archive"
+    if [[ -f "$archive" ]]; then
+      echo "$archive"
+      return 0
+    fi
+
+    tar czf "$archive" --exclude="node_modules" "${dirs[@]}"
+    ln -sf "$archive" "$DEV_ARCHIVE_DIR/latest"
+    echo "$archive"
+  )
 }
 
 function dev-workspace-push(){
