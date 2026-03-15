@@ -8,8 +8,9 @@ export DOCKER_CONFIG=$HOME/.docker
 export CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1
 export VANTA_LINT_HOOK_ON_EDIT_ENABLED="false"
 
-export DEV_WORKSPACE_DIR_NAME="ryanquinn3"
-export DEV_WORKSPACE_DIR=".${DEV_WORKSPACE_DIR_NAME}"
+export DEV_WORKSPACE_DIR=".ai-dev"
+export DEV_ARCHIVE_DIR="$HOME/ai-dev-archives"
+export DEV_S3_ARCHIVE_PREFIX="s3://vanta-dev-codespace-assets/ryanquinn3/ai-dev-archives"
 export CODESPACE_DISPLAY_NAME=$(echo "$CODESPACE_NAME" | grep -oP '^[^-]+-[^-]+' || echo "$CODESPACE_NAME")
 
 WC_PKG="@vanta/web-client"
@@ -156,7 +157,7 @@ fi
 
 function new_prompt(){
   [ -z "$1" ] && { echo "Usage: new_prompt NAME"; return 1; }
-  touch .ryanquinn3/$1.md
+  touch .ai-dev/$1.md
 }
 
 
@@ -209,25 +210,58 @@ function _run_just(){
   just $recipe
 }
 
-function dev-workspace-push(){
-  aws-vault exec devadmin -- bash -c '
-    aws s3 sync "${DEV_WORKSPACE_DIR}" "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}" --exclude "*node_modules*"
-    find /workspaces/obsidian -type d -name ".ai-dev" | while read dir; do
-      rel_path="${dir#/workspaces/obsidian/}"
-      aws s3 sync "$dir" "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}/ai-dev/$rel_path" --exclude "*node_modules*"
-    done
-  '
-}
-  
-function dev-workspace-pull(){
-  aws-vault exec devadmin -- bash -c '
-    aws s3 sync "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}" "${DEV_WORKSPACE_DIR}" --exclude "ai-dev/*" --exclude "*node_modules*"
+function dev-workspace-archive(){
+  mkdir -p "$DEV_ARCHIVE_DIR"
+  local timestamp=$(date +%Y-%m-%dT%H-%M-%S)
+  local archive="$DEV_ARCHIVE_DIR/ai-dev-${timestamp}.tar.gz"
 
-    # List ai-dev prefixes and sync each back to original location
-    for prefix in $(aws s3 ls "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}/ai-dev/" | awk "{print \$2}"); do
-      aws s3 sync "s3://vanta-dev-codespace-assets/${DEV_WORKSPACE_DIR_NAME}/ai-dev/$prefix" "/workspaces/obsidian/$prefix"
-    done
-  '
+  (
+    cd /workspaces/obsidian
+    local dirs=()
+    while IFS= read -r d; do
+      dirs+=("$d")
+    done < <(find . -type d -name ".ai-dev" | sed 's|^\./||')
+
+    if [[ ${#dirs[@]} -eq 0 ]]; then
+      echo "No .ai-dev directories found"
+      return 1
+    fi
+
+    tar czf "$archive" "${dirs[@]}" --exclude="node_modules"
+  )
+
+  ln -sf "$archive" "$DEV_ARCHIVE_DIR/latest"
+  echo "$archive"
+}
+
+function dev-workspace-push(){
+  local archive
+  archive=$(dev-workspace-archive)
+  if [[ $? -ne 0 ]]; then
+    echo "Archive failed"
+    return 1
+  fi
+
+  local filename=$(basename "$archive")
+  aws-vault exec devadmin -- aws s3 cp "$archive" "$DEV_S3_ARCHIVE_PREFIX/$filename"
+}
+
+function dev-workspace-pull(){
+  mkdir -p "$DEV_ARCHIVE_DIR"
+
+  local latest_key
+  latest_key=$(aws-vault exec devadmin -- aws s3 ls "$DEV_S3_ARCHIVE_PREFIX/" | sort | tail -1 | awk '{print $4}')
+  if [[ -z "$latest_key" ]]; then
+    echo "No archives found in S3"
+    return 1
+  fi
+
+  local dest="$DEV_ARCHIVE_DIR/$latest_key"
+  aws-vault exec devadmin -- aws s3 cp "$DEV_S3_ARCHIVE_PREFIX/$latest_key" "$dest"
+  ln -sf "$dest" "$DEV_ARCHIVE_DIR/latest"
+
+  (cd /workspaces/obsidian && tar xzf "$dest")
+  echo "Restored from $latest_key"
 }
 
 

@@ -37,7 +37,7 @@ When writing markdown files, follow these rules:
 
 ### Notes and research
 
-For all other markdown files (proposals, explorations, research, diagrams), use the top level `.ryanquinn3` directory. Find an appropriate sub-directory based on the context of the conversation.
+For all other markdown files (proposals, explorations, research, diagrams), use the top level `.ai-dev` directory. Find an appropriate sub-directory based on the context of the conversation.
 
 ### Other Preferences
 - prefer flatten function styles. return early and keep the else branch flatter.
