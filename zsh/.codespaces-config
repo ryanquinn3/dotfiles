@@ -227,7 +227,7 @@ function dev-workspace-archive(){
       return 1
     fi
 
-    tar czf "$archive" "${dirs[@]}" --exclude="node_modules"
+    tar czf "$archive" --exclude="node_modules" "${dirs[@]}"
   )
 
   ln -sf "$archive" "$DEV_ARCHIVE_DIR/latest"
