@@ -11,7 +11,7 @@ export VANTA_LINT_HOOK_ON_EDIT_ENABLED="false"
 export DEV_WORKSPACE_DIR=".ai-dev"
 export DEV_ARCHIVE_DIR="$HOME/ai-dev-archives"
 export DEV_S3_ARCHIVE_PREFIX="s3://vanta-dev-codespace-assets/ryanquinn3/ai-dev-archives"
-export CODESPACE_DISPLAY_NAME=$(echo "$CODESPACE_NAME" | grep -oP '^[^-]+-[^-]+' || echo "$CODESPACE_NAME")
+export CDE_DISPLAY_NAME=$(echo "$(gitpod environment get -f Id)")
 
 WC_PKG="@vanta/web-client"
 
