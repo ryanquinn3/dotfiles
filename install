@@ -31,14 +31,6 @@ function clone_tmux_plugin_manager(){
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
-function load_nvm(){
-	
-	# if NVM_DIR is already set, use that otherwise set it  to /usr/local/share/nvm
-	[ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
-	
-	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-}
 ### Oh My Zsh
 
 function setup_oh_my_zsh_plugins() {
@@ -84,12 +76,8 @@ function install_npm_globals() {
 	# npm i -g  @anthropic-ai/claude-code
 }
 
-if [ -f "$HOME/.nvm" ]; then
-	PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash'
-fi
 
 setup_tmux
-load_nvm
 
 
 if [[ $OSTYPE == 'darwin'* ]]; then
@@ -122,12 +110,6 @@ echo "Symlinking dotfiles..."
 tic -x ~/ghostty.terminfo
 setup_oh_my_zsh
 
-
-
-echo "Installing node..."
-
-nvm install 22.18.0
-nvm alias default 22.18.0
 
 # make sure default shell is set to zsh
 sudo chsh -s $(which zsh) $USERNAME

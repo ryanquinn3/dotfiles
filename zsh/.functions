@@ -122,3 +122,20 @@ install_portainer() {
     -v portainer_data:/data portainer/portainer-ce:latest \
     --http-enabled
 }
+
+tmux_current_session(){
+  tmux display-message -p '#S'
+}
+
+tmux_new_window() {
+  tmux new-window -t "$(tmux_current_session)" -n "$1" "$2"
+}
+
+tmux_open_code() {
+  tmux_new_window "opencode" "opencode"
+}
+alias oc="tmux_open_code"
+alias cc="tmux_claude_code"
+tmux_claude_code() {
+  tmux_new_window "claude-code" "clc"
+}

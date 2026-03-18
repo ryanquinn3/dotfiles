@@ -51,7 +51,7 @@ export FZF_DEFAULT_COMMAND="$SHELL -c 'fd --hidden --strip-cwd-prefix --exclude 
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
 
-[ -z "$TMUX" ] && tmux setenv -g CODESPACE_DISPLAY_NAME $CODESPACE_DISPLAY_NAME
+[ -z "$TMUX" ] && tmux setenv -g CDE_DISPLAY_NAME $CDE_DISPLAY_NAME
 
 # Functions
 login_link(){
