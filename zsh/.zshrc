@@ -60,8 +60,8 @@ if [[ -n "$VSCODE_GIT_IPC_HANDLE"  ]]; then
   export GIT_EDITOR="code --wait"
   export EDITOR="code --wait"
 else
-  export GIT_EDITOR="vim"
-  export EDITOR="vim"
+  export GIT_EDITOR="gcode --wait"
+  export EDITOR="gcode --wait"
 fi
 
 

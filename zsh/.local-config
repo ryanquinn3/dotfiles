@@ -35,7 +35,7 @@ ona_ssh() {
   
   if [[ $(gitpod env get $gitpod_env -f phase) != "running" ]]; then
     echo "Starting Gitpod environment..."
-    gitpod env start --editor vscode $gitpod_env
+    gum spin --spinner dot --title "Starting Gitpod environment" -- gitpod env start --editor vscode $gitpod_env
     sleep 2 # Wait a moment for the environment to start
   fi
 
