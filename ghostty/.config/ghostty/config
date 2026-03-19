@@ -5,14 +5,21 @@ font-size = 13
 command = /usr/bin/env zsh
 shell-integration-features = ssh-env
 
+copy-on-select = clipboard
+clipboard-read = allow
+clipboard-write = allow
+
 # tmux remappers
 # ctrl+s = \x13
 
+# macos-titlebar-style = hidden
+
 # switch windows (1-4)
-keybind = super+1=text:\x13\x31
-keybind = super+2=text:\x13\x32
-keybind = super+3=text:\x13\x33
-keybind = super+4=text:\x13\x34
+# keybind = super+1=unbind
+keybind = ctrl+one=text:\x13\x31
+keybind = ctrl+two=text:\x13\x32
+keybind = ctrl+three=text:\x13\x33
+keybind = ctrl+four=text:\x13\x34
 
 # split pane vertical
 keybind = super+\=text:\x13\x7c

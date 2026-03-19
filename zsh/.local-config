@@ -49,6 +49,18 @@ ona_ssh() {
   return $ec
 }
 
+ona_stop(){
+  gitpod environment stop $(gitpod config context list -f Environment)
+}
+
+ona_set_env() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: ona_set_env <environment-id>"
+    return 1
+  fi
+   gitpod config context modify default --environment-id $1
+}
+
 push(){
   if [[ -z "$1" ]]; then
     echo "Usage: push <commit-message>"

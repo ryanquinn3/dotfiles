@@ -46,6 +46,9 @@ export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin
 
 fpath=(~/.zsh/completions $fpath)
 
+if [[ -f "/opt/homebrew/bin/brew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 # Node tooling
 eval "$(fnm env --use-on-cd --shell zsh)"

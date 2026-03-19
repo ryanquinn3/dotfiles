@@ -18,6 +18,7 @@ brew "pandoc"
 tap "dlvhdr/formulae"
 brew "diffnav"
 cask "font-hack-nerd-font"
+brew "gum"
 
 
 if RUBY_PLATFORM =~ /linux/
