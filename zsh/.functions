@@ -137,5 +137,5 @@ tmux_open_code() {
 alias oc="tmux_open_code"
 alias cc="tmux_claude_code"
 tmux_claude_code() {
-  tmux_new_window "claude-code" "clc"
+  tmux_new_window "claude-code" "claude --dangerously-skip-permissions"
 }
