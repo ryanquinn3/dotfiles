@@ -55,7 +55,7 @@ kill_process_on_port() {
 }
 
 reload_zsh() {
-  source ~/.zshrc
+  exec zsh
 }
 
 
