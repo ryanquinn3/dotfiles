@@ -6,7 +6,8 @@ alias cat="bat"
 export DOT_FILES=$HOME/repos/dotfiles
 export EDITOR='subl -w'
 
-
+# Node tooling
+eval "$(fnm env --use-on-cd --shell zsh)"
 
 # GH autocompletion
 eval "$(gh completion -s zsh)"
