@@ -36,41 +36,40 @@
    ln -s "$dst" "$src"
  }
 
-link_to_efs "$1"
-#  # Credentials
-#  link_to_efs ".ssh"
-#  link_to_efs ".aws"
-#  link_to_efs ".awsvault"
-#  link_to_efs ".npmrc"
-#  link_to_efs ".terraform.d"
-#  link_to_efs ".config/gh"
+ # Credentials
+ link_to_efs ".ssh"
+ link_to_efs ".aws"
+ link_to_efs ".awsvault"
+ link_to_efs ".npmrc"
+ link_to_efs ".terraform.d"
+ link_to_efs ".config/gh"
 
-#  # Tool state
-#  link_to_efs ".claude.json"
-#  link_to_efs ".config/Code"
-#  link_to_efs ".config/lazydocker"
-#  link_to_efs ".config/turborepo"
-#  link_to_efs ".config/acli"
-#  link_to_efs ".config/gsync"
-#  link_to_efs ".config/opencode"
-#  link_to_efs ".config/vscode-dev-containers"
-#  link_to_efs ".codex"
-#  link_to_efs ".devcontainer"
-#  link_to_efs ".fx"
-#  link_to_efs ".ngrok2"
-#  link_to_efs ".semgrep"
-#  link_to_efs ".dotnet"
+ # Tool state
+ link_to_efs ".claude.json"
+ link_to_efs ".config/Code"
+ link_to_efs ".config/lazydocker"
+ link_to_efs ".config/turborepo"
+ link_to_efs ".config/acli"
+ link_to_efs ".config/gsync"
+ link_to_efs ".config/opencode"
+ link_to_efs ".config/vscode-dev-containers"
+ link_to_efs ".codex"
+ link_to_efs ".devcontainer"
+ link_to_efs ".fx"
+ link_to_efs ".ngrok2"
+ link_to_efs ".semgrep"
+ link_to_efs ".dotnet"
 
-#  # Shell
-#  link_to_efs ".zsh_history"
-#  link_to_efs ".oh-my-zsh"
-#  link_to_efs ".zsh"
-#  link_to_efs ".fzf"
-#  link_to_efs "fzf-git.sh"
-#  link_to_efs ".tmux"
-#  link_to_efs ".bun"
+ # Shell
+ link_to_efs ".zsh_history"
+ link_to_efs ".oh-my-zsh"
+ link_to_efs ".zsh"
+ link_to_efs ".fzf"
+ link_to_efs "fzf-git.sh"
+ link_to_efs ".tmux"
+ link_to_efs ".bun"
 
-#  # Custom
-#  link_to_efs "tools"
-#  link_to_efs "ai-dev-archives"
+ # Custom
+ link_to_efs "tools"
+ link_to_efs "ai-dev-archives"
 
