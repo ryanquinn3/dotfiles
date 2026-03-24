@@ -54,6 +54,10 @@
 # opencode
  link_to_efs ".config/opencode"
  link_to_efs ".local/share/opencode"
+ link_to_efs ".local/state/opencode"
+
+ #glean
+ link_to_efs ".local/state/glean-cli"
 
  link_to_efs ".config/vscode-dev-containers"
  link_to_efs ".codex"
