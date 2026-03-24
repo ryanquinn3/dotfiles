@@ -51,7 +51,10 @@
  link_to_efs ".config/turborepo"
  link_to_efs ".config/acli"
  link_to_efs ".config/gsync"
+# opencode
  link_to_efs ".config/opencode"
+ link_to_efs ".local/share/opencode"
+
  link_to_efs ".config/vscode-dev-containers"
  link_to_efs ".codex"
  link_to_efs ".devcontainer"
