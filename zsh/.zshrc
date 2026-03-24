@@ -104,7 +104,7 @@ unset file
 if [[ -z "$IS_ON_ONA" ]]; then
    source ~/.local-config
 else
-    source ~/.codespaces-config
+    source ~/.cde-config
 fi
 
 export PATH="$HOME/.poetry/bin:$PATH"
