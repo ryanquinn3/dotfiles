@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+ # Creates ~/X → ~/efs/X symlinks for persistent state across devcontainers.
+ # Safe to re-run: skips already-correct symlinks, migrates real dirs/files to efs first.
+
+ EFS_DIR="$HOME/efs"
+
+ if [ ! -d "$EFS_DIR" ]; then
+   echo "setup-efs: ~/efs not found, skipping"
+   exit 0
+ fi
+
+ link_to_efs() {
+   local name="$1"
+   local src="$HOME/$name"
+   local dst="$EFS_DIR/$name"
+
+   # Already correct
+   if [ -L "$src" ] && [ "$(readlink "$src")" = "$dst" ]; then
+     return
+   fi
+
+   # Migrate real file/dir to efs if dst doesn't exist yet
+   if [ ! -e "$dst" ] && [ -e "$src" ] && [ ! -L "$src" ]; then
+     mv "$src" "$dst"
+   fi
+
+   # Remove stale real file/dir at src
+   if [ -e "$src" ] && [ ! -L "$src" ]; then
+     rm -rf "$src"
+   fi
+
+   # Remove wrong symlink
+   [ -L "$src" ] && rm "$src"
+
+   mkdir -p "$(dirname "$src")"
+   ln -s "$dst" "$src"
+ }
+
+link_to_efs "$1"
+#  # Credentials
+#  link_to_efs ".ssh"
+#  link_to_efs ".aws"
+#  link_to_efs ".awsvault"
+#  link_to_efs ".npmrc"
+#  link_to_efs ".terraform.d"
+#  link_to_efs ".config/gh"
+
+#  # Tool state
+#  link_to_efs ".claude.json"
+#  link_to_efs ".config/Code"
+#  link_to_efs ".config/lazydocker"
+#  link_to_efs ".config/turborepo"
+#  link_to_efs ".config/acli"
+#  link_to_efs ".config/gsync"
+#  link_to_efs ".config/opencode"
+#  link_to_efs ".config/vscode-dev-containers"
+#  link_to_efs ".codex"
+#  link_to_efs ".devcontainer"
+#  link_to_efs ".fx"
+#  link_to_efs ".ngrok2"
+#  link_to_efs ".semgrep"
+#  link_to_efs ".dotnet"
+
+#  # Shell
+#  link_to_efs ".zsh_history"
+#  link_to_efs ".oh-my-zsh"
+#  link_to_efs ".zsh"
+#  link_to_efs ".fzf"
+#  link_to_efs "fzf-git.sh"
+#  link_to_efs ".tmux"
+#  link_to_efs ".bun"
+
+#  # Custom
+#  link_to_efs "tools"
+#  link_to_efs "ai-dev-archives"
+

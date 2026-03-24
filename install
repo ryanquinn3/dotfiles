@@ -32,13 +32,22 @@ function clone_tmux_plugin_manager(){
 }
 
 ### Oh My Zsh
-
 function setup_oh_my_zsh_plugins() {
-	git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
-	git clone --depth 1 https://github.com/unixorn/fzf-zsh-plugin.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-zsh-plugin
-	git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab
-	git clone https://github.com/junegunn/fzf-git.sh.git ~/fzf-git.sh
-	git clone https://github.com/chrisands/zsh-yarn-completions ~/.oh-my-zsh/custom/plugins/zsh-yarn-completions
+	# fzf zsh plugin
+	$fzf_zsh_plugin_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-zsh-plugin"
+	[ -d "$fzf_zsh_plugin_dir" ] || git clone --depth 1 https://github.com/unixorn/fzf-zsh-plugin.git "$fzf_zsh_plugin_dir"
+
+	# fzf-tab
+	$fzf_tab_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab"
+	[ -d "$fzf_tab_dir" ] || git clone https://github.com/Aloxaf/fzf-tab "$fzf_tab_dir"
+	
+	# fzf git plugin
+	[ -d ~/fzf-git.sh ] || \
+		git clone https://github.com/junegunn/fzf-git.sh.git ~/fzf-git.sh
+	
+	# yarn completions	
+	$zsh_yarn_completions_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-yarn-completions"
+	[ -d "$zsh_yarn_completions_dir" ] || git clone https://github.com/chrisands/zsh-yarn-completions "$zsh_yarn_completions_dir"
 }
 
 function setup_oh_my_zsh() {
@@ -108,6 +117,7 @@ echo "Symlinking dotfiles..."
 
 ./stow.sh
 tic -x ~/ghostty.terminfo
+./setup-efs
 setup_oh_my_zsh
 
 
