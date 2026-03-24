@@ -23,6 +23,7 @@ brew "gum"
 
 if RUBY_PLATFORM =~ /linux/
   brew "atlassian/homebrew-acli/acli"
+  brew "gleanwork/tap/glean-cli"
 end
 
 if RUBY_PLATFORM =~ /darwin/
