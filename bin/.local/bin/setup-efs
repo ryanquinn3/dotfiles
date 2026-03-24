@@ -68,6 +68,7 @@
  link_to_efs "fzf-git.sh"
  link_to_efs ".tmux"
  link_to_efs ".bun"
+ link_to_efs ".local/share/zoxide"
 
  # Custom
  link_to_efs "tools"
