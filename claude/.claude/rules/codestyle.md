@@ -41,6 +41,7 @@ interface CreateUserInput {
   age: number;
 }
 function createUser(input: CreateUserInput) { ... }
+```
 
 ## Consistent argument order
 
