@@ -33,23 +33,24 @@ function clone_tmux_plugin_manager(){
 
 ### Oh My Zsh
 function setup_oh_my_zsh_plugins() {
-	# Ensure custom plugins directory exists
-	mkdir -p "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins"
+	custom_plugins_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins"
+	[ -d "$custom_plugins_dir" ] || mkdir -p "$custom_plugins_dir"
+
 	
 	# fzf zsh plugin
-	fzf_zsh_plugin_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-zsh-plugin"
+	fzf_zsh_plugin_dir="${custom_plugins_dir}/fzf-zsh-plugin"
 	[ -d "$fzf_zsh_plugin_dir" ] || git clone --depth 1 https://github.com/unixorn/fzf-zsh-plugin.git "$fzf_zsh_plugin_dir"
 
 	# fzf-tab
-	fzf_tab_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab"
+	fzf_tab_dir="${custom_plugins_dir}/fzf-tab"
 	[ -d "$fzf_tab_dir" ] || git clone https://github.com/Aloxaf/fzf-tab "$fzf_tab_dir"
 	
 	# fzf git plugin
-	[ -d ~/fzf-git.sh ] || \
-		git clone https://github.com/junegunn/fzf-git.sh.git ~/fzf-git.sh
+	fzf_git_plugin_dir="${custom_plugins_dir}/fzf-git-plugin"
+	[ -d "$fzf_git_plugin_dir" ] || git clone https://github.com/junegunn/fzf-git.sh.git "$fzf_git_plugin_dir"
 	
 	# yarn completions	
-	zsh_yarn_completions_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-yarn-completions"
+	zsh_yarn_completions_dir="${custom_plugins_dir}/zsh-yarn-completions"
 	[ -d "$zsh_yarn_completions_dir" ] || git clone https://github.com/chrisands/zsh-yarn-completions "$zsh_yarn_completions_dir"
 }
 
