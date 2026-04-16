@@ -30,10 +30,7 @@ Example directory: `packages/my-package/src/my-dir/.ai-dev/plans/2025-12-01-supp
 ### Markdown Preferences
 
 When writing markdown files, follow these rules:
-
 - Prefer mermaid for visualizations 
-- Use HTML table syntax instead of markdown tables.
-- HTML table `th` and `td` elements should have `style="border: 1pt solid #000; padding: 5pt;"` by default.
 
 ### Notes and research
 
