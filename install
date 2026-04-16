@@ -120,7 +120,7 @@ echo "Symlinking dotfiles..."
 [ -f ~/.zshrc ] && rm ~/.zshrc
 
 ./stow.sh
-./setup-efs
+./bin/.local/bin/setup-efs
 setup_oh_my_zsh
 
 
