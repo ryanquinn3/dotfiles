@@ -116,7 +116,6 @@ echo "Symlinking dotfiles..."
 [ -f ~/.zshrc ] && rm ~/.zshrc
 
 ./stow.sh
-tic -x ~/ghostty.terminfo
 ./setup-efs
 setup_oh_my_zsh
 

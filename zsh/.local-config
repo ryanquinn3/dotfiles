@@ -52,6 +52,10 @@ ona_stop(){
   gitpod environment stop $(gitpod config context list -f Environment)
 }
 
+ona_create(){
+  gitpod environment create https://github.com/VantaInc/obsidian.git --class-id 019b3485-7dbc-73b5-92f3-023820982606
+}
+
 ona_set_env() {
   if [[ -z "$1" ]]; then
     echo "Usage: ona_set_env <environment-id>"
