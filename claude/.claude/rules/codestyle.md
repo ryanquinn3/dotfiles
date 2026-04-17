@@ -50,3 +50,7 @@ Related methods should have a consistent argument order. If `create(domainId, in
 ## YAGNI
 
 Only add features, filters, fields, or API surface that is grounded in actual need. Don't speculatively add capabilities.
+
+## Prefer flattened function styles
+
+Prefer flattened function styles. Return early rather than adding unnecessary branching.
