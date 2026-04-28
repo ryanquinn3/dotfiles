@@ -2,7 +2,7 @@ source ~/.git-fns
 
 # Claude code boot up
 clc(){
-  GITHUB_TOKEN= ANTHROPIC_API_KEY= claude --dangerously-skip-permissions --permission-mode plan "$@"
+  GITHUB_TOKEN= ANTHROPIC_API_KEY= claude --dangerously-skip-permissions "$@"
 }
 
 clean_docker() {
@@ -111,17 +111,12 @@ lint_changed(){
   npx eslint --fix $(echo "$changed_files")
 }
 
-install_portainer() {
-  docker volume inspect portainer_data >/dev/null 2>&1 || docker volume create portainer_data
-  docker run -d \
-    -p 8000:8000 \
-    -p 9443:9000 \
-    --name portainer \
-    --restart=always \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -v portainer_data:/data portainer/portainer-ce:latest \
-    --http-enabled
+# Select Docker Compose services
+function dcs() { 
+  file=${1:-docker-compose.yml}
+  docker compose -f $file config --format json | jq -r '.services | keys | .[]' | fzf --multi
 }
+
 
 tmux_current_session(){
   tmux display-message -p '#S'
