@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+sudo EFS_MOUNT_POINT=~/efs GITHUB_USER=ryanquinn3 ./.devcontainer/bin/efs-mount ~/efs
