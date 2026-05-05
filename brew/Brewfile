@@ -19,7 +19,7 @@ tap "dlvhdr/formulae"
 brew "diffnav"
 cask "font-hack-nerd-font"
 brew "gum"
-
+brew "rtk"
 
 if RUBY_PLATFORM =~ /linux/
   brew "atlassian/homebrew-acli/acli"

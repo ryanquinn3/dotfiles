@@ -10,7 +10,7 @@ run_stow zsh tmux git-common fd lnav bin starship gh-dash
 
 
 if [[ $OSTYPE == 'darwin'* ]]; then
-  run_stow aerospace ghostty personal sketchybar docker
+  run_stow aerospace ghostty personal sketchybar docker claude
 fi
 
 if [[ $OSTYPE == 'linux-gnu'* ]]; then
