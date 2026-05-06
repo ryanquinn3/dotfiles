@@ -52,6 +52,7 @@
  link_to_efs ".config/acli"
  link_to_efs ".config/gsync"
  link_to_efs ".config/ddog"
+ link_to_efs ".config/pup"
 # opencode
  link_to_efs ".config/opencode"
  link_to_efs ".local/share/opencode"
