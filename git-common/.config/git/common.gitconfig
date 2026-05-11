@@ -3,8 +3,11 @@
   email = 'ryan3q@gmail.com'
 
 [init]
-  defaultBranch = 'main'
+  defaultBranch = main
   autoSetupRemote = true
+
+[push]
+   autoSetupRemote = true
 
 [core]
   pager = delta

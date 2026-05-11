@@ -1,3 +1,8 @@
+# Local lookup for default branch (no network call)
+_git_default_branch() {
+  git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo main
+}
+
 # Git commit all with message, retrying if pre-commit hooks fail
 gacm(){
   if [ -z "$1" ]; then
@@ -26,13 +31,28 @@ _change_branch(){
       --bind 'enter:become(git checkout {-1})'
 }
 
-
-# Fetch and update local branch from remote
+# Fetch a branch without switching to it (default: main)
 syncb() {
-  local default_branch=$(git remote show origin | grep 'HEAD branch' -m 1 | cut -d' ' -f5)
-  local branch="${1:-$default_branch}"
-  git fetch origin $branch:$branch --update-head-ok --no-tags
+  local branch="${1:-$(_git_default_branch)}"
+  git fetch origin "$branch:$branch" --update-head-ok --no-tags
+  if [ "$(git branch --show-current)" = "$branch" ]; then
+    git reset --hard "$branch"
+  fi
 }
+
+# Reset current branch to match remote exactly
+resetb() {
+  local branch=$(git branch --show-current)
+  git fetch origin "$branch" --no-tags && git reset --hard "origin/$branch"
+}
+
+# Sync main + rebase current branch onto it
+rebasem() {
+  local main=$(_git_default_branch)
+  syncb "$main" && git rebase "$main"
+}
+
+
 
 # Delete git branches matching a substring
 gitdb() {
