@@ -6,6 +6,13 @@ paths:
 
 # Testing Practices
 
+## Avoid stubbing
+
+**Don't** stub methods on the subject under test (e.g. `sinon.stub(instance, 'method').returns(...)`).
+**Do** refactor the subject to accept dependencies via injection or parameterization, then pass test doubles in.
+
+Needing to stub signals a design problem: concrete implementations should depend on interfaces, not hard-coded dependencies. Test the public interface as a black box; the test should not know the implementation.
+
 ## Context-aware test runner
 
 Some packages use Vitest, others use Mocha. Check the package's existing test files or `package.json` before writing tests. Do not assume one runner.
