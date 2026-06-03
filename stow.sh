@@ -6,7 +6,7 @@ function run_stow(){
   done
 }
 
-run_stow zsh tmux git-common fd lnav bin starship gh-dash
+run_stow zsh tmux git-common fd lnav bin starship gh-dash opencode
 
 
 if [[ $OSTYPE == 'darwin'* ]]; then

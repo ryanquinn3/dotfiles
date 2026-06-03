@@ -1,5 +1,5 @@
 ---
-description: Creating implementation plans or multi-step task breakdowns. This includes writing out a plan for how to implement a feature, break down a task into multiple steps, or create a multi-step checklist for a complex change.
+description: Creating implementation plans or multi-step task breakdowns. This includes writing out a plan for how to implement a feature, break down a task into multiple steps, or create a multi-step checklist for a complex change. Use before any writing-plans skills.
 ---
 
 # Planning

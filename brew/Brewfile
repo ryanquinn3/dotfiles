@@ -21,39 +21,49 @@ cask "font-hack-nerd-font"
 brew "gum"
 brew "rtk"
 
+# AI tools
+brew "anomalyco/tap/opencode"
+
 if RUBY_PLATFORM =~ /linux/
   brew "atlassian/homebrew-acli/acli"
   brew "gleanwork/tap/glean-cli"
 end
 
 if RUBY_PLATFORM =~ /darwin/
-  brew "tmux" # tmux is already installed in codespaces
-  brew "awscli"
-  brew "ffmpeg"
-  brew "gh"
-  brew "uv"
-  brew "k9s"
-  brew "redis"
+  # general terminal tools
+  brew "tmux" # tmux is already installed in cde
   brew "httpie"
   brew "yq"
   brew "jq"
-  brew "mysql"
   brew "ripgrep"
   brew "tree"
+  brew "ffmpeg"
+  brew "gh"
+  brew "uv"
+
+
+
+  # cloud CLIs
+  brew "awscli"
   brew "tailscale"
+
+  # dev tools for specific stacks
+  # brew "k9s"
+  # brew "redis"
   
+  
+  # macOS utilities
   brew "FelixKratz/formulae/borders"
   brew "felixkratz/formulae/sketchybar"
 
   # casks
   cask "google-chrome"
   cask "sublime-text"
-  cask "webstorm"
+  # cask "webstorm"
   cask "spotify"
   # cask "iterm2"
   cask "zoom"
   cask "slack"
-  # cask "penc"
   cask "obsidian"
   cask "postman"
   cask "raycast"

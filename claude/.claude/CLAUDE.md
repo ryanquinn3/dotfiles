@@ -37,3 +37,5 @@ For all other markdown files (proposals, explorations, research, diagrams), use 
 
 ### No deferred research or verification tasks
 Never surface a recommendation, caveat, or follow-up item that asks the user to verify, look up, or confirm something you could resolve yourself. If a claim needs verification — a specific AWS primitive, an API behavior, a config detail, a naming convention — do the research inline and include the finding in your response. If you're uncertain, state your best determination with your confidence level and reasoning, then keep moving. The only acceptable output is a complete answer, not a checklist of things for the user to go do.
+
+@RTK.md

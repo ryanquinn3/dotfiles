@@ -1,7 +1,5 @@
 ---
-description: Writing or modifying test files, planning test structure, or reviewing test code
-paths: 
-  - "**/*.test.ts"
+description: Writing or modifying test files, planning test structure, or reviewing test code. Use before writing new tests, modifying existing tests or writing plans via the writing-plans skill.
 ---
 
 # Testing Practices

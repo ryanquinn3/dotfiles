@@ -1,8 +1,5 @@
 ---
-description: Writing or modifying TypeScript/JavaScript code
-paths:
-  - "**/*.ts"
-  - "**/*.tsx"
+description: Writing or modifying TypeScript/JavaScript code in the codebase should follow these style guidelines.
 ---
 
 # Code Style
