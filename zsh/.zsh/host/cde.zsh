@@ -148,6 +148,7 @@ function stamp(){
 }
 
 custom_comp_dir=~/.zsh/completions
+mkdir -p $custom_comp_dir
 
 # if $custom_comp_dir/_docker doesnt exist and docker command exists
 if command -v docker &> /dev/null && [ ! -f $custom_comp_dir/_docker ]; then

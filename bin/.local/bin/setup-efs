@@ -56,7 +56,6 @@
  link_to_efs ".cache/mcp2cli"
  
 # opencode
- link_to_efs ".config/opencode"
  link_to_efs ".local/share/opencode"
  link_to_efs ".local/state/opencode"
 
