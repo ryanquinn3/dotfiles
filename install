@@ -116,8 +116,9 @@ fi
 
 echo "Symlinking dotfiles..."
 
-# if ~/.zshrc exists, delete it
+# remove pre-existing rc files so stow can symlink ours without conflict
 [ -f ~/.zshrc ] && rm ~/.zshrc
+[ -f ~/.zshenv ] && rm ~/.zshenv
 
 ./stow.sh
 ./bin/.local/bin/setup-efs

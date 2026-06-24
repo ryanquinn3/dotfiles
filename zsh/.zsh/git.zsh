@@ -3,6 +3,57 @@ _git_default_branch() {
   git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo main
 }
 
+# Interactive git commit: select files to stage and provide a commit message
+git_commit_interactive() {
+  local -a changed_files untracked_files staged_files selected_files files_to_unstage
+  local staged_selected msg
+
+  changed_files=("${(@f)$(git diff --name-only)}")
+  untracked_files=("${(@f)$(git ls-files --others --exclude-standard)}")
+  staged_files=("${(@f)$(git diff --name-only --cached)}")
+  changed_files=("${(@)changed_files:#}")
+  untracked_files=("${(@)untracked_files:#}")
+  staged_files=("${(@)staged_files:#}")
+  changed_files+=("${untracked_files[@]}")
+  changed_files=("${(@u)changed_files[@]}")
+
+  if (( ! ${#changed_files} )); then
+    echo "No changed files to commit."
+    return 0
+  fi
+
+  staged_selected="${(j:,:)staged_files}"
+  selected_files=("${(@f)$(gum choose --header "Select files to stage" --no-limit --selected="$staged_selected" "$changed_files[@]")}")
+  selected_files=("${(@)selected_files:#}")
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+
+  if (( ! ${#selected_files} )); then
+    echo "No files selected."
+    return 1
+  fi
+
+  msg=$(gum input --header "Enter a commit message" --placeholder "Commit message")
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
+
+  for staged_file in "$staged_files[@]"; do
+    if (( ${selected_files[(Ie)$staged_file]} == 0 )); then
+      files_to_unstage+=("$staged_file")
+    fi
+  done
+
+  if (( ${#files_to_unstage} )); then
+    git restore --staged -- "${files_to_unstage[@]}" || return 1
+  fi
+
+  git add -- "${selected_files[@]}" || return 1
+  git commit -m "$msg"
+}
+alias gci='git_commit_interactive'
+
 # Git commit all with message, retrying if pre-commit hooks fail
 gacm(){
   if [ -z "$1" ]; then
@@ -13,7 +64,7 @@ gacm(){
   echo "Committing code..."
 
   git add --all
-  
+
   # if this fails, retry
   git commit -m $1
   if [ $? -ne 0 ]; then
@@ -52,19 +103,11 @@ rebasem() {
   syncb "$main" && git rebase "$main"
 }
 
-
-
-# Delete git branches matching a substring
-gitdb() {
-  if [ -z "$1" ]
-  then
-    echo "Provide a git branch substring to delete it"
-    exit 0
-  fi
-  git branch | grep -Ei "$1" | grep -Eiv "\*" | while read -r line ; do
-    gb -D $line
-  done
+# Delete local branches interactively using gum
+git_delete_branches() {
+  git branch | cut -c 3- | gum choose --no-limit | xargs git branch -D
 }
+alias gbdel='git_delete_branches'
 
 # Smart Git Squash Function
 git_smart_squash() {
@@ -99,7 +142,7 @@ git_smart_squash() {
   # 4. Perform the squash
   echo "Squashing all commits since $merge_base..."
   git reset --soft "$merge_base"
-  
+
   echo "Ready to commit. Use 'git commit' to finalize."
 }
 
@@ -123,4 +166,18 @@ unpushed() {
       fi
     fi
   done
+}
+
+alias gbsort="git branch --sort=-committerdate"
+alias gcan="git add --all && git commit --amend --no-edit"
+alias pullhead='git pull origin $(git rev-parse --abbrev-ref HEAD)'
+alias gcb='_change_branch'
+
+push(){
+  if [[ -z "$1" ]]; then
+    echo "Usage: push <commit-message>"
+    return 1
+  fi
+  gacm "$1"
+  gp
 }

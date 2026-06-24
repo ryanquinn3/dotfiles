@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "theme": "https://github.com/sinelaw/fresh-plugins#catppuccin-macchiato",
+  "editor": {
+    "auto_save_enabled": true,
+    "auto_save_interval_secs": 5
+  },
+  "file_explorer": {
+    "show_hidden": true,
+    "show_gitignored": true
+  },
+  "lsp": {
+    "typescript": {
+      "enabled": true,
+      "auto_start": true,
+      "process_limits": {
+        "max_memory_percent": 50,
+        "max_cpu_percent": 90,
+        "enabled": false
+      }
+    }
+  },
+  "plugins": {
+    "vi_mode": {
+      "enabled": true,
+      "settings": {
+        "autoStart": false
+      }
+    }
+  },
+  "file_browser": {
+    "show_hidden": true
+  }
+}

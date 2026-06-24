@@ -1,0 +1,26 @@
+# GNU Stow ignore list for the `claude` package.
+# A local ignore file OVERRIDES stow's built-in defaults (no merge), so the
+# standard defaults are reproduced below, then `plugins/` is added.
+#
+# `plugins/` holds Claude Code plugin bundles that are loaded in place via
+# `claude --plugin-dir $DOT_FILES/claude/plugins/<name>`. They must NOT be
+# symlinked into $HOME, so stow skips the whole subtree.
+
+# --- stow built-in defaults ---
+RCS
+.+,v
+CVS
+\.\#.+
+\.cvsignore
+\.svn
+_darcs
+\.git
+\.gitignore
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+^/COPYING
+
+# --- this package ---
+^/plugins

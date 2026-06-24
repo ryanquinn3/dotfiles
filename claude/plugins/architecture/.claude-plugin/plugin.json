@@ -1,0 +1,9 @@
+{
+  "name": "architecture",
+  "description": "Diagramming skills for architecture and design work: Mermaid and Excalidraw diagram generation",
+  "version": "0.1.0",
+  "author": {
+    "name": "Ryan Quinn"
+  },
+  "keywords": ["diagrams", "mermaid", "excalidraw", "architecture"]
+}

@@ -1,10 +1,8 @@
-
-
-ZSHRC_PROFILE="1"
-# if $ZSHRC_PROFILE is set, source it at start
+# Set ZSHRC_PROFILE=1 before launching zsh to profile startup;
+# the matching `zprof` report is printed at the end of this file.
 [ -n "$ZSHRC_PROFILE" ] && zmodload zsh/zprof
 # ZSH config
-# ZSH_THEME="powerlevel10k/powerlevel10k"
+
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 ZSH_DISABLE_COMPFIX="true"
@@ -38,11 +36,9 @@ setopt SHARE_HISTORY
 # Execute commands using history (e.g.: using !$) immediately:
 unsetopt HIST_VERIFY
 
-export LANG=en_US.UTF-8
+# env (PATH, LANG, EDITOR, exports) lives in .zshenv
 export ZSH="$HOME/.oh-my-zsh"
 export ZSHRC="$HOME/.zshrc"
-export DOCKER_BUILDKIT=1
-export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.local/bin"
 
 fpath=(~/.zsh/completions $fpath)
 
@@ -54,14 +50,6 @@ fi
 
 plugins=(git brew fzf-tab zsh-yarn-completions)
 source $ZSH/oh-my-zsh.sh
-
-if [[ -n "$VSCODE_GIT_IPC_HANDLE"  ]]; then
-  export GIT_EDITOR="code --wait"
-  export EDITOR="code --wait"
-else
-  export GIT_EDITOR="gcode --wait"
-  export EDITOR="gcode --wait"
-fi
 
 
 # fzf
@@ -82,33 +70,28 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
+zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept --preview-window='right:60%'
 # zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 # preview directory's content with exa when completing cd
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'tree -C $realpath | head -200'
+# when completing a command name, preview what it resolves to
+# (alias target, function body, or binary path + tldr). source our
+# alias/function files (fzf runs previews in a non-interactive shell
+# that hasn't loaded rc) then resolve.
+zstyle ':fzf-tab:complete:-command-:*' fzf-preview \
+  'for f in ~/.zsh/*.zsh; do source "$f"; done 2>/dev/null; cmd_preview $word'
 # switch group using `,` and `.`
 zstyle ':fzf-tab:*' switch-group ',' '.'
 # zstyle ':fzf-tab:*' fzf-flags --preview 'bat -n --color=always {}'
 
 
-for file in ~/.{aliases,functions,path,dockerfunc,extra,exports}; do
-	if [[ -r "$file" ]] && [[ -f "$file" ]]; then
-		source "$file"
-	fi
-done
-unset file
-
-
-
-# only add these if we are not in a codespace
-if [[ -z "$IS_ON_ONA" ]]; then
-   source ~/.local-config
+# load topic files (cross-platform), then the machine-specific host overlay last
+for f in ~/.zsh/*.zsh(N); do source "$f"; done
+if [[ -n "$IS_ON_ONA" ]]; then
+  source ~/.zsh/host/cde.zsh
 else
-    source ~/.cde-config
+  source ~/.zsh/host/macos.zsh
 fi
-
-export PATH="$HOME/.poetry/bin:$PATH"
-
 
 # if zoxide is installed, initialize it
 [ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
@@ -116,3 +99,6 @@ export PATH="$HOME/.poetry/bin:$PATH"
 source ~/fzf-git.sh/fzf-git.sh
 
 eval "$(starship init zsh)"
+
+# print startup profile if ZSHRC_PROFILE was set (see top of file)
+[ -n "$ZSHRC_PROFILE" ] && zprof

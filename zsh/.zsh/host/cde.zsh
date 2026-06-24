@@ -8,6 +8,12 @@ export DOCKER_CONFIG=$HOME/.docker
 export CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1
 export VANTA_LINT_HOOK_ON_EDIT_ENABLED="false"
 
+# Claude Code plugins loaded on every cde (overrides the default set in
+# claude.zsh, which is sourced earlier). A cde is always the obsidian work box,
+# so compose the work profile here. Append work plugins as they are built, e.g.
+#   _CLAUDE_PLUGINS=(architecture writing work-obsidian)
+_CLAUDE_PLUGINS=(architecture writing)
+
 export DEV_WORKSPACE_DIR=".ai-dev"
 export DEV_ARCHIVE_DIR="$HOME/ai-dev-archives"
 export DEV_S3_ARCHIVE_PREFIX="s3://vanta-dev-codespace-assets/ryanquinn3/ai-dev-archives"
@@ -82,7 +88,7 @@ nb(){
   else
     branch_name="$1"
   fi
-  
+
   syncb && gco -b "$branch_name" main
 }
 
@@ -114,7 +120,7 @@ function logs_ts(){
   fi
   docker compose logs "$service.internal" --no-log-prefix -f \
   | grep --line-buffered '^{' \
-  | jq --unbuffered -c '. + {timestamp: (now | strflocaltime("%Y-%m-%dT%H:%M:%S%Z"))}' 
+  | jq --unbuffered -c '. + {timestamp: (now | strflocaltime("%Y-%m-%dT%H:%M:%S%Z"))}'
 }
 
 function logs_lnav(){
@@ -126,7 +132,7 @@ function logs_lnav(){
   logs_ts "$service" | lnav
 }
 
- 
+
 
 # check if python is /workspaces/obsidian/.venv/bin and only activate if is not
 if [ "$(which python)" != "/workspaces/obsidian/.venv/bin/python" ]; then
@@ -138,7 +144,7 @@ function stamp(){
     echo "Usage: stamp PR_NUMBER"
     return 1
   fi
-   gh pr review --approve $1  
+   gh pr review --approve $1
 }
 
 custom_comp_dir=~/.zsh/completions
@@ -199,7 +205,7 @@ function _run_turbo_task() {
     # what you actually execute (properly quoted)
     local command="turbo "$TASK_NAME" --filter="$PACKAGE_NAME" --output-logs=\"errors-only\""
     eval $command
-    
+
     print -s -- "$command"        # append to zsh history without expansion
   fi
 }
@@ -275,5 +281,3 @@ function dev-workspace-pull(){
   (cd /workspaces/obsidian && tar xzf "$dest")
   echo "Restored from $latest_key"
 }
-
-

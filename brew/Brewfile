@@ -19,16 +19,20 @@ tap "dlvhdr/formulae"
 brew "diffnav"
 cask "font-hack-nerd-font"
 brew "gum"
+brew "glow"
 brew "rtk"
+tap "modem-dev/tap", trusted: true
+brew "hunk"
 
 # AI tools
-brew "anomalyco/tap/opencode"
+brew "anomalyco/tap/opencode", trusted: true
 
 if RUBY_PLATFORM =~ /linux/
   brew "atlassian/homebrew-acli/acli"
   brew "gleanwork/tap/glean-cli"
 end
 
+# macos 
 if RUBY_PLATFORM =~ /darwin/
   # general terminal tools
   brew "tmux" # tmux is already installed in cde
@@ -40,7 +44,9 @@ if RUBY_PLATFORM =~ /darwin/
   brew "ffmpeg"
   brew "gh"
   brew "uv"
-
+  brew "oven-sh/bun/bun"
+  brew "fresh-editor"
+  brew "backlog-md"
 
 
   # cloud CLIs
@@ -53,8 +59,8 @@ if RUBY_PLATFORM =~ /darwin/
   
   
   # macOS utilities
-  brew "FelixKratz/formulae/borders"
-  brew "felixkratz/formulae/sketchybar"
+  brew "FelixKratz/formulae/borders", trusted: true
+  brew "felixkratz/formulae/sketchybar", trusted: true
 
   # casks
   cask "google-chrome"
@@ -73,7 +79,7 @@ if RUBY_PLATFORM =~ /darwin/
   cask "1password/tap/1password-cli"
   cask "notion"
   cask "vlc"
-  cask "nikitabobko/tap/aerospace"
+  cask "nikitabobko/tap/aerospace", trusted: true
   cask "ghostty"
   cask "arc"
   cask "superwhisper"
