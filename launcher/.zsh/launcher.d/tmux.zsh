@@ -1,37 +1,39 @@
-# tmux window switcher — first launcher plugin.
+# tmux window switcher -- launcher plugin.
 #
-# Prints one launcher row per tmux window (MRU-sorted) when sourced. No wrapping
-# function: the core sources this file in a subshell and captures stdout.
+#   enter   -> switch the client to that session/window
+#   alt     -> kill the window
+#   preview -> show the pane's contents
 #
-# Safety contract (the row's command fields are eval'd downstream):
-#   - Action/preview targets use STABLE tmux IDs (#{session_id} $N,
-#     #{window_id} @N, #{pane_id} %N) — integer tokens with no injectable text.
-#   - DISPLAY may show names but is sanitized: [[:cntrl:]] (incl. \x1e/\x1f/
-#     newlines) stripped before wrapping in ANSI.
-#   - Field separator into awk is \x1e (Record Separator-adjacent control byte),
-#     not '|', because window names/paths can contain '|' and shift fields.
+# Every target is a stable tmux ID ($N/@N/%N) carried in `data`; the core pipes
+# `data` to these helpers on stdin and they read it with jq. No window name or
+# path ever reaches a command, so there is nothing to escape.
 
-local d=$_LAUNCHER_DELIM
+_tmux_switch() {                       # enter
+  local d; d=$(jq -c .)
+  tmux switch-client -t "$(jq -r .sid <<<"$d")"
+  tmux select-window -t "$(jq -r .wid <<<"$d")"
+}
+_tmux_kill()    { tmux kill-window  -t "$(jq -r .wid)"; }   # alt
+_tmux_preview() { tmux capture-pane -t "$(jq -r .pid)" -ep; }
+
+[[ -n $_LAUNCHER_EMIT ]] || return 0   # re-sourced just for a helper: stop here
+
+local sh='source ~/.zsh/launcher.d/tmux.zsh'
+# One JSON row per window, MRU-sorted (most-recent activity first). tmux emits
+# \x1f-separated fields (window names/paths can contain anything but \x1f); jq
+# splits on the same byte (0x1f) and builds the row, so all JSON escaping is
+# automatic. The $HOME prefix in the path is shortened to ~ for display.
 tmux list-windows -a -F \
-  $'#{window_activity}\x1e#{session_id}\x1e#{window_id}\x1e#{pane_id}\x1e#{session_name}\x1e#{window_name}\x1e#{pane_current_command}\x1e#{pane_current_path}' \
+  $'#{window_activity}\x1f#{session_id}\x1f#{window_id}\x1f#{pane_id}\x1f#{session_name}\x1f#{window_name}\x1f#{pane_current_command}\x1f#{pane_current_path}' \
   2>/dev/null \
-  | sort -t $'\x1e' -k1,1nr \
-  | awk -F $'\x1e' -v home="$HOME" -v d="$d" -v icon=$'\uf120' \
-        -v w1=$_LAUNCHER_COLW[1] -v w2=$_LAUNCHER_COLW[2] -v w3=$_LAUNCHER_COLW[3] '
-    {
-      sid=$2; wid=$3; pid=$4; sess=$5; win=$6; cmd=$7; path=$8
-      gsub(/[[:cntrl:]]/," ",sess); gsub(/[[:cntrl:]]/," ",win)   # sanitize display fields
-      gsub(/[[:cntrl:]]/," ",cmd);  gsub(/[[:cntrl:]]/," ",path)
-      hl=length(home); if (substr(path,1,hl)==home) path="~" substr(path,hl+1)
-      # leading icon (terminal, blue) + sess/win/cmd padded to shared grid widths,
-      # path as the free tail. Columns line up with other plugins rows.
-      disp=sprintf("\033[34m%s\033[0m  \033[33m%-*s\033[0m \033[36m%-*s\033[0m \033[90m%-*s\033[0m \033[32m%s\033[0m", icon, w1, sess, w2, win, w3, cmd, path)
-      preview="tmux capture-pane -t " pid " -ep"
-      # session_id is $N: wrap it in single quotes (emitted via \047 so the
-      # apostrophe does not close this shell-single-quoted awk program) so the
-      # core eval passes a literal $N to tmux instead of expanding it as a shell
-      # param. @N/%N are not shell special. IDs only: injection-safe.
-      exec="tmux switch-client -t \047" sid "\047 \\; select-window -t " wid
-      alt="tmux kill-window -t " wid
-      printf "%s%s%s%s%s%s%s\n", disp, d, preview, d, exec, d, alt
-    }'
+  | sort -t $'\x1f' -k1,1nr \
+  | jq -Rc --arg home "$HOME" \
+       --arg enter   "$sh && _tmux_switch" \
+       --arg alt     "$sh && _tmux_kill" \
+       --arg preview "$sh && _tmux_preview" '
+      split("\u001f")
+      | { display: { icon: "\uf120", color: 34,
+                     cols: [ .[4], .[5], .[6] ],
+                     tail: ( .[7] | if startswith($home) then "~" + .[($home|length):] else . end ) },
+          data:    { sid: .[1], wid: .[2], pid: .[3] },
+          enter: $enter, alt: $alt, preview: $preview }'

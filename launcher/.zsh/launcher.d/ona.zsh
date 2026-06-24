@@ -1,71 +1,114 @@
-# ona (gitpod) environments — launcher plugin. Mac-only (lives in the launcher
-# package, never stowed on ona/cde), so no IS_ON_ONA guard needed.
+# ona (gitpod) environments -- launcher plugin. Mac-only (lives in the launcher
+# package, never stowed on ona/cde).
 #
-# Prints one row per gitpod env that has NO live local tmux session bound to it:
-#   - stopped env            -> row; exec starts it, then ssh-attaches.
-#   - running, not bound      -> row; exec ssh-attaches (start is a no-op).
-#   - running, session bound  -> NOTHING; the tmux plugin already shows it.
+#   enter   -> start the env if stopped, then ssh-attach in a fresh detached
+#              local session ona-<short> (stamped @is_remote so tmux.conf drops
+#              into dumb-terminal mode on entry)
+#   alt     -> stop the env (running only)
+#   preview -> gitpod env details
 #
-# Binding is by tmux SESSION name `ona-<short>` (<short> = first UUID segment).
-# The exec creates a detached local session with that name and switches to it;
-# detection is `tmux has-session`. Connecting is a local session (not a window in
-# the current session) so it stands alone and the tmux plugin lists it normally.
-#
-# Safety (the core evals EXEC; fzf evals PREVIEW/ALT): the only value reaching a
-# command field is the env id (UUID: hex + dashes, injection-safe). branch/repo
-# are repo-influenced, so they appear ONLY in DISPLAY and are control-stripped.
+# Envs that already have a live local ona-<short> session AND are running are
+# skipped: the tmux plugin already lists them, so showing them here would
+# duplicate. Only the env id (a UUID, injection-safe) and its short form travel
+# in `data`; the core feeds it to the helpers below on stdin.
 
-# Defined unconditionally — the spawned session re-sources THIS file (in a fresh
-# `zsh -c`, where _LAUNCHER_DELIM is unset) purely to obtain this helper.
+# Runs INSIDE the spawned ona-<short> window. Reads the env id from $ONA_ID
+# (set on the session via `new-session -e`), so nothing is interpolated into a
+# command string. Falls back to $1 when called directly.
 _ona_connect() {
-  local id=$1 host="${1}.gitpod.environment"
+  local id=${1:-$ONA_ID}
+  local host="${id}.gitpod.environment"
   if [[ $(gitpod env get "$id" -f phase) != "running" ]]; then
     gum spin --spinner dot --title "Starting $id" -- gitpod env start "$id"
   fi
   echo "Connecting to ${host}..."
   ssh -tt "$host" "tmux new-session -A -s main"
-  # reset mouse reporting that the remote session may have left on
+  # reset mouse reporting the remote session may have left on
   [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
-  exec zsh   # keep the session's window alive as a shell after disconnect
+  exec zsh   # keep the window alive as a shell after disconnect
 }
 
-# Emit rows only when sourced by the launcher core (it sets _LAUNCHER_DELIM,
-# inherited by the emit subshell). The helper re-source above leaves it unset;
-# return 0 (not the failed test's 1) so `source … && _ona_connect` still runs.
-[[ -n $_LAUNCHER_DELIM ]] || return 0
+_ona_launch() {                        # enter
+  local d; d=$(jq -c .)
+  local id short
+  id=$(jq -r .id <<<"$d")
+  short=$(jq -r .short <<<"$d")
+  # detached local session whose window connects; ONA_ID is read by _ona_connect.
+  tmux new-session -d -s "ona-$short" -e "ONA_ID=$id" \
+    'zsh -c "source ~/.zsh/launcher.d/ona.zsh && _ona_connect"'
+  tmux set-option -t "ona-$short" @is_remote 1   # bare name: set-option rejects =name
+  tmux switch-client -t "=ona-$short"            # =name: exact match, accepted here
+}
 
-local d=$_LAUNCHER_DELIM
-gitpod env list -o json 2>/dev/null \
-  | jq -r '.[] | [
-      .id,
-      (.status.phase // "" | sub("ENVIRONMENT_PHASE_";"") | ascii_downcase),
-      (.status.content.git.branch // "?"),
-      (.status.content.git.cloneUrl // "" | sub("\\.git$";"") | split("/") | last)
-    ] | join("\u001e")' \
-  | while IFS=$'\x1e' read -r id phase branch repo; do
-      local short=${id%%-*}
-      # running + a local session already bound -> tmux plugin shows it; skip.
-      if [[ $phase == running ]] && tmux has-session -t "=ona-$short" 2>/dev/null; then
-        continue
-      fi
-      branch=${branch//[[:cntrl:]]/ }   # repo-influenced -> sanitize for DISPLAY
-      repo=${repo//[[:cntrl:]]/ }
-      local disp
-      # leading icon (cloud, magenta) + branch/phase/repo padded to the shared
-      # grid widths so columns align with other plugins' rows.
-      disp=$(printf "\033[35m%s\033[0m  \033[36m%-${_LAUNCHER_COLW[1]}s\033[0m \033[90m%-${_LAUNCHER_COLW[2]}s\033[0m \033[32m%-${_LAUNCHER_COLW[3]}s\033[0m" \
-        $'\uf0c2' "$branch" "$phase" "$repo")
-      local preview="gitpod env get $id"
-      # detached local session named ona-<short>; stamp it @is_remote 1 so the
-      # tmux.conf pane-focus-in hook drops into "dumb terminal" mode (no local
-      # prefix/status/key-table) on entry and passes keys through to the remote
-      # tmux; then switch the client to it. quote the =name target on switch: a
-      # leading '=' forces exact match but would also trigger zsh EQUALS filename
-      # expansion when the core evals this string, hence both quoted and =.
-      # set-option's -t rejects the '=' prefix, so the stamp targets the bare
-      # name (unambiguous: <short> is a full UUID segment).
-      local exec="tmux new-session -d -s ona-$short \"zsh -c 'source ~/.zsh/launcher.d/ona.zsh && _ona_connect $id'\" \\; set-option -t \"ona-$short\" @is_remote 1 \\; switch-client -t \"=ona-$short\""
-      local alt=":"
-      [[ $phase == running ]] && alt="gitpod env stop $id"
-      print -r -- "$disp$d$preview$d$exec$d$alt"
-    done
+_ona_stop() {                          # alt
+  local d; d=$(jq -c .)
+  [[ $(jq -r .phase <<<"$d") == running ]] || return 0
+  gitpod env stop "$(jq -r .id <<<"$d")"
+}
+
+_ona_preview() { gitpod env get "$(jq -r .id)"; }
+
+[[ -n $_LAUNCHER_EMIT ]] || return 0   # re-sourced just for a helper: stop here
+
+# --- stale-while-revalidate cache for `gitpod env list` ----------------------
+# `gitpod env list` is a network call and the slowest thing in emit; it blocks
+# the picker from appearing. The set of envs and their phases changes rarely, so
+# we cache the raw JSON and serve it stale: print the cached copy immediately and
+# (if it's older than the TTL) refresh in the background so the NEXT open is
+# fresh. Only the slow remote call is cached -- the live tmux-session dedup below
+# is always recomputed, so a freshly opened/closed local session is never stale.
+typeset -g  _ONA_CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/launcher-ona.json
+typeset -gi _ONA_TTL=30                 # seconds before a served cache is refreshed
+
+# One foreground refresh: gitpod -> unique temp -> atomic rename. The temp is
+# per-invocation (mktemp) so concurrent refreshes can't clobber a shared file;
+# the rename is atomic so a reader never sees a half-written cache.
+_ona_refresh() {
+  local tmp
+  [[ -d ${_ONA_CACHE:h} ]] || mkdir -p "${_ONA_CACHE:h}"
+  tmp=$(mktemp "${_ONA_CACHE}.XXXXXX") || return
+  if gitpod env list -o json >"$tmp" 2>/dev/null; then
+    mv -f "$tmp" "$_ONA_CACHE"
+  else
+    rm -f "$tmp"
+  fi
+}
+
+# SWR read: cold start fetches once (we have nothing to show); otherwise print
+# the cache and, when stale, kick off a detached background refresh. The
+# background subshell redirects its fds off the emit pipe (&>/dev/null </dev/null)
+# so it can't hold the pipe open and stall _launcher_render's wait for EOF, and
+# is disowned (&!) so it outlives this short-lived emit subshell.
+_ona_env_list() {
+  if [[ ! -f $_ONA_CACHE ]]; then
+    _ona_refresh
+  else
+    local age=$(( $(date +%s) - $(stat -f %m "$_ONA_CACHE") ))
+    (( age >= _ONA_TTL )) && ( _ona_refresh ) </dev/null &>/dev/null &!
+  fi
+  cat "$_ONA_CACHE" 2>/dev/null
+}
+# -----------------------------------------------------------------------------
+
+local sh='source ~/.zsh/launcher.d/ona.zsh'
+# ona-<short> sessions that already exist locally, as a JSON array, used to drop
+# running+bound envs (the tmux plugin already shows them).
+local live
+live=$(tmux list-sessions -F '#{session_name}' 2>/dev/null \
+       | jq -Rsc 'split("\n") | map(select(startswith("ona-")))')
+
+_ona_env_list \
+  | jq -c --argjson live "${live:-[]}" \
+       --arg enter   "$sh && _ona_launch" \
+       --arg alt     "$sh && _ona_stop" \
+       --arg preview "$sh && _ona_preview" '
+      .[]
+      | { id:     .id,
+          short:  ( .id | split("-")[0] ),
+          phase:  ( .status.phase // "" | sub("ENVIRONMENT_PHASE_"; "") | ascii_downcase ),
+          branch: ( .status.content.git.branch // "?" ),
+          repo:   ( .status.content.git.cloneUrl // "" | sub("\\.git$"; "") | split("/") | last ) }
+      | select( ( .phase == "running" and ( .short as $s | $live | index("ona-" + $s) ) ) | not )
+      | { display: { icon: "\uf0c2", color: 35, cols: [ .branch, .phase, .repo ], tail: "" },
+          data:    { id: .id, short: .short, phase: .phase },
+          enter: $enter, alt: $alt, preview: $preview }'
