@@ -19,12 +19,16 @@ _tmux_preview() { tmux capture-pane -t "$(jq -r .pid)" -ep; }
 [[ -n $_LAUNCHER_EMIT ]] || return 0   # re-sourced just for a helper: stop here
 
 local sh='source ~/.zsh/launcher.d/tmux.zsh'
-# One JSON row per window, MRU-sorted (most-recent activity first). tmux emits
-# \x1f-separated fields (window names/paths can contain anything but \x1f); jq
-# splits on the same byte (0x1f) and builds the row, so all JSON escaping is
-# automatic. The $HOME prefix in the path is shortened to ~ for display.
+# One JSON row per window, MRU-sorted by last *focus* (most-recently viewed
+# first). The sort key is @focus_ts, the epoch stamped on each window by the
+# pane-focus-in hook in .tmux.conf; windows never focused since that hook was
+# installed have no @focus_ts, so we fall back to #{window_activity} (last
+# output) via the #{?...} ternary. tmux emits \x1f-separated fields (window
+# names/paths can contain anything but \x1f); jq splits on the same byte (0x1f)
+# and builds the row, so all JSON escaping is automatic. The $HOME prefix in the
+# path is shortened to ~ for display.
 tmux list-windows -a -F \
-  $'#{window_activity}\x1f#{session_id}\x1f#{window_id}\x1f#{pane_id}\x1f#{session_name}\x1f#{window_name}\x1f#{pane_current_command}\x1f#{pane_current_path}' \
+  $'#{?#{@focus_ts},#{@focus_ts},#{window_activity}}\x1f#{session_id}\x1f#{window_id}\x1f#{pane_id}\x1f#{session_name}\x1f#{window_name}\x1f#{pane_current_command}\x1f#{pane_current_path}' \
   2>/dev/null \
   | sort -t $'\x1f' -k1,1nr \
   | jq -Rc --arg home "$HOME" \

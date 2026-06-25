@@ -73,7 +73,6 @@
  # Shell
  link_to_efs ".zsh_history"
  link_to_efs ".oh-my-zsh"
- link_to_efs ".zsh"
  link_to_efs ".fzf"
  link_to_efs "fzf-git.sh"
  link_to_efs ".tmux"

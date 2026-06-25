@@ -48,7 +48,7 @@ fi
 
 
 
-plugins=(git brew fzf-tab zsh-yarn-completions)
+plugins=(git brew fzf-tab zsh-yarn-completions tmux)
 source $ZSH/oh-my-zsh.sh
 
 

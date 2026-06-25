@@ -1,6 +1,14 @@
 if [ -f /etc/profile.d/ona-secrets.sh ]; then
   source /etc/profile.d/ona-secrets.sh
 fi
+
+# Auto-mount EFS on a fresh box (first interactive shell only)
+if [ -n "$EFS_MOUNT_POINT" ] && ! mountpoint -q "$EFS_MOUNT_POINT"; then
+  sudo EFS_MOUNT_POINT="$EFS_MOUNT_POINT" GITHUB_USER="$GITHUB_USER" \
+    /workspaces/obsidian/.devcontainer/bin/efs-mount "$EFS_MOUNT_POINT" \
+    && setup-efs
+fi
+
 # config for codespaces
 export DEV_LOG_FORMAT="json"
 export DOCKER_CONFIG=$HOME/.docker
