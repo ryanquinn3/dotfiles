@@ -28,7 +28,7 @@ local sh='source ~/.zsh/launcher.d/tmux.zsh'
 # and builds the row, so all JSON escaping is automatic. The $HOME prefix in the
 # path is shortened to ~ for display.
 tmux list-windows -a -F \
-  $'#{?#{@focus_ts},#{@focus_ts},#{window_activity}}\x1f#{session_id}\x1f#{window_id}\x1f#{pane_id}\x1f#{session_name}\x1f#{window_name}\x1f#{pane_current_command}\x1f#{pane_current_path}' \
+  $'#{?#{@focus_ts},#{@focus_ts},#{window_activity}}\x1f#{session_id}\x1f#{window_id}\x1f#{pane_id}\x1f#{session_name}\x1f#{window_name}\x1f#{pane_current_command}\x1f#{pane_current_path}\x1f#{@icon}' \
   2>/dev/null \
   | sort -t $'\x1f' -k1,1nr \
   | jq -Rc --arg home "$HOME" \
@@ -36,7 +36,7 @@ tmux list-windows -a -F \
        --arg alt     "$sh && _tmux_kill" \
        --arg preview "$sh && _tmux_preview" '
       split("\u001f")
-      | { display: { icon: "\uf120", color: 34,
+      | { display: { icon: ( if .[8] == "" then "\uf120" else .[8] end ), color: 34,
                      cols: [ .[4], .[5], .[6] ],
                      tail: ( .[7] | if startswith($home) then "~" + .[($home|length):] else . end ) },
           data:    { sid: .[1], wid: .[2], pid: .[3] },

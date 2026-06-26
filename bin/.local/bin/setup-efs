@@ -64,7 +64,6 @@
 
  link_to_efs ".config/vscode-dev-containers"
  link_to_efs ".codex"
- link_to_efs ".devcontainer"
  link_to_efs ".fx"
  link_to_efs ".ngrok2"
  link_to_efs ".semgrep"

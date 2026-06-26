@@ -1,7 +1,7 @@
 # Plugin-based fzf launcher (mac-only; package stowed only in the darwin branch).
 #
 # A single fzf core that pipes rows from any number of plugins into one picker.
-# The core stays domain-agnostic: it knows nothing about tmux, ssh, or gitpod.
+# The core stays domain-agnostic: it knows nothing about tmux, ssh, or ona.
 #
 # DATA-IN, NOT CODE-IN. A plugin emits one JSON object per line (JSONL) with a
 # `data` payload and three FIXED command strings (enter/alt/preview). The core

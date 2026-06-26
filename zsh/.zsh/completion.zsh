@@ -1,3 +1,15 @@
+# Cache a tool's zsh completion into $fpath once, as _<cmd> so compinit autoloads
+# it (next shell). Regenerate by deleting the file. Extra args override the
+# generator when it isn't the conventional `<cmd> completion zsh`.
+gen_completion() {
+    local cmd=$1; shift
+    command -v "$cmd" &>/dev/null || return
+    mkdir -p "$ZSH_COMPLETIONS_DIR"
+    local out="$ZSH_COMPLETIONS_DIR/_$cmd"
+    [ -f "$out" ] && return
+    if (( $# )); then "$@" > "$out"; else "$cmd" completion zsh > "$out"; fi
+}
+
 # extract the contiguous leading comment block above a function definition.
 # add a comment directly above any function to document it here / in previews.
 fn_doc() {

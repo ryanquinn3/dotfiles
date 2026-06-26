@@ -25,7 +25,7 @@ _CLAUDE_PLUGINS=(architecture writing)
 export DEV_WORKSPACE_DIR=".ai-dev"
 export DEV_ARCHIVE_DIR="$HOME/ai-dev-archives"
 export DEV_S3_ARCHIVE_PREFIX="s3://vanta-dev-codespace-assets/ryanquinn3/ai-dev-archives"
-export CDE_DISPLAY_NAME=$(echo "$(gitpod environment get -f Id)")
+export CDE_DISPLAY_NAME=$(echo "$(ona environment get -f Id)")
 
 WC_PKG="@vanta/web-client"
 
@@ -155,20 +155,11 @@ function stamp(){
    gh pr review --approve $1
 }
 
-custom_comp_dir=~/.zsh/completions
-mkdir -p $custom_comp_dir
-
-# if $custom_comp_dir/_docker doesnt exist and docker command exists
-if command -v docker &> /dev/null && [ ! -f $custom_comp_dir/_docker ]; then
-  docker completion zsh > $custom_comp_dir/_docker
-fi
+gen_completion docker
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# if $custom_comp_dir/_turbo doesnt exist and turbo command exists
-if command -v turbo &> /dev/null && [ ! -f $custom_comp_dir/_turbo ]; then
-  turbo completion zsh > $custom_comp_dir/_turbo
-fi
+gen_completion turbo
 
 function new_prompt(){
   [ -z "$1" ] && { echo "Usage: new_prompt NAME"; return 1; }

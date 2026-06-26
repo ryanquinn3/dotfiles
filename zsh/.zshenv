@@ -10,6 +10,7 @@ export DOCKER_BUILDKIT=1
 typeset -U path PATH
 export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.local/bin:$HOME/.poetry/bin"
 
+export ZSH_COMPLETIONS_DIR="$HOME/.zsh/completions"
 # Editor: inside a VS Code / CDE integrated terminal use code, else gcode.
 # On macOS .local-config overrides this to `fresh`; in CDEs nothing overrides
 # it, so this block is the source of truth there. (see .zshrc sourcing order)

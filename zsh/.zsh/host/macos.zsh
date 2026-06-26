@@ -9,8 +9,8 @@ export EDITOR='fresh --wait'
 # Node tooling
 eval "$(fnm env --use-on-cd --shell zsh)"
 
-# GH autocompletion
-eval "$(gh completion -s zsh)"
+
+gen_completion gh gh completion -s zsh   # gh uses `-s zsh`, not `completion zsh`
 
 # disable mouse reporting
 function fix_mouse(){
@@ -19,43 +19,7 @@ function fix_mouse(){
 
 alias fm="fix_mouse"
 
-
-ona_ssh() {
-  gitpod_env=$( gitpod config context list -f Environment)
-  if [[ -z "$gitpod_env" ]]; then
-    echo "No active Gitpod environments in context. Set one with gitpod config context modify default --environment-id $ENV"
-    return 1
-  fi
-
-  if [[ $(gitpod env get $gitpod_env -f phase) != "running" ]]; then
-    gum spin --spinner dot --title "Starting Gitpod environment" -- gitpod env start --editor vscode $gitpod_env
-  fi
-
-  gitpod_host="${gitpod_env}.gitpod.environment"
-  echo "Connecting to ${gitpod_host}..."
-  # Connect via SSH and attach to main tmux session
-  ssh -tt "${gitpod_host}" "tmux new-session -A -s main"
-  # When ssh session ends, disable mouse reporting so that terminal behaves correctly
-  local ec=$?
-  [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
-  return $ec
-}
-
-ona_stop(){
-  gitpod environment stop $(gitpod config context list -f Environment)
-}
-
-ona_create(){
-  gitpod environment create https://github.com/VantaInc/obsidian.git --class-id 019b3485-7dbc-73b5-92f3-023820982606
-}
-
-ona_set_env() {
-  if [[ -z "$1" ]]; then
-    echo "Usage: ona_set_env <environment-id>"
-    return 1
-  fi
-   gitpod config context modify default --environment-id $1
-}
+# ona environment helpers live in ~/.zsh/ona.zsh (sourced as a topic file)
 
 # print current wifi network
 ssid() {
