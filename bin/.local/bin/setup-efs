@@ -62,7 +62,6 @@
  #glean
  link_to_efs ".local/state/glean-cli"
 
- link_to_efs ".config/vscode-dev-containers"
  link_to_efs ".codex"
  link_to_efs ".fx"
  link_to_efs ".ngrok2"
@@ -71,10 +70,6 @@
 
  # Shell
  link_to_efs ".zsh_history"
- link_to_efs ".oh-my-zsh"
- link_to_efs ".fzf"
- link_to_efs "fzf-git.sh"
- link_to_efs ".tmux"
  link_to_efs ".bun"
  link_to_efs ".local/share/zoxide"
 

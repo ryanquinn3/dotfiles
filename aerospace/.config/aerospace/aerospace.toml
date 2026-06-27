@@ -22,7 +22,7 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
 # The 'accordion-padding' specifies the size of accordion padding
 # You can set 0 to disable the padding feature
-accordion-padding = 30
+accordion-padding = 1
 
 # Possible values: tiles|accordion
 default-root-container-layout = 'tiles'
@@ -76,7 +76,7 @@ automatically-unhide-macos-hidden-apps = false
     inner.vertical =   10
     outer.left =       10
     outer.bottom =     10
-    outer.top =        [{ monitor.'^built-in retina display$' = 0}, 30]
+    outer.top =        [{ monitor.'^built-in retina display$' = 5}, 30]
     outer.right =      10
 
 # 'main' binding mode declaration
@@ -117,10 +117,13 @@ automatically-unhide-macos-hidden-apps = false
     alt-comma = 'layout accordion horizontal vertical'
 
     # See: `
-    alt-h = 'focus left'
-    alt-j = 'focus down'
-    alt-k = 'focus up'
-    alt-l = 'focus right'
+    # alt-h = 'focus left'
+    # alt-j = 'focus down'
+    # alt-k = 'focus up'
+    # alt-l = 'focus right'
+
+    alt-k = 'focus --boundaries-action wrap-around-the-workspace dfs-next'
+    alt-l = 'focus --boundaries-action wrap-around-the-workspace dfs-prev'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
     alt-shift-h = 'move left'

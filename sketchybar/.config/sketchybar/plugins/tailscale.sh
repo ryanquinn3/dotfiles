@@ -5,7 +5,7 @@ ts=$(tailscale status > /dev/null)
 
 # if exit code is 0
 if [ $? -eq 0 ]; then
-  sketchybar -m --set tailscale label.color=$COLOR_SUCCESS
+  sketchybar -m --set tailscale icon.color=$COLOR_SUCCESS
 else
-  sketchybar -m --set tailscale label.color=$COLOR_WARNING
+  sketchybar -m --set tailscale icon.color=$COLOR_WARNING
 fi

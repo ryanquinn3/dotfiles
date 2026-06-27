@@ -1,34 +1,34 @@
-# This is a demo config to showcase some of the most important commands.
-# It is meant to be changed and configured, as it is intentionally kept sparse.
-# For a (much) more advanced configuration example see my dotfiles:
-# https://github.com/FelixKratz/dotfiles
+#!/usr/bin/env bash
+# Catppuccin Macchiato themed bar with two floating pills (left + right).
+# Docs: https://felixkratz.github.io/SketchyBar/
 
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
 source "$PLUGIN_DIR/colors.sh"
 
-BAR_HEIGHT=25
-##### Bar Appearance #####
-# Configuring the general appearance of the bar.
-# These are only some of the options available. For all options see:
-# https://felixkratz.github.io/SketchyBar/config/bar
-# If you are looking for other colors, see the color picker:
-# https://felixkratz.github.io/SketchyBar/config/tricks#color-picker
+BAR_HEIGHT=32
+PILL_HEIGHT=26
+PILL_RADIUS=13 # half of PILL_HEIGHT for a true pill shape
 
-sketchybar --bar position=top height=$BAR_HEIGHT blur_radius=30 color=0x40000000
+##### Bar Appearance #####
+# Fully transparent bar so the left/right brackets read as isolated pills.
+sketchybar --bar position=top \
+                 height=$BAR_HEIGHT \
+                 color=0x00000000 \
+                 blur_radius=0 \
+                 padding_left=8 \
+                 padding_right=8 \
+                 y_offset=0 \
+                 margin=0
 
 ##### Changing Defaults #####
-# We now change some default values, which are applied to all further items.
-# For a full list of all available item properties see:
-# https://felixkratz.github.io/SketchyBar/config/items
-
 default=(
-  padding_left=5
-  padding_right=5
+  padding_left=4
+  padding_right=4
   icon.font="Hack Nerd Font:Bold:14.0"
   label.font="Hack Nerd Font:Bold:12.0"
-  icon.color=0xffffffff
-  label.color=0xffffffff
+  icon.color=$TEXT
+  label.color=$TEXT
   icon.padding_left=4
   icon.padding_right=4
   label.padding_left=4
@@ -36,62 +36,61 @@ default=(
 )
 sketchybar --default "${default[@]}"
 
-##### Adding Mission Control Space Indicators #####
-# Let's add some mission control spaces:
-# https://felixkratz.github.io/SketchyBar/config/components#space----associate-mission-control-spaces-with-an-item
-# to indicate active and available mission control spaces.
-
+##### Mission Control Space Indicators #####
 sketchybar --add event aerospace_workspace_change
 
-for sid in $(aerospace list-workspaces --all); do
-    sketchybar --add item space.$sid left \
-        --subscribe space.$sid aerospace_workspace_change \
-        --set space.$sid \
-        background.color=0x44ffffff \
-        background.corner_radius=5 \
-        background.height=20 \
-        background.drawing=off \
-        icon.drawing=off \
-        label="$sid" \
-        click_script="aerospace workspace $sid" \
-        script="$CONFIG_DIR/plugins/aerospace.sh $sid"
-done
+# Single indicator: workspace icon on the left, focused workspace name on the right.
+sketchybar --add item workspace left \
+           --subscribe workspace aerospace_workspace_change \
+           --set workspace \
+                 icon=\
+                 icon.color=$ACCENT \
+                 label.color=$TEXT \
+                 script="$CONFIG_DIR/plugins/aerospace.sh"
 
-##### Adding Left Items #####
-# We add some regular items to the left side of the bar, where
-# only the properties deviating from the current defaults need to be set
-
+##### Left Items #####
 sketchybar --add item front_app left \
-           --set front_app icon.drawing=off script="$PLUGIN_DIR/front_app.sh" \
+           --set front_app icon.drawing=off label.color=$TEXT \
+                 script="$PLUGIN_DIR/front_app.sh" \
            --subscribe front_app front_app_switched
 
-##### Adding Right Items #####
-# In the same way as the left items we can add items to the right side.
-# Additional position (e.g. center) are available, see:
-# https://felixkratz.github.io/SketchyBar/config/items#adding-items-to-sketchybar
-
-# Some items refresh on a fixed cycle, e.g. the clock runs its script once
-# every 10s. Other items respond to events they subscribe to, e.g. the
-# volume.sh script is only executed once an actual change in system audio
-# volume is registered. More info about the event system can be found here:
-# https://felixkratz.github.io/SketchyBar/config/events
-
+##### Right Items #####
 sketchybar --add item clock right \
-           --set clock update_freq=10 icon=  script="$PLUGIN_DIR/clock.sh" \
+           --set clock update_freq=10 icon= icon.color=$LAVENDER \
+                 script="$PLUGIN_DIR/clock.sh" \
            --add item volume right \
-           --set volume script="$PLUGIN_DIR/volume.sh" \
+           --set volume icon.color=$SKY script="$PLUGIN_DIR/volume.sh" \
            --subscribe volume volume_change \
            --add item battery right \
-           --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" \
+           --set battery update_freq=120 icon.color=$GREEN \
+                 script="$PLUGIN_DIR/battery.sh" \
            --subscribe battery system_woke power_source_change
 
 sketchybar --add item tailscale right \
            --set tailscale script="$PLUGIN_DIR/tailscale.sh" \
                  update_freq=10 \
-                 label="tailscale" \
-                 background.height=$BAR_HEIGHT \
-                 icon.drawing=off \
+                 label.padding_left=0 \
+                 label.padding_right=0 \
+                 icon=󰦝 \
                  label.font="Hack Nerd Font:Regular:11.0"
 
-##### Force all scripts to run the first time (never do this in a script) #####
+##### Pills (brackets) #####
+# Left pill groups the workspaces + front_app; right pill groups the status items.
+pill=(
+  background.color=$PILL_BG
+  background.corner_radius=$PILL_RADIUS
+  background.height=$PILL_HEIGHT
+  background.border_color=$PILL_BORDER
+  background.border_width=1
+  padding_left=8
+      padding_right=8
+)
+
+sketchybar --add bracket left_pill workspace front_app \
+           --set left_pill "${pill[@]}"
+
+sketchybar --add bracket right_pill clock volume battery tailscale \
+           --set right_pill "${pill[@]}"
+
+##### Force all scripts to run the first time #####
 sketchybar --update
