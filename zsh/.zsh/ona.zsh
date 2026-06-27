@@ -45,21 +45,17 @@ ona_pick() {
           --layout=reverse \
           --info=inline \
           --preview-window='nohidden,40%,<50(down,50%,border-rounded)' \
-    | awk '{ print $1 }'
+    | awk '{ print $1 }' | tee >(pbcopy)
 
   rm -rf "$cache"; unset ONA_PREVIEW_CACHE
 }
 
 ona_ssh() {
   local env_id host
-  env_id=$(ona config context list -f Environment)
-  if [[ -z "$env_id" ]]; then
-    echo "No active ona environment in context. Set one with: ona_set_env <environment-id>"
-    return 1
-  fi
+  env_id=$(ona_pick) || return 1
 
   if [[ $(ona env get $env_id -f phase) != "running" ]]; then
-    gum spin --spinner dot --title "Starting ona environment" -- ona env start --editor vscode $env_id
+    gum spin --spinner dot --title "Starting ona environment" -- ona env start $env_id
   fi
 
   host="${env_id}.gitpod.environment"
@@ -73,7 +69,7 @@ ona_ssh() {
 }
 
 ona_stop(){
-  ona environment stop $(ona config context list -f Environment)
+  ona environment stop $(ona_pick)
 }
 
 ona_create(){
@@ -81,9 +77,10 @@ ona_create(){
 }
 
 ona_set_env() {
-  if [[ -z "$1" ]]; then
-    echo "Usage: ona_set_env <environment-id>"
+  ona_env=$(ona_pick)
+  if [[ -z "$ona_env" ]]; then
+    
     return 1
   fi
-  ona config context modify default --environment-id $1
+  ona config context modify default --environment-id $ona_env
 }

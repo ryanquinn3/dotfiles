@@ -122,7 +122,6 @@ echo "Symlinking dotfiles..."
 [ -f ~/.zshenv ] && rm ~/.zshenv
 
 ./stow.sh
-[[ $OSTYPE == 'linux-gnu'* ]] && ./bin/.local/bin/setup-efs
 setup_oh_my_zsh
 
 
@@ -130,7 +129,5 @@ setup_oh_my_zsh
 sudo chsh -s $(which zsh) $USERNAME
 
 
-echo "Configuring shell..."
-source ~/.zshrc
-echo "Done."
+echo "Run \"source ~/.zshrc\" to load the new zsh config."
 
