@@ -74,7 +74,6 @@ function install_homebrew_for_linux(){
 	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 	(cd $DIR/brew && brew bundle install)
 	gh extension install dlvhdr/gh-dash
-
 }
 
 
@@ -118,8 +117,8 @@ fi
 echo "Symlinking dotfiles..."
 
 # remove pre-existing rc files so stow can symlink ours without conflict
-[ -f ~/.zshrc ] && rm ~/.zshrc
-[ -f ~/.zshenv ] && rm ~/.zshenv
+[ -f ~/.zshrc ] && mv ~/.zshrc ~/.zshrc.old
+[ -f ~/.zshenv ] && mv ~/.zshenv ~/.zshenv.old
 
 ./stow.sh
 setup_oh_my_zsh
