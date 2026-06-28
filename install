@@ -33,7 +33,7 @@ function clone_tmux_plugin_manager(){
 
 ### Oh My Zsh
 function setup_oh_my_zsh_plugins() {
-	custom_plugins_dir="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins"
+	custom_plugins_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
 	[ -d "$custom_plugins_dir" ] || mkdir -p "$custom_plugins_dir"
 
 	
@@ -117,8 +117,8 @@ fi
 echo "Symlinking dotfiles..."
 
 # remove pre-existing rc files so stow can symlink ours without conflict
-[ -f ~/.zshrc ] && mv ~/.zshrc ~/.zshrc.old
-[ -f ~/.zshenv ] && mv ~/.zshenv ~/.zshenv.old
+[ -f "$HOME/.zshrc" ] && mv "$HOME/.zshrc" "$HOME/.zshrc.old"
+[ -f "$HOME/.zshenv" ] && mv "$HOME/.zshenv" "$HOME/.zshenv.old"
 
 ./stow.sh
 setup_oh_my_zsh

@@ -73,13 +73,17 @@ ona_stop(){
 }
 
 ona_create(){
-  ona environment create https://github.com/VantaInc/obsidian.git --class-id 019b3485-7dbc-73b5-92f3-023820982606
+  if [[ -z "$ONA_PROJECT_ID" || -z "$ONA_CLASS_ID" ]]; then
+    echo "ONA_PROJECT_ID and ONA_CLASS_ID must be set to create an environment."
+    return 1
+  fi
+  ona environment create $ONA_PROJECT_ID --class-id $ONA_CLASS_ID
 }
 
 ona_set_env() {
   ona_env=$(ona_pick)
   if [[ -z "$ona_env" ]]; then
-    
+    echo "No ona environment selected."
     return 1
   fi
   ona config context modify default --environment-id $ona_env

@@ -9,3 +9,5 @@ claude/.claude/debug
 claude/.claude/plugins
 claude/.claude/.credentials.json
 .DS_Store
+
+.env*

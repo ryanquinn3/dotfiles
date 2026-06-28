@@ -6,7 +6,8 @@
 export LANG=en_US.UTF-8
 export DOCKER_BUILDKIT=1
 
-[[ -f ~/.zshenv.old ]] && source ~/.zshenv.old
+[[ -f "$HOME/.zshenv.old" ]] && source "$HOME/.zshenv.old"
+[[ -f "$HOME/.env.local" ]] && source "$HOME/.env.local"
 
 # keep PATH entries unique so re-sourcing in subshells doesn't duplicate them
 typeset -U path PATH

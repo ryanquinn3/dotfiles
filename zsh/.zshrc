@@ -42,9 +42,16 @@ export ZSHRC="$HOME/.zshrc"
 
 fpath=(~/.zsh/completions $fpath)
 
-if [[ -f "/opt/homebrew/bin/brew" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
+# init brew early (before fzf/completion) so brew tools win over older system
+# copies (e.g. apt fzf without --zsh). brew usually isn't on PATH in a fresh
+# shell, so try it directly, then fall back to the canonical install prefixes;
+# shellenv then sets PATH/MANPATH/etc.
+for brew_bin in brew /opt/homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  if command -v "$brew_bin" >/dev/null 2>&1; then
+    eval "$("$brew_bin" shellenv)"
+    break
+  fi
+done
 
 
 
@@ -52,8 +59,10 @@ plugins=(git brew fzf-tab zsh-yarn-completions tmux)
 source $ZSH/oh-my-zsh.sh
 
 
-# fzf
-source <(fzf --zsh)
+# fzf (--zsh needs fzf >= 0.48; guard so an older system fzf doesn't error)
+if fzf --zsh >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --no-ignore-vcs"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --no-ignore-vcs"
@@ -96,7 +105,9 @@ fi
 # if zoxide is installed, initialize it
 [ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
 
-source ~/fzf-git.sh/fzf-git.sh
+# fzf-git is cloned as an omz custom plugin (see install: fzf_git_plugin_dir)
+fzf_git="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-git-plugin/fzf-git.sh"
+[ -f "$fzf_git" ] && source "$fzf_git"
 
 eval "$(starship init zsh)"
 
