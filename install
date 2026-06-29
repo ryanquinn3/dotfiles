@@ -73,7 +73,7 @@ function install_homebrew_for_linux(){
 	sudo apt-get install build-essential
 	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 	# needed for this install script
-	HOMEBREW_NO_AUTO_UPDATE=1 brew stow fzf
+	HOMEBREW_NO_AUTO_UPDATE=1 brew install stow fzf
 	# (cd $DIR/brew && brew bundle install)
 	# gh extension install dlvhdr/gh-dash
 }
