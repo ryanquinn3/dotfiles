@@ -78,7 +78,9 @@ ona_create(){
     echo "ONA_PROJECT_ID and ONA_CLASS_ID must be set to create an environment."
     return 1
   fi
-  ona environment create $ONA_PROJECT_ID --class-id $ONA_CLASS_ID
+  ona environment create $ONA_PROJECT_ID --class-id $ONA_CLASS_ID --set-as-context
+  echo "Created and set new environment as context: $(ona env get -f id). Install brew".
+  ona environment ssh -- -t 'zsh -ic "setup_efs && install-apps"'
 }
 
 ona_set_env() {

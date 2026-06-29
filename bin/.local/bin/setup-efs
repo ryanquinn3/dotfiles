@@ -54,6 +54,7 @@
  link_to_efs ".config/ddog"
  link_to_efs ".config/pup"
  link_to_efs ".cache/mcp2cli"
+ link_to_efs ".cache/Homebrew"
  
 # opencode
  link_to_efs ".local/share/opencode"

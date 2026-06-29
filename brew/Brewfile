@@ -24,11 +24,14 @@ tap "modem-dev/tap", trusted: true
 brew "hunk"
 
 # AI tools
-brew "anomalyco/tap/opencode", trusted: true
+tap "anomalyco/tap", trusted: true
+brew "opencode"
 
 if RUBY_PLATFORM =~ /linux/
-  brew "atlassian/homebrew-acli/acli"
-  brew "gleanwork/tap/glean-cli"
+  tap "atlassian/homebrew-acli", trusted: true
+  tap "gleanwork/tap", trusted: true
+  brew "acli"
+  brew "glean-cli"
 end
 
 # macos 

@@ -9,6 +9,9 @@ export DOCKER_BUILDKIT=1
 [[ -f "$HOME/.zshenv.old" ]] && source "$HOME/.zshenv.old"
 [[ -f "$HOME/.env.local" ]] && source "$HOME/.env.local"
 
+if [ -f /etc/profile.d/ona-secrets.sh ]; then
+  source /etc/profile.d/ona-secrets.sh
+fi
 # keep PATH entries unique so re-sourcing in subshells doesn't duplicate them
 typeset -U path PATH
 export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.local/bin:$HOME/.poetry/bin"
