@@ -181,3 +181,12 @@ push(){
   gacm "$1"
   gp
 }
+
+# Approve a PR with the given number using GitHub CLI
+function stamp(){
+  if [ -z "$1" ]; then
+    echo "Usage: stamp PR_NUMBER"
+    return 1
+  fi
+   gh pr review --approve $1
+}

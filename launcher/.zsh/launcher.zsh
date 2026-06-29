@@ -16,6 +16,7 @@
 #   {
 #     "display": { "icon": "", "color": 34, "cols": ["c1","c2","c3"], "tail": "" },
 #     "data":    { ... },          # arbitrary, plugin-defined; passed to cmds on stdin
+#     "sort":    1782748960,       # OPTIONAL epoch secs; global MRU sort key (see _launcher_sort)
 #     "enter":   "<cmd>",          # run on Enter   (action)
 #     "alt":     "<cmd>",          # run on ctrl-x  (alt action)
 #     "preview": "<cmd>"           # run for the preview pane
@@ -55,6 +56,17 @@ _launcher_emit_rows() {
   done
 }
 
+# Global MRU sort across all plugins. Plugins emit rows in glob order (ona.zsh
+# before tmux.zsh), so without this every ona env would clump ahead of every
+# tmux window regardless of recency. Each row MAY carry a top-level numeric
+# `sort` (epoch seconds: tmux uses last-focus, ona uses lastStartedAt); we slurp
+# the whole stream and order it newest-first so the two interleave by recency.
+# Rows without `sort` sink to the bottom (treated as 0). The key is stripped
+# after sorting -- it's an ordering concern, never part of dispatch `data`.
+_launcher_sort() {
+  jq -sc 'sort_by(-(.sort // 0)) | .[] | del(.sort)'
+}
+
 # JSONL on stdin -> "DISPLAY<TAB>ROW_JSON" on stdout. fzf shows field 1 (the
 # rendered display); field 2 carries the row's JSON (sans display) for dispatch.
 # jq -c guarantees the JSON is single-line and tab-free, so exactly one TAB
@@ -83,14 +95,14 @@ _launcher_run() {
 
 launcher() {
   local line
-  line=$(_launcher_emit_rows | _launcher_render | fzf \
+  line=$(_launcher_emit_rows | _launcher_sort | _launcher_render | fzf \
     --ansi --delimiter='\t' --with-nth=1 \
     --layout=reverse --cycle --info=inline --border=rounded \
     --border-label=' launch ' --prompt='  ' --pointer='▶' --scrollbar='█' \
     --header=$'\033[2menter: run   ctrl-x: alt\033[0m' \
     --preview='source ~/.zsh/launcher.zsh && _launcher_run preview {2..}' \
     --preview-window=right:55% \
-    --bind='ctrl-x:execute-silent(source ~/.zsh/launcher.zsh && _launcher_run alt {2..})+reload(zsh -c "source ~/.zsh/launcher.zsh && _launcher_emit_rows | _launcher_render")') || return
+    --bind='ctrl-x:execute-silent(source ~/.zsh/launcher.zsh && _launcher_run alt {2..})+reload(zsh -c "source ~/.zsh/launcher.zsh && _launcher_emit_rows | _launcher_sort | _launcher_render")') || return
   [[ -n $line ]] || return
   _launcher_run enter "${line#*$'\t'}"     # strip the DISPLAY field, keep ROW_JSON
 }

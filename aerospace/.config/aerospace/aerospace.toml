@@ -74,10 +74,10 @@ automatically-unhide-macos-hidden-apps = false
 [gaps]
     inner.horizontal = 10
     inner.vertical =   10
-    outer.left =       10
-    outer.bottom =     10
-    outer.top =        [{ monitor.'^built-in retina display$' = 5}, 30]
-    outer.right =      10
+    outer.left =       5
+    outer.bottom =     5
+    outer.top =        [{ monitor.'^built-in retina display$' = 5}, 35]
+    outer.right =      5
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes

@@ -68,12 +68,6 @@ export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --e
 [ -z "$TMUX" ] && tmux setenv -g CDE_DISPLAY_NAME $CDE_DISPLAY_NAME
 
 # Functions
-login_link(){
-  json_line=$(logs_web 2>/dev/null  | \
-   grep 'loginLink":' | \
-   tail -n 1 )
-  echo "{$json_line}" | jq -r .loginLink
-}
 
 function startc(){
   docker compose up -d "$1.internal"
@@ -131,29 +125,13 @@ function logs_ts(){
   | jq --unbuffered -c '. + {timestamp: (now | strflocaltime("%Y-%m-%dT%H:%M:%S%Z"))}'
 }
 
-function logs_lnav(){
-  local service=$1
-  if [[ -z "$service" ]]; then
-    echo "Usage: logs_lnav <service-name>"
-    return 1
-  fi
-  logs_ts "$service" | lnav
-}
-
-
 
 # check if python is /workspaces/obsidian/.venv/bin and only activate if is not
 if [ "$(which python)" != "/workspaces/obsidian/.venv/bin/python" ]; then
   source /workspaces/obsidian/.venv/bin/activate
 fi
 
-function stamp(){
-  if [ -z "$1" ]; then
-    echo "Usage: stamp PR_NUMBER"
-    return 1
-  fi
-   gh pr review --approve $1
-}
+
 
 gen_completion docker
 
