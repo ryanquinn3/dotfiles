@@ -31,7 +31,7 @@ WC_PKG="@vanta/web-client"
 
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
 
-[ -z "$DOT_FILES" ] && export DOT_FILES="/workspaces/.codespaces/.persistedshare/dotfiles"
+[ -z "$DOT_FILES" ] && export DOT_FILES="$HOME/dotfiles"
 
 # use personal gh token for gh cli
 alias pgh="GH_TOKEN=$GH_GIST_TOKEN gh"

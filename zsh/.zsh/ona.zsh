@@ -49,10 +49,11 @@ ona_pick() {
 
   rm -rf "$cache"; unset ONA_PREVIEW_CACHE
 }
+alias oep="ona_pick"
 
 ona_ssh() {
   local env_id host
-  env_id=$(ona_pick) || return 1
+  env_id=$(oep) || return 1
 
   if [[ $(ona env get $env_id -f phase) != "running" ]]; then
     gum spin --spinner dot --title "Starting ona environment" -- ona env start $env_id
@@ -69,7 +70,7 @@ ona_ssh() {
 }
 
 ona_stop(){
-  ona environment stop $(ona_pick)
+  ona environment stop $(oep)
 }
 
 ona_create(){
@@ -81,7 +82,7 @@ ona_create(){
 }
 
 ona_set_env() {
-  ona_env=$(ona_pick)
+  ona_env=$(oep)
   if [[ -z "$ona_env" ]]; then
     echo "No ona environment selected."
     return 1

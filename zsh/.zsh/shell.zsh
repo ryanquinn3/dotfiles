@@ -1,4 +1,5 @@
 reload_zsh() {
+  [[ -n "$TMUX" ]] && tmux source-file ~/.tmux.conf
   exec zsh
 }
 
