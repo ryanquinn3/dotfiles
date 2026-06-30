@@ -25,10 +25,8 @@ tap "anomalyco/tap", trusted: true
 brew "opencode", args: ['ignore-dependencies']
 
 if RUBY_PLATFORM =~ /linux/
-  tap "atlassian/homebrew-acli", trusted: true
-  tap "gleanwork/tap", trusted: true
-  brew "acli"
-  brew "glean-cli"
+  # linux specific formulas
+
 end
 
 # macos 
@@ -56,10 +54,6 @@ if RUBY_PLATFORM =~ /darwin/
   # ona
   tap "gitpod-io/tap", trusted: true
   brew "ona"
-
-  # dev tools for specific stacks
-  # brew "k9s"
-  # brew "redis"
   
   
   # macOS utilities

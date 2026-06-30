@@ -65,7 +65,11 @@ export FZF_DEFAULT_COMMAND="$SHELL -c 'fd --hidden --strip-cwd-prefix --exclude 
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$SHELL -c 'fd --type=d --hidden --strip-cwd-prefix --exclude .git --no-ignore-vcs'"
 
-[ -z "$TMUX" ] && tmux setenv -g CDE_DISPLAY_NAME $CDE_DISPLAY_NAME
+# Set the global tmux env var so panes can show the CDE name, but only when a
+# tmux server is actually running (avoids a connect error in bare ssh shells).
+if [ -z "$TMUX" ] && tmux has-session 2>/dev/null; then
+  tmux setenv -g CDE_DISPLAY_NAME "$CDE_DISPLAY_NAME"
+fi
 
 # Functions
 
@@ -258,40 +262,58 @@ function dev-workspace-pull(){
   echo "Restored from $latest_key"
 }
 
-# Archive the brew Cellar to EFS so it survives box recreation.
+# Archive a directory to EFS so it survives box recreation.
 # Build on local disk first, then copy to EFS: streaming gzip straight to the
 # network drive interleaves compression with per-write NFS latency, whereas a
 # single bulk copy of the finished archive saturates EFS throughput.
-function brew-cellar-archive(){
-  local cellar
-  cellar=$(brew --cellar) || return 1
-  if [[ ! -d "$cellar" ]]; then
-    echo "Cellar not found at $cellar"
+function _brew_dir_archive(){
+  local src="$1" archive="$2" name="$3"
+  if [[ ! -d "$src" ]]; then
+    echo "$name not found at $src"
     return 1
   fi
 
-  local archive="$HOME/efs/brew-cellar.tar.gz"
   mkdir -p "$(dirname "$archive")"
-
-  local tmp="${TMPDIR:-/tmp}/brew-cellar.$$.tar.gz"
-  tar czf "$tmp" -C "$cellar" . || { rm -f "$tmp"; return 1; }
+  local tmp="${TMPDIR:-/tmp}/${name}.$$.tar.gz"
+  tar czf "$tmp" -C "$src" . || { rm -f "$tmp"; return 1; }
   mv "$tmp" "$archive"
-  echo "Archived $cellar -> $archive"
+  echo "Archived $src -> $archive"
 }
 
-# Restore the brew Cellar from the EFS archive
-function brew-cellar-restore(){
-  local archive="$HOME/efs/brew-cellar.tar.gz"
+# Restore a directory from its EFS archive. Only extracts files missing from the
+# target; never overwrites existing ones.
+function _brew_dir_restore(){
+  local archive="$1" dest="$2"
   if [[ ! -f "$archive" ]]; then
     echo "Archive not found at $archive"
     return 1
   fi
 
+  mkdir -p "$dest"
+  tar xzf "$archive" -C "$dest" --skip-old-files
+  echo "Restored $archive -> $dest"
+}
+
+function brew-cellar-archive(){
   local cellar
   cellar=$(brew --cellar) || return 1
-  mkdir -p "$cellar"
+  _brew_dir_archive "$cellar" "$HOME/efs/brew-cellar.tar.gz" "brew-cellar"
+}
 
-  # Only extract files missing from the cellar; never overwrite existing ones.
-  tar xzf "$archive" -C "$cellar" --skip-old-files
-  echo "Restored $archive -> $cellar"
+function brew-cellar-restore(){
+  local cellar
+  cellar=$(brew --cellar) || return 1
+  _brew_dir_restore "$HOME/efs/brew-cellar.tar.gz" "$cellar"
+}
+
+function brew-taps-archive(){
+  local taps
+  taps=$(brew --taps) || return 1
+  _brew_dir_archive "$taps" "$HOME/efs/brew-taps.tar.gz" "brew-taps"
+}
+
+function brew-taps-restore(){
+  local taps
+  taps=$(brew --taps) || return 1
+  _brew_dir_restore "$HOME/efs/brew-taps.tar.gz" "$taps"
 }

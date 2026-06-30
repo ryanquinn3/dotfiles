@@ -75,14 +75,17 @@ ona_stop(){
 
 ona_bootstrap() {
   echo "Setting up efs symlinks"
-  ./setup-efs
+  setup-efs
 
-  echo "Restoring brew cellar"
+  echo "Restoring brew cellar and taps"
   brew-cellar-restore
+  brew-taps-restore
 
   echo "Running brew bundle"
   time_start=$(date +%s)
-  ./install-apps
+  # Don't upgrade already-installed formulae during bootstrap; just install
+  # what's missing. Scoped to this call only, not exported globally.
+  HOMEBREW_BUNDLE_NO_UPGRADE=1 install-apps
   time_end=$(date +%s)
   echo "Brew bundle completed in $((time_end - time_start)) seconds"
 }
