@@ -135,8 +135,6 @@ fi
 
 gen_completion docker
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
 gen_completion turbo
 
 function new_prompt(){
