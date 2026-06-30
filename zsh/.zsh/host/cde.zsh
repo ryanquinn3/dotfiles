@@ -291,6 +291,7 @@ function brew-cellar-restore(){
   cellar=$(brew --cellar) || return 1
   mkdir -p "$cellar"
 
-  tar xzf "$archive" -C "$cellar"
+  # Only extract files missing from the cellar; never overwrite existing ones.
+  tar xzf "$archive" -C "$cellar" --skip-old-files
   echo "Restored $archive -> $cellar"
 }
