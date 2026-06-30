@@ -73,6 +73,20 @@ ona_stop(){
   ona environment stop $(oep)
 }
 
+ona_bootstrap() {
+  echo "Setting up efs symlinks"
+  ./setup-efs
+
+  echo "Restoring brew cellar"
+  brew-cellar-restore
+
+  echo "Running brew bundle"
+  time_start=$(date +%s)
+  ./install-apps
+  time_end=$(date +%s)
+  echo "Brew bundle completed in $((time_end - time_start)) seconds"
+}
+
 ona_create(){
   if [[ -z "$ONA_PROJECT_ID" || -z "$ONA_CLASS_ID" ]]; then
     echo "ONA_PROJECT_ID and ONA_CLASS_ID must be set to create an environment."
@@ -83,7 +97,7 @@ ona_create(){
     --set-as-context \
     --inactivity-timeout 8h
   echo "Created and set new environment as context: $(ona env get -f id). Install brew".
-  ona environment ssh $(ona env get -f id) -- -t 'zsh -ic "setup-efs && install-apps"'
+  ona environment ssh $(ona env get -f id) -- -t 'zsh -ic "ona_bootstrap"'
 }
 
 ona_set_env() {
