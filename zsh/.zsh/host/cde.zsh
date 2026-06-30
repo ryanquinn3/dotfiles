@@ -257,3 +257,40 @@ function dev-workspace-pull(){
   (cd /workspaces/obsidian && tar xzf "$dest")
   echo "Restored from $latest_key"
 }
+
+# Archive the brew Cellar to EFS so it survives box recreation.
+# Build on local disk first, then copy to EFS: streaming gzip straight to the
+# network drive interleaves compression with per-write NFS latency, whereas a
+# single bulk copy of the finished archive saturates EFS throughput.
+function brew-cellar-archive(){
+  local cellar
+  cellar=$(brew --cellar) || return 1
+  if [[ ! -d "$cellar" ]]; then
+    echo "Cellar not found at $cellar"
+    return 1
+  fi
+
+  local archive="$HOME/efs/brew-cellar.tar.gz"
+  mkdir -p "$(dirname "$archive")"
+
+  local tmp="${TMPDIR:-/tmp}/brew-cellar.$$.tar.gz"
+  tar czf "$tmp" -C "$cellar" . || { rm -f "$tmp"; return 1; }
+  mv "$tmp" "$archive"
+  echo "Archived $cellar -> $archive"
+}
+
+# Restore the brew Cellar from the EFS archive
+function brew-cellar-restore(){
+  local archive="$HOME/efs/brew-cellar.tar.gz"
+  if [[ ! -f "$archive" ]]; then
+    echo "Archive not found at $archive"
+    return 1
+  fi
+
+  local cellar
+  cellar=$(brew --cellar) || return 1
+  mkdir -p "$cellar"
+
+  tar xzf "$archive" -C "$cellar"
+  echo "Restored $archive -> $cellar"
+}
