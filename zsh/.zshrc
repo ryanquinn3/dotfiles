@@ -43,17 +43,6 @@ export ZSHRC="$HOME/.zshrc"
 
 fpath=(~/.zsh/completions $fpath)
 
-# init brew early (before fzf/completion) so brew tools win over older system
-# copies (e.g. apt fzf without --zsh). brew usually isn't on PATH in a fresh
-# shell, so try it directly, then fall back to the canonical install prefixes;
-# shellenv then sets PATH/MANPATH/etc.
-for brew_bin in brew /opt/homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
-  if command -v "$brew_bin" >/dev/null 2>&1; then
-    eval "$("$brew_bin" shellenv)"
-    break
-  fi
-done
-
 
 
 plugins=(git brew fzf-tab zsh-yarn-completions tmux)

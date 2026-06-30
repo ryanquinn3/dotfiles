@@ -14,7 +14,20 @@ if [ -f /etc/profile.d/ona-secrets.sh ]; then
 fi
 # keep PATH entries unique so re-sourcing in subshells doesn't duplicate them
 typeset -U path PATH
-export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.local/bin:$HOME/.poetry/bin"
+export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.local/bin"
+
+# init brew early (before fzf/completion) so brew tools win over older system
+# copies (e.g. apt fzf without --zsh). brew usually isn't on PATH in a fresh
+# shell, so try it directly, then fall back to the canonical install prefixes;
+# shellenv then sets PATH/MANPATH/etc.
+if [[ -z "$HOMEBREW_PREFIX" ]]; then
+  for brew_bin in brew /opt/homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+    if command -v "$brew_bin" >/dev/null 2>&1; then
+      eval "$("$brew_bin" shellenv)"
+      break
+    fi
+  done
+fi
 
 export ZSH_COMPLETIONS_DIR="$HOME/.zsh/completions"
 # Editor: inside a VS Code / CDE integrated terminal use code, else gcode.
