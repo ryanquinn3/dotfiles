@@ -21,7 +21,7 @@ brew "hunk"
 
 # AI tools
 tap "anomalyco/tap", trusted: true
-brew "opencode"
+brew "opencode", args: ['ignore-dependencies']
 
 if RUBY_PLATFORM =~ /linux/
   tap "atlassian/homebrew-acli", trusted: true
