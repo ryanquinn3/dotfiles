@@ -45,7 +45,7 @@ fpath=(~/.zsh/completions $fpath)
 
 
 
-plugins=(git brew fzf-tab zsh-yarn-completions tmux)
+plugins=(git fzf-tab zsh-yarn-completions tmux)
 source $ZSH/oh-my-zsh.sh
 
 
