@@ -21,6 +21,7 @@ brew "hunk"
 
 # AI tools
 tap "anomalyco/tap", trusted: true
+# requires node and ripgrep, which are installed above / out of band
 brew "opencode", args: ['ignore-dependencies']
 
 if RUBY_PLATFORM =~ /linux/
