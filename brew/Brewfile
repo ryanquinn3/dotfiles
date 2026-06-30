@@ -1,8 +1,6 @@
 cask_args appdir: "/Applications"
 
 # Common formulas
-brew "watch"
-brew "zsh-syntax-highlighting"
 brew "eza"
 brew "bat"
 brew "fzf"
@@ -12,9 +10,7 @@ brew "git-delta"
 brew "stow"
 brew "procs"
 brew "starship"
-brew "fnm"
-brew "pandoc"
-tap "dlvhdr/formulae"
+tap "dlvhdr/formulae", trusted: true
 brew "diffnav"
 cask "font-hack-nerd-font"
 brew "gum"
@@ -38,6 +34,8 @@ end
 if RUBY_PLATFORM =~ /darwin/
   # general terminal tools
   brew "tmux" # tmux is already installed in cde
+  brew "fnm"
+  brew "watch"
   brew "httpie"
   brew "yq"
   brew "jq"

@@ -21,37 +21,42 @@ function configure_finder() {
 	defaults write com.apple.finder "ShowPathbar" -bool "true" && killall Finder
 }
 
-function setup_tmux() {
-	mkdir -p ~/.tmux/plugins
-	clone_tmux_plugin_manager
+function tmux_plugin_path() {
+	local plugin_name="$1"
+	echo "$HOME/.tmux/plugins/$plugin_name"
 }
 
-function clone_tmux_plugin_manager(){
-	[ -d ~/.tmux/plugins/tpm ] && return
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+function setup_tmux() {
+	mkdir -p ~/.tmux/plugins
+
+	if [ -d "$(tmux_plugin_path tpm)" ]; then
+		echo "tpm already installed"
+	else
+		git clone https://github.com/tmux-plugins/tpm "$(tmux_plugin_path tpm)"
+	fi
+
+	if [ -d "$(tmux_plugin_path catppuccin)" ]; then
+		echo "catppuccin already installed"
+	else
+		mkdir -p "$(tmux_plugin_path catppuccin)"
+		git clone -b v2.3.0 https://github.com/catppuccin/tmux.git "$(tmux_plugin_path catppuccin)/tmux"
+	fi
 }
+
 
 ### Oh My Zsh
 function setup_oh_my_zsh_plugins() {
 	custom_plugins_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
 	[ -d "$custom_plugins_dir" ] || mkdir -p "$custom_plugins_dir"
 
+	source "$DIR/zsh/.zsh/shell.zsh"
 	
-	# fzf zsh plugin
-	fzf_zsh_plugin_dir="${custom_plugins_dir}/fzf-zsh-plugin"
-	[ -d "$fzf_zsh_plugin_dir" ] || git clone --depth 1 https://github.com/unixorn/fzf-zsh-plugin.git "$fzf_zsh_plugin_dir"
-
-	# fzf-tab
-	fzf_tab_dir="${custom_plugins_dir}/fzf-tab"
-	[ -d "$fzf_tab_dir" ] || git clone https://github.com/Aloxaf/fzf-tab "$fzf_tab_dir"
+	install_plugin "fzf-zsh-plugin" "https://github.com/unixorn/fzf-zsh-plugin.git"
+	install_plugin "fzf-tab" "https://github.com/Aloxaf/fzf-tab.git"
+	install_plugin "zsh-yarn-completions" "https://github.com/chrisands/zsh-yarn-completions.git"
+	install_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+	install_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions.git"
 	
-	# fzf git plugin
-	fzf_git_plugin_dir="${custom_plugins_dir}/fzf-git-plugin"
-	[ -d "$fzf_git_plugin_dir" ] || git clone https://github.com/junegunn/fzf-git.sh.git "$fzf_git_plugin_dir"
-	
-	# yarn completions	
-	zsh_yarn_completions_dir="${custom_plugins_dir}/zsh-yarn-completions"
-	[ -d "$zsh_yarn_completions_dir" ] || git clone https://github.com/chrisands/zsh-yarn-completions "$zsh_yarn_completions_dir"
 }
 
 function setup_oh_my_zsh() {
@@ -69,26 +74,17 @@ function setup_oh_my_zsh() {
 ### end Oh My Zsh
 
 function install_homebrew_for_linux(){
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	if command -v brew >/dev/null 2>&1; then
+		echo "Homebrew already installed"
+	else
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	fi
 	sudo apt-get install build-essential
 	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 	# needed for this install script
 	HOMEBREW_NO_AUTO_UPDATE=1 brew install stow fzf
-	# (cd $DIR/brew && brew bundle install)
+	
 	# gh extension install dlvhdr/gh-dash
-}
-
-
-
-### apt packages
-function install_apt_packages() {
-	sudo apt-get update
-}
-
-### end apt packages
-
-function install_npm_globals() {
-	# npm i -g  @anthropic-ai/claude-code
 }
 
 
@@ -107,27 +103,35 @@ fi
 if [[ $OSTYPE == 'linux-gnu'* ]]; then
 	echo -ne "Installing homebrew...\033[0K\r"
 	install_homebrew_for_linux
-	echo -ne "Installing apt packages...\033[0K\r"
-	install_apt_packages
-	echo -e "Installing apt packages... Done"
 	mkdir -p ~/.fzf/shell
-	ln -s  /usr/share/doc/fzf/examples/key-bindings.zsh ~/.fzf/shell/key-bindings.zsh
+	ln -sf /usr/share/doc/fzf/examples/key-bindings.zsh ~/.fzf/shell/key-bindings.zsh
 	
 fi
 
 
 echo "Symlinking dotfiles..."
 
-# remove pre-existing rc files so stow can symlink ours without conflict
-[ -f "$HOME/.zshrc" ] && mv "$HOME/.zshrc" "$HOME/.zshrc.old"
-[ -f "$HOME/.zshenv" ] && mv "$HOME/.zshenv" "$HOME/.zshenv.old"
+# remove pre-existing rc files so stow can symlink ours without conflict.
+# skip files we already symlinked (stow re-runs), and never clobber an existing backup.
+backup_rc_file() {
+	local rc="$1"
+	[ -e "$rc" ] || return 0          # nothing there
+	[ -L "$rc" ] && return 0          # already our stow symlink
+	[ -e "$rc.old" ] && return 0      # keep the original backup
+	mv "$rc" "$rc.old"
+}
+backup_rc_file "$HOME/.zshrc"
+backup_rc_file "$HOME/.zshenv"
 
 ./stow.sh
 setup_oh_my_zsh
 
 
 # make sure default shell is set to zsh
-sudo chsh -s $(which zsh) $USERNAME
+zsh_path=$(which zsh)
+if [ "$SHELL" != "$zsh_path" ]; then
+	sudo chsh -s "$zsh_path" "$USER"
+fi
 
 
 echo "Run \"source ~/.zshrc\" to load the new zsh config."

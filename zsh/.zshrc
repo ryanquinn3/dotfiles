@@ -8,6 +8,7 @@ COMPLETION_WAITING_DOTS="true"
 ZSH_DISABLE_COMPFIX="true"
 export ZSH_CACHE_DIR="$HOME/.oh-my-zsh/cache"
 export ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
+export ZSH_PLUGIN_DIR="$HOME/.oh-my-zsh/custom/plugins"
 ##########
 # HISTORY
 ##########
@@ -105,11 +106,12 @@ fi
 # if zoxide is installed, initialize it
 [ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
 
-# fzf-git is cloned as an omz custom plugin (see install: fzf_git_plugin_dir)
-fzf_git="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-git-plugin/fzf-git.sh"
-[ -f "$fzf_git" ] && source "$fzf_git"
+load_plugin "zsh-autosuggestions/zsh-autosuggestions.zsh"
+load_plugin "zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
-eval "$(starship init zsh)"
+
+# if starship is installed, initialize it 
+[ -x "$(command -v starship)" ] && eval "$(starship init zsh)"
 
 # print startup profile if ZSHRC_PROFILE was set (see top of file)
 [ -n "$ZSHRC_PROFILE" ] && zprof
