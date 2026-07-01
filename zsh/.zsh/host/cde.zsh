@@ -294,26 +294,14 @@ function _brew_dir_restore(){
   echo "Restored $archive -> $dest"
 }
 
-function brew-cellar-archive(){
-  local cellar
-  cellar=$(brew --cellar) || return 1
-  _brew_dir_archive "$cellar" "$HOME/efs/brew-cellar.tar.gz" "brew-cellar"
+brew-prefix-archive() {
+  local prefix; 
+  prefix=$(brew --prefix) || return 1
+  _brew_dir_archive "$prefix" "$HOME/efs/brew-prefix.tar.gz" "brew-prefix"
 }
 
-function brew-cellar-restore(){
-  local cellar
-  cellar=$(brew --cellar) || return 1
-  _brew_dir_restore "$HOME/efs/brew-cellar.tar.gz" "$cellar"
-}
-
-function brew-taps-archive(){
-  local taps
-  taps=$(brew --taps) || return 1
-  _brew_dir_archive "$taps" "$HOME/efs/brew-taps.tar.gz" "brew-taps"
-}
-
-function brew-taps-restore(){
-  local taps
-  taps=$(brew --taps) || return 1
-  _brew_dir_restore "$HOME/efs/brew-taps.tar.gz" "$taps"
+brew-prefix-restore() {
+  local prefix;
+   prefix=$(brew --prefix) || return 1
+  _brew_dir_restore "$HOME/efs/brew-prefix.tar.gz" "$prefix"
 }

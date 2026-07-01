@@ -109,9 +109,8 @@ ona_bootstrap() {
   echo "Setting up efs symlinks"
   setup-efs
 
-  echo "Restoring brew cellar and taps"
-  brew-cellar-restore
-  brew-taps-restore
+  echo "Restoring brew prefix"
+  brew-prefix-restore
 
   echo "Running brew bundle"
   time_start=$(date +%s)
