@@ -14,8 +14,8 @@ export ZSH_PLUGIN_DIR="$HOME/.oh-my-zsh/custom/plugins"
 ##########
 
 HISTFILE=$HOME/.zsh_history
-HISTSIZE=50000
-SAVEHIST=50000
+HISTSIZE=110000
+SAVEHIST=100000
 # Immediately append to history file:
 setopt INC_APPEND_HISTORY
 # Record timestamp in history:
@@ -36,6 +36,8 @@ setopt HIST_SAVE_NO_DUPS
 setopt SHARE_HISTORY
 # Execute commands using history (e.g.: using !$) immediately:
 unsetopt HIST_VERIFY
+
+unsetopt HIST_SAVE_BY_COPY
 
 # env (PATH, LANG, EDITOR, exports) lives in .zshenv
 export ZSH="$HOME/.oh-my-zsh"

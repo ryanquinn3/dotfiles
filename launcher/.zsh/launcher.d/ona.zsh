@@ -1,3 +1,4 @@
+source $HOME/.zsh/ona.zsh
 # ona (gitpod) environments -- launcher plugin. Mac-only (lives in the launcher
 # package, never stowed on ona/cde).
 #
@@ -13,13 +14,6 @@
 # skipped: the tmux plugin already lists them, so showing them here would
 # duplicate. Only the env id (a UUID, injection-safe) and its short form travel
 # in `data`; the core feeds it to the helpers below on stdin.
-
-# Cache path for `ona env list` (SWR machinery lives below the emit guard).
-# Defined up here so the launch/disconnect helpers can invalidate it: both events
-# change an env's phase, so dropping the cache forces a fresh fetch (and accurate
-# stopped/running state) on the next picker open.
-typeset -g _ONA_CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/launcher-ona.json
-_ona_clear_cache() { rm -f "$_ONA_CACHE"; }
 
 # An ssh that exits nonzero in under this many seconds never made it past the
 # ProxyCommand/auth (e.g. expired token in ~/.ssh/gitpod) -- a "failed to
@@ -91,7 +85,7 @@ _ona_launch() {                        # enter
 _ona_stop() {                          # alt
   local d; d=$(jq -c .)
   [[ $(jq -r .phase <<<"$d") == running ]] || return 0
-  ona env stop "$(jq -r .id <<<"$d")"
+  ona_stop "$(jq -r .id <<<"$d")"
 }
 
 _ona_preview() { ona env get "$(jq -r .id)"; }

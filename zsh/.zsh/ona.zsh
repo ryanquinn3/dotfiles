@@ -1,8 +1,18 @@
 # ona (formerly gitpod) environment helpers. The CLI is `ona`; the SSH host
 # suffix is still `<id>.gitpod.environment` (matched by ~/.ssh/gitpod/config,
 # whose ProxyCommand drives the connection), so that literal stays as-is.
+# check if interactive shell before doing completions
 
-gen_completion ona
+[[ -o interactive ]] && gen_completion ona
+
+
+# Cache path for `ona env list` (SWR machinery lives below the emit guard).
+# Defined up here so the launch/disconnect helpers can invalidate it: both events
+# change an env's phase, so dropping the cache forces a fresh fetch (and accurate
+# stopped/running state) on the next picker open.
+typeset -g _ONA_CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/launcher-ona.json
+_ona_clear_cache() { rm -f "$_ONA_CACHE"; }
+
 
 # fzf-pick an ona environment. Preview shows `ona env get` for the highlighted
 # row; the selected environment id is printed to stdout (so it composes:
@@ -69,11 +79,33 @@ ona_ssh() {
   return $ec
 }
 
-ona_stop(){
-  ona environment stop $(oep)
+# Select an ona env and delete it
+ona_delete() {
+  local env_id="${1:-$(oep)}"
+  [[ -n "$env_id" ]] || { echo "No ona environment selected." >&2; return 1; }
+  echo "Deleting ona environment $env_id..."
+  ona environment delete $env_id "$@"
+  context_env=$(ona env get -f id)
+  if [[ "$context_env" == "$env_id" ]]; then
+    echo "Deleted environment was the current context. Resetting context to a new environment..."
+    ona_reset_context_env "$env_id"
+  fi
+  _ona_clear_cache
 }
 
+ona_stop(){
+  local env_id="${1:-$(oep)}"
+  [[ -n "$env_id" ]] || { echo "No ona environment selected." >&2; return 1; }
+  ona environment stop "$env_id"
+  _ona_clear_cache
+}
+
+# A custom postStart hook. Run only on ona machines
 ona_bootstrap() {
+  if [[ $OSTYPE == 'darwin'* ]]; then
+    echo "ona_bootstrap does not run on macOS. Skipping..."
+    return 0
+  fi
   echo "Setting up efs symlinks"
   setup-efs
 
@@ -98,9 +130,32 @@ ona_create(){
   ona environment create $ONA_PROJECT_ID \
     --class-id $ONA_CLASS_ID \
     --set-as-context \
-    --inactivity-timeout 8h
+    --inactivity-timeout 8h \
+    --logs
   echo "Created and set new environment as context: $(ona env get -f id). Install brew".
   ona environment ssh $(ona env get -f id) -- -t 'zsh -ic "ona_bootstrap"'
+  _ona_clear_cache
+}
+
+# Reset the current ona context to a most recent env. If [env_id] is provided, 
+# it will be excluded from the search for a new context. If no other envs are found, an error is returned.
+# Usage: ona_reset_context_env [env_id]
+ona_reset_context_env() {
+  old_env_id=$1
+  local new_env_id
+  env_ids=$(ona env list -o json | jq -r '.[].id')
+  if [[ -z "$old_env_id" ]]; then
+    echo "No old environment id provided. Resetting context to the first available environment."
+    new_env_id=$(echo "$env_ids" | head -n 1)
+  else
+    new_env_id=$(echo "$env_ids" | grep -v "$old_env_id" | head -n 1)
+  fi
+  if [[ -z "$new_env_id" ]]; then
+    echo "No ona environments found to reset context."
+    return 1
+  fi
+  echo "Resetting context to ona environment $new_env_id..."
+  ona config context modify --current --environment-id $new_env_id
 }
 
 ona_set_env() {
@@ -109,5 +164,5 @@ ona_set_env() {
     echo "No ona environment selected."
     return 1
   fi
-  ona config context modify default --environment-id $ona_env
+  ona config context modify --current --environment-id $ona_env
 }
