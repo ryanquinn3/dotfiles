@@ -84,7 +84,7 @@ ona_delete() {
   local env_id="${1:-$(oep)}"
   [[ -n "$env_id" ]] || { echo "No ona environment selected." >&2; return 1; }
   echo "Deleting ona environment $env_id..."
-  ona environment delete $env_id "$@"
+  ona environment delete $env_id
   context_env=$(ona env get -f id)
   if [[ "$context_env" == "$env_id" ]]; then
     echo "Deleted environment was the current context. Resetting context to a new environment..."
@@ -130,6 +130,7 @@ ona_create(){
     --class-id $ONA_CLASS_ID \
     --set-as-context \
     --inactivity-timeout 8h \
+    --name "$(random-name)" \
     --logs
   echo "Created and set new environment as context: $(ona env get -f id). Install brew".
   ona environment ssh $(ona env get -f id) -- -t 'zsh -ic "ona_bootstrap"'

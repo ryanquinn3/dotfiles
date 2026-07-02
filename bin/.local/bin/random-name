@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+adjectives=(
+  admiring adoring affectionate agitated amazing angry awesome
+  blissful bold boring brave clever cool eager elastic elegant
+  epic fervent focused friendly
+)
+
+nouns=(
+  albattani allen almeida archimedes bardeen bell bhabha bohr
+  brahmagupta cori curie darwin edison einstein euclid fermi
+  franklin galileo goodall hawking
+)
+
+adjective="${adjectives[RANDOM % ${#adjectives[@]}]}"
+noun="${nouns[RANDOM % ${#nouns[@]}]}"
+
+echo "${adjective}_${noun}"

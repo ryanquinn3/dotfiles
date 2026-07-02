@@ -25,7 +25,7 @@ _CLAUDE_PLUGINS=(architecture writing)
 export DEV_WORKSPACE_DIR=".ai-dev"
 export DEV_ARCHIVE_DIR="$HOME/ai-dev-archives"
 export DEV_S3_ARCHIVE_PREFIX="s3://vanta-dev-codespace-assets/ryanquinn3/ai-dev-archives"
-export CDE_DISPLAY_NAME=$(echo "$(ona environment get -f Id)")
+export CDE_DISPLAY_NAME=$(ona environment get -f Id)
 
 WC_PKG="@vanta/web-client"
 

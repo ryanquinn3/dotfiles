@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+name="$(ona environment get -f name 2>/dev/null || true)"
+
+if [ -n "$name" ]; then
+  echo "$name"
+else
+  id="$(ona environment get -f Id)"
+  echo "${id%%-*}"
+fi

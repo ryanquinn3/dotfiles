@@ -62,6 +62,15 @@ clp(){
   command claude "${plugin_args[@]}" "$@"
 }
 
+# Run a chat-only agent in a readonly mode when you want no actions to be taken.
+claude_chat(){
+  local settings=$(yq -o=json '{
+    "agents": {"chat": .},
+    "agent": "chat"
+    }' ~/claude-agents/chat.yaml)
+  claude --settings "$settings" --tools "Read,Glob,Grep,WebFetch,WebSearch" "$@"  
+}
+
 # Boot Claude with all permission prompts skipped.
 clc(){
   GITHUB_TOKEN= ANTHROPIC_API_KEY= claude --dangerously-skip-permissions "$@"

@@ -146,6 +146,7 @@ _ona_env_list \
       .[]
       | { id:     .id,
           short:  ( .id | split("-")[0] ),
+          name:   ( .metadata.name // "[unnamed]" ),
           phase:  ( .status.phase // "" | sub("ENVIRONMENT_PHASE_"; "") | ascii_downcase ),
           branch: ( .status.content.git.branch // "?" ),
           repo:   ( .status.content.git.cloneUrl // "" | sub("\\.git$"; "") | split("/") | last ),
@@ -154,7 +155,7 @@ _ona_env_list \
           # fractional part first; missing/blank stamps fall back to 0 (sink to bottom).
           started: ( .metadata.lastStartedAt // "" | if . == "" then 0 else ( sub("\\.[0-9]+Z$"; "Z") | fromdateiso8601 ) end ) }
       | select( ( .phase == "running" and ( .short as $s | $live | index("ona-" + $s) ) ) | not )
-      | { display: { icon: "\uf0c2", color: 35, cols: [ .branch, .phase, .repo ], tail: "" },
-          data:    { id: .id, short: .short, phase: .phase },
+      | { display: { icon: "\uf0c2", color: 35, cols: [ .name, .phase, .branch ], tail: "" },
+          data:    { id: .id, short: .short, name: .name , phase: .phase },
           sort:    .started,
           enter: $enter, alt: $alt, preview: $preview }'
