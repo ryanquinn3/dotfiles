@@ -1,44 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-URL="http://127.0.0.1:8080/health"
-NAME="web"
-THRESHOLD_MS=400         # warn (⚠) if slower than this
-CONNECT_TIMEOUT=0.25     # seconds
-TOTAL_TIMEOUT=0.8        # seconds
+SERVICE="${1:?usage: svc-health <compose-service> [private-port] [path]}"
+PRIVATE_PORT="${2:-80}"
+PATH_SUFFIX="${3:-/health}"
 
-while getopts ":u:n:t:c:m:" opt; do
-  case "$opt" in
-    u) URL="$OPTARG" ;;
-    n) NAME="$OPTARG" ;;
-    t) THRESHOLD_MS="$OPTARG" ;;
-    c) CONNECT_TIMEOUT="$OPTARG" ;;
-    m) TOTAL_TIMEOUT="$OPTARG" ;;
-  esac
-done
+port="$(docker compose port "$SERVICE" "$PRIVATE_PORT" 2>/dev/null | cut -d: -f2)"
+[[ -z "$port" ]] && exit 1
 
-# Get HTTP code and total time (seconds) from curl. "000" when it can't connect.
-out="$(curl -sS -o /dev/null \
-  -w '%{http_code} %{time_total}' \
-  --connect-timeout "$CONNECT_TIMEOUT" \
-  --max-time "$TOTAL_TIMEOUT" \
-  "$URL" || true)"
-
-code="${out%% *}"
-secs="${out##* }"
-[[ -z "${code:-}" ]] && code="000"
-[[ -z "${secs:-}" ]] && secs="0"
-
-# Convert seconds -> integer ms
-ms=$(awk -v s="$secs" 'BEGIN{printf("%d", s*1000 + 0.5)}')
-
-if [[ "$code" == "200" ]]; then
-  if (( ms > THRESHOLD_MS )); then
-    echo "#[fg=yellow]⚠ ${NAME} #[default]"
-  else
-    echo "#[fg=green]🟢 ${NAME} #[default]"
-  fi
-else
-  echo "#[fg=red]🔴 ${NAME} #[default]"
-fi
-
+code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 0.5 "http://127.0.0.1:${port}${PATH_SUFFIX}" 2>/dev/null || echo 000)
+[[ "$code" == "200" ]]
