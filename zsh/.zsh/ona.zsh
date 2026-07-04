@@ -59,7 +59,7 @@ ona_pick() {
 
   rm -rf "$cache"; unset ONA_PREVIEW_CACHE
 }
-alias oep="ona_pick"
+alias -g oep="ona_pick"
 
 ona_ssh() {
   local env_id host

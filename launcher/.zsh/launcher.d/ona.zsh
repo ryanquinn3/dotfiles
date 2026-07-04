@@ -27,41 +27,50 @@ typeset -gi _ONA_CONNECT_MIN=10
 _ona_connect() {
   local id=${1:-$ONA_ID}
   local host="${id}.gitpod.environment"
-  if [[ $(ona env get "$id" -f phase) != "running" ]]; then
-    gum spin --spinner dot --title "Starting $id" -- ona env start "$id"
-  fi
-  echo "Connecting to ${host}..."
-  local start=$(date +%s)
-  ssh -tt "$host" "tmux new-session -A -s main"
-  local ec=$? elapsed=$(( $(date +%s) - start ))
-  # reset mouse reporting the remote session may have left on
-  [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
 
-  # Did we ever connect? A clean tmux detach exits 0; a real session that later
-  # drops (laptop lid, dead link) exits nonzero but only after being alive a
-  # while. An ssh that dies nonzero within _ONA_CONNECT_MIN never got past the
-  # ProxyCommand/auth -- DON'T tear down: keep this window so the error stays on
-  # screen and the user can fix it (commonly a stale token: `gitpod login
-  # --gitpod-config-dir ~/.ssh/gitpod`) and relaunch, instead of being bounced
-  # back with no clue why. @is_remote is unset so the lingering shell behaves
-  # normally rather than staying in dumb-terminal mode.
-  if (( ec != 0 && elapsed < _ONA_CONNECT_MIN )); then
-    print -ru2 -- $'\nCould not connect to '"${host}"$' (ssh exited '"$ec"$' in '"${elapsed}"$'s).\nFix the error above, then close this window or reconnect.'
-    _ona_clear_cache
-    tmux set-option -u @is_remote 2>/dev/null
-    exec zsh
-  fi
+  while true; do
+    if [[ $(ona env get "$id" -f phase) != "running" ]]; then
+      gum spin --spinner dot --title "Starting $id" -- ona env start "$id"
+    fi
 
-  # Connected, then the session ended (clean detach, instance stop, or dropped
-  # link): tear this throwaway session down instead of stranding a bare shell.
-  # Hop the client back to the session we launched from FIRST -- killing the
-  # attached session would otherwise detach the client (detach-on-destroy
-  # defaults to on). @is_remote is session-scoped, so dumb mode dies with the
-  # session and the origin is normal again. No attached client (navigated away /
-  # stopped elsewhere) -> the switch is a harmless no-op and kill-session just
-  # reaps the zombie.
-  _ona_clear_cache   # env likely stopped/stopping; next open refetches. Before
-                     # kill-session, which ends this process.
+    echo "Connecting to ${host}..."
+    local start=$(date +%s)
+    ssh -tt \
+      -o ServerAliveInterval=15 \
+      -o ServerAliveCountMax=3 \
+      -o ConnectTimeout=5 \
+      "$host" "tmux new-session -A -s main"
+    local ec=$? elapsed=$(( $(date +%s) - start ))
+
+    # reset mouse reporting the remote session may have left on
+    [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
+
+    # Clean detach / exit (Ctrl-b d, exit): intentional -> stop, tear down below.
+    (( ec == 0 )) && break
+
+    # Never got past ProxyCommand/auth: keep the window so the error stays on
+    # screen (commonly a stale token). Don't retry -- fast failures are almost
+    # always config, and looping just buries the message.
+    if (( elapsed < _ONA_CONNECT_MIN )); then
+      print -ru2 -- $'\nCould not connect to '"${host}"$' (ssh exited '"$ec"$' in '"${elapsed}"$'s).\nFix the error above, then close this window or reconnect.'
+      _ona_clear_cache
+      tmux set-option -u @is_remote 2>/dev/null
+      exec zsh
+    fi
+
+    # Connected, then dropped after being alive. Re-check phase to decide:
+   
+    if [[ $(ona env get "$id" -f phase) == "running" ]]; then
+      print -ru2 -- $'\nlink dropped after '"${elapsed}"$'s, env still up -- reconnecting...'
+      sleep 2
+      continue                       # network blip: cheap re-ssh
+    fi
+    break                            # env stopped: fall through to teardown
+  done
+ 
+  # Reached only on clean detach or env-stopped drop: tear down the throwaway
+  # session and hop the client back to origin first (detach-on-destroy).
+  _ona_clear_cache
   tmux switch-client -t "=$ONA_ORIGIN" 2>/dev/null || tmux switch-client -l 2>/dev/null
   tmux kill-session -t "=ona-${id%%-*}"
 }
