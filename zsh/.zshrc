@@ -97,6 +97,7 @@ fi
 # if zoxide is installed, initialize it
 [ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
 
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 load_plugin "zsh-autosuggestions/zsh-autosuggestions.zsh"
 load_plugin "zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
