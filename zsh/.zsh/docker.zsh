@@ -12,13 +12,13 @@ clean_docker() {
 # Select one or more Docker Compose services from config file
 docker_compose_services() {
   file=${1:-docker-compose.yml}
-  docker compose -f $file config --format json | jq -r '.services | keys | .[]' | gum filter
+  docker compose -f $file config --format json | jq -r '.services | keys | .[]' | gum filter --no-limit --select-if-one
 }
 alias -g dcsp='$(docker_compose_services)'
 
 # Select one or more Docker containers from the list of running containers
 docker_containers(){
-  docker ps --format '{{json .}}' | jq -r ".Names" | gum filter
+  docker ps --format '{{json .}}' | jq -r ".Names" | gum filter --no-limit --select-if-one
 }
 
 alias -g dcp='$(docker_containers)'
