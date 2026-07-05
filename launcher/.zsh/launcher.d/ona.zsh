@@ -42,9 +42,6 @@ _ona_connect() {
       "$host" "tmux new-session -A -s main"
     local ec=$? elapsed=$(( $(date +%s) - start ))
 
-    # reset mouse reporting the remote session may have left on
-    [[ -t 1 ]] && print -n -- $'\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
-
     # Clean detach / exit (Ctrl-b d, exit): intentional -> stop, tear down below.
     (( ec == 0 )) && break
 
