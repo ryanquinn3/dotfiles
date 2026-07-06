@@ -9,7 +9,7 @@ _docker_compose_running_services() {
 # _docker has no compose support at all, so wrap it: dispatch to our function
 # for these subcommands, otherwise fall through to the real completion.
 _docker_with_compose_override() {
-    if [[ $words[2] == compose && $words[3] == (exec|logs|stop) ]]; then
+    if [[ $words[2] == compose && $words[3] == (exec|logs|stop|down) ]]; then
         _docker_compose_running_services
         return
     fi
