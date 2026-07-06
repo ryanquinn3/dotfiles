@@ -1,3 +1,18 @@
+# Custom completion helper to grab running compose services
+_docker_compose_running_services() {
+    local -a running_svcs
+    # Fetch only running service names from the current directory context
+    running_svcs=($(docker compose ps --services --status=running 2>/dev/null))
+    _describe 'running services' running_svcs
+}
+
+# Force specific subcommands to only auto-complete running services
+compdef _docker_compose_running_services \
+    'docker compose exec' \
+    'docker compose logs' \
+    'docker compose stop' \
+   
+
 clean_docker() {
   if [ ! -z "$1" ]; then
     images=$(docker images -a | grep $1 | awk '{ print $3 }')
