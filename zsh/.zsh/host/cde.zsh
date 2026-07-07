@@ -22,6 +22,10 @@ export VANTA_LINT_HOOK_ON_EDIT_ENABLED="false"
 #   _CLAUDE_PLUGINS=(architecture writing work-obsidian)
 _CLAUDE_PLUGINS=(architecture writing)
 
+# A cde is a personal sandbox, so skip permission prompts on every invocation
+# (overrides the default empty set in claude.zsh, which is sourced earlier).
+_CLAUDE_DEFAULT_ARGS=(--dangerously-skip-permissions)
+
 export DEV_WORKSPACE_DIR=".ai-dev"
 export DEV_ARCHIVE_DIR="$HOME/ai-dev-archives"
 export DEV_S3_ARCHIVE_PREFIX="s3://vanta-dev-codespace-assets/ryanquinn3/ai-dev-archives"

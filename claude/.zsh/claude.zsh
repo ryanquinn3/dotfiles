@@ -16,10 +16,13 @@ typeset -g _CLAUDE_PLUGINS_DIR="${${(%):-%x}:A:h:h}/plugins"
 # (e.g. cde.zsh loads the work plugins on every cde).
 typeset -ga _CLAUDE_PLUGINS=()
 
-# Wrapper: inject --plugin-dir for each selected plugin, then defer to the real
-# binary. `command claude` avoids recursing back into this function. Unknown
-# plugin names are skipped (with a warning) so a stale override can't stop
-# claude from launching.
+# Default args applied to every interactive `claude` invocation. 
+typeset -ga _CLAUDE_DEFAULT_ARGS=()
+
+# Wrapper: inject --plugin-dir for each selected plugin plus _CLAUDE_DEFAULT_ARGS,
+# then defer to the real binary. `command claude` avoids recursing back into this
+# function. Unknown plugin names are skipped (with a warning) so a stale override
+# can't stop claude from launching.
 claude() {
   local -a plugin_args
   local p dir
@@ -31,7 +34,7 @@ claude() {
     fi
     plugin_args+=(--plugin-dir "$dir")
   done
-  command claude "${plugin_args[@]}" "$@"
+  command claude "${plugin_args[@]}" "${_CLAUDE_DEFAULT_ARGS[@]}" "$@"
 }
 
 # Interactively choose from the plugins available in plugins/. Prints the chosen
@@ -73,7 +76,7 @@ claude_chat(){
 
 # Boot Claude with all permission prompts skipped.
 clc(){
-  GITHUB_TOKEN= ANTHROPIC_API_KEY= claude --dangerously-skip-permissions "$@"
+  GITHUB_TOKEN= ANTHROPIC_API_KEY= claude "$@"
 }
 
 # Pick a model interactively, then launch.
@@ -91,11 +94,10 @@ clm(){
 # Launch with the chrome-devtools MCP server wired up.
 _claude_dev_tools() {
   claude \
-    --dangerously-skip-permissions \
     --mcp-config '{"mcpServers": {"chrome-devtools": {"command": "npx", "args": ["-y", "chrome-devtools-mcp@latest", "--auto-connect"]}}}'
 }
 
 alias cc="tmux_claude_code"
 tmux_claude_code() {
-  tmux_new_window "claude-code" "claude --dangerously-skip-permissions"
+  tmux_new_window "claude-code" "claude"
 }
