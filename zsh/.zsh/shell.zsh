@@ -1,6 +1,6 @@
 reload_zsh() {
   local stow_changes
-  stow_changes=$("$DOT_FILES/stow.sh" --dry-run 2>&1)
+  stow_changes=$(link_dot --dry-run 2>&1)
   [[ -n "$stow_changes" ]] && print -u2 -- "reload_zsh: pending stow changes, run 'link_dot':\n$stow_changes"
 
   [[ -n "$TMUX" ]] && tmux source-file ~/.tmux.conf
