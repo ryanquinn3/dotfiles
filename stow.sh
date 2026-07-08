@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
+STOW_FLAGS=()
+if [[ "$1" == "--dry-run" ]]; then
+  STOW_FLAGS+=(-n -v)
+  shift
+fi
+
 # Symlink a package into $HOME. stow may fold a whole package directory into a
 # single symlink when the target dir doesn't exist yet (new files added to a
 # folded dir then appear automatically).
 function run_stow(){
   for dir in "$@"; do
-    stow -t "$HOME" "$dir"
+    stow "${STOW_FLAGS[@]}" -t "$HOME" "$dir" 2>&1 | grep -v '^WARNING: in simulation mode'
   done
 }
 
@@ -17,7 +23,7 @@ function run_stow(){
 # into this repo. Trade-off: a newly added repo file needs a re-stow to appear.
 function run_stow_no_fold(){
   for dir in "$@"; do
-    stow --no-folding -t "$HOME" "$dir"
+    stow "${STOW_FLAGS[@]}" --no-folding -t "$HOME" "$dir" 2>&1 | grep -v '^WARNING: in simulation mode'
   done
 }
 

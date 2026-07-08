@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Re-stow dotfiles from anywhere.
+cd "$DOT_FILES" && ./stow.sh "$@"
