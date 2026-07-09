@@ -19,6 +19,8 @@ Never surface a recommendation, caveat, or follow-up item that asks the user to 
 
 ### Plans, Notes, and Research Files
 
+`.ai-dev` is **git ignored** directory specifically for keeping scratch work, notes, and plans. It is ignored globally in git config.
+
 Before saving any of these files to disk, check the repo for any `.ai-dev` directories. If they are present, it is **critical** that plans go in one of those directories.
 If changes are scoped to a single directory store plans in an `.ai-dev` directory in that directory.
 
