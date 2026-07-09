@@ -62,7 +62,7 @@ clp(){
   chosen=("${(@f)$(_claude_choose_plugins)}") || return
   (( ${#chosen} )) || return
   for p in $chosen; do plugin_args+=(--plugin-dir "$_CLAUDE_PLUGINS_DIR/$p"); done
-  command claude "${plugin_args[@]}" "$@"
+  command claude "${plugin_args[@]}" "${_CLAUDE_DEFAULT_ARGS[@]}" "$@"
 }
 
 # Run a chat-only agent in a readonly mode when you want no actions to be taken.
