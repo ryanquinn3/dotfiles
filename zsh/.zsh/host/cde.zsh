@@ -13,6 +13,33 @@ fi
 export DEV_LOG_FORMAT="json"
 export DOCKER_CONFIG=$HOME/.docker
 
+# vscode bindings to make separate terminals be able to connect to vscode remote
+function vscode_server_bin_path(){
+  ls -td "$HOME"/.vscode-server/cli/servers/Stable-*/ 2>/dev/null | head -1
+}
+
+vscode_server_dir=$(vscode_server_bin_path)
+if [ -z "$VSCODE_IPC_HOOK_CLI" ]; then
+    export VSCODE_IPC_HOOK_CLI=$(ls -t /tmp/vscode-ipc-* 2>/dev/null | head -n 1)
+fi
+
+if [[ -n "$vscode_server_dir" ]]; then
+  export PATH="${vscode_server_dir}server/bin/remote-cli:$PATH"
+  browser=$(fd 'browser.sh' "$vscode_server_dir")
+  if [[ -n "$browser" ]]; then
+    export BROWSER="$browser"
+  fi
+fi
+
+function code(){
+  # if VSCODE_IPC_HOOK_CLI is not set, find the latest vscode ipc hook socket and set it
+  if [ -z "$VSCODE_IPC_HOOK_CLI" ]; then
+    export VSCODE_IPC_HOOK_CLI=$(ls -t /tmp/vscode-ipc-* 2>/dev/null | head -n 1)
+  fi
+  command code --reuse-window "$@"
+}
+
+
 export CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1
 export VANTA_LINT_HOOK_ON_EDIT_ENABLED="false"
 
