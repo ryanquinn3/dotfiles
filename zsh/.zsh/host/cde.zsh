@@ -20,7 +20,9 @@ function vscode_server_bin_path(){
 
 vscode_server_dir=$(vscode_server_bin_path)
 if [ -z "$VSCODE_IPC_HOOK_CLI" ]; then
-    export VSCODE_IPC_HOOK_CLI=$(ls -t /tmp/vscode-ipc-* 2>/dev/null | head -n 1)
+    sock_path=$(ls -t /tmp/vscode-ipc-* 2>/dev/null | head -n 1)
+    
+    [[ -n "$sock_path" ]] && export VSCODE_IPC_HOOK_CLI="$sock_path"
 fi
 
 if [[ -n "$vscode_server_dir" ]]; then

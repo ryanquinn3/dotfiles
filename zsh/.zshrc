@@ -65,13 +65,19 @@ export FZF_CTRL_T_OPTS="
 
 # disable sort when completing `git checkout`
 zstyle ':completion:*:git-checkout:*' sort false
+# include hidden files in file completion without typing a leading "."
+setopt GLOB_DOTS
+# order file completions by modification time (newest first) instead of alphabetically
+zstyle ':completion:*' file-sort modification
+# don't let zsh's completion system (or fzf-tab) re-sort matches alphabetically over file-sort's ordering
+zstyle ':completion:*' sort false
 # set descriptions format to enable group support
 zstyle ':completion:*:descriptions' format '[%d]'
 # set list-colors to enable filename colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept --preview-window='right:60%'
+zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept --preview-window='right:60%' --no-sort
 # zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 # preview directory's content with exa when completing cd
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'tree -C $realpath | head -200'
