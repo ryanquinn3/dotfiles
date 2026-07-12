@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 
-files=$(fd --type f --hidden -0 | xargs -0 eza -r --sort=modified --oneline --icons=never)
+# Pass 1: normal listing (honors .gitignore/.fdignore, so build dirs etc. stay out).
+# Pass 2: re-include .ai-dev, which my global git ignore (~/.config/git/ignore)
+# hides everywhere. --no-ignore-vcs makes it discoverable, and --full-path
+# '/\.ai-dev/' keeps this pass scoped to .ai-dev only, so no other git-ignored
+# files (dist/, *.log, ...) leak in. The two passes never overlap.
+files=$( { fd --type f --hidden; \
+           fd --type f --hidden --no-ignore-vcs --full-path '/\.ai-dev/'; } \
+         | eza --stdin -r --sort=modified --oneline --icons=never \
+         )
 
 echo "$files" | fzf --ansi --reverse --no-sort --inline-info --cycle \
   --border=rounded \
-  --prompt "Select a file to open: " \
-  --header "Use TAB to select multiple files, ENTER to open" \
+  --prompt "Select a file to paste into pane: " \
   --preview "bat --style=numbers --color=always {} | head -n 100"
