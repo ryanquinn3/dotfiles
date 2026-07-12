@@ -23,8 +23,10 @@ keybind = super+escape=text:\x1b[1;5P
 # cmd+k => custom sequence tmux maps to User0 (fzf window switcher popup)
 keybind = super+k=text:\x1b[5002~
 
-# cmd+k => custom sequence tmux maps to User0 (fzf window switcher popup)
-keybind = super+e=text:\x1b[5003~
+# cmd+e => prefix + Shift-F (C-s F); tmux `bind F` runs the file picker. Sent as
+# the raw prefix sequence (not a User key) so it forwards to remote tmux for free
+# in dumb mode -- \x13 is C-s, F is literal.
+keybind = super+e=text:\x13F
 
 desktop-notifications = true
 
