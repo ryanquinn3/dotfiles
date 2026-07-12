@@ -9,4 +9,8 @@ trap 'rm -f "$tmpfile"' EXIT
 tmux display-popup -w 90% -h 90% -E "quick-pick-file > '$tmpfile'"
 
 selection=$(cat "$tmpfile")
-[ -n "$selection" ] && tmux send-keys -l -- "$selection"
+# Cancelling fzf (Esc/Ctrl-C) yields an empty selection; that's not an error,
+# so return 0 rather than letting the failed test become the exit code.
+if [ -n "$selection" ]; then
+  tmux send-keys -l -- "$selection"
+fi
