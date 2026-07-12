@@ -23,6 +23,9 @@ keybind = super+escape=text:\x1b[1;5P
 # cmd+k => custom sequence tmux maps to User0 (fzf window switcher popup)
 keybind = super+k=text:\x1b[5002~
 
+# cmd+k => custom sequence tmux maps to User0 (fzf window switcher popup)
+keybind = super+e=text:\x1b[5003~
+
 desktop-notifications = true
 
 # switch windows (1-4)

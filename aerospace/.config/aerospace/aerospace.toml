@@ -116,14 +116,9 @@ automatically-unhide-macos-hidden-apps = false
     alt-slash = 'layout tiles horizontal vertical'
     alt-comma = 'layout accordion horizontal vertical'
 
-    # See: `
-    # alt-h = 'focus left'
-    # alt-j = 'focus down'
-    # alt-k = 'focus up'
-    # alt-l = 'focus right'
 
-    alt-k = 'focus --boundaries-action wrap-around-the-workspace dfs-next'
-    alt-l = 'focus --boundaries-action wrap-around-the-workspace dfs-prev'
+    alt-a = 'focus --boundaries-action wrap-around-the-workspace dfs-next'
+    alt-shift-a = 'focus --boundaries-action wrap-around-the-workspace dfs-prev'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
     alt-shift-h = 'move left'
@@ -165,7 +160,6 @@ automatically-unhide-macos-hidden-apps = false
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
 
-    alt-a = 'exec-and-forget ~/.config/aerospace/focus-app.sh company.thebrowser.Browser Arc'
     alt-s = 'exec-and-forget ~/.config/aerospace/focus-app.sh com.tinyspeck.slackmacgap Slack'
     alt-m = 'exec-and-forget ~/.config/aerospace/focus-app.sh com.apple.MobileSMS Messages'
     alt-p = 'exec-and-forget ~/.config/aerospace/focus-app.sh com.openai.chat ChatGPT'

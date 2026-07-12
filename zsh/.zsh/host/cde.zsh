@@ -53,7 +53,7 @@ _CLAUDE_PLUGINS=(architecture writing)
 
 # A cde is a personal sandbox, so skip permission prompts on every invocation
 # (overrides the default empty set in claude.zsh, which is sourced earlier).
-_CLAUDE_DEFAULT_ARGS=(--dangerously-skip-permissions)
+_CLAUDE_DEFAULT_ARGS=(--permission-mode auto)
 
 export DEV_WORKSPACE_DIR=".ai-dev"
 export DEV_ARCHIVE_DIR="$HOME/ai-dev-archives"

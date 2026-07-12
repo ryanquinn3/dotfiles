@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+files=$(fd --type f --hidden -0 | xargs -0 eza -r --sort=modified --oneline --icons=never)
+
+echo "$files" | fzf --ansi --reverse --no-sort --inline-info --cycle \
+  --border=rounded \
+  --prompt "Select a file to open: " \
+  --header "Use TAB to select multiple files, ENTER to open" \
+  --preview "bat --style=numbers --color=always {} | head -n 100"

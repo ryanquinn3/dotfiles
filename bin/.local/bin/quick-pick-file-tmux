@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Runs quick-pick-file in a real tmux popup (so fzf has a pty to render into),
+# then sends the selected path(s) back into the pane that triggered it -
+# `run-shell` alone has no pty and can't paste output into the pane itself.
+
+tmpfile=$(mktemp)
+trap 'rm -f "$tmpfile"' EXIT
+
+tmux display-popup -w 90% -h 90% -E "quick-pick-file > '$tmpfile'"
+
+selection=$(cat "$tmpfile")
+[ -n "$selection" ] && tmux send-keys -l -- "$selection"
