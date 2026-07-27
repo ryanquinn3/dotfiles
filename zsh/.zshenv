@@ -12,9 +12,6 @@ export DOCKER_BUILDKIT=1
 if [ -f /etc/profile.d/ona-secrets.sh ]; then
   source /etc/profile.d/ona-secrets.sh
 fi
-# keep PATH entries unique so re-sourcing in subshells doesn't duplicate them
-typeset -U path PATH
-export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.local/bin"
 
 # init brew early (before fzf/completion) so brew tools win over older system
 # copies (e.g. apt fzf without --zsh). brew usually isn't on PATH in a fresh
@@ -29,6 +26,11 @@ if [[ -z "$HOMEBREW_PREFIX" ]]; then
   done
 fi
 
+# keep PATH entries unique so re-sourcing in subshells doesn't duplicate them
+typeset -U path PATH
+export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.cargo/bin:/usr/local/opt/openssl@1.1/bin:$HOME/.local/bin"
+
+
 export ZSH_COMPLETIONS_DIR="$HOME/.zsh/completions"
 # Editor: inside a VS Code / CDE integrated terminal use code, else gcode.
 # On macOS .local-config overrides this to `fresh`; in CDEs nothing overrides
@@ -40,3 +42,5 @@ else
   export GIT_EDITOR="gcode --wait"
   export EDITOR="gcode --wait"
 fi
+
+. "$HOME/.cargo/env"

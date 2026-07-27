@@ -20,7 +20,7 @@ function vscode_server_bin_path(){
 
 vscode_server_dir=$(vscode_server_bin_path)
 if [ -z "$VSCODE_IPC_HOOK_CLI" ]; then
-    sock_path=$(ls -t /tmp/vscode-ipc-* 2>/dev/null | head -n 1)
+    sock_path=$(ls -t /tmp/vscode-ipc-*(N) 2>/dev/null | head -n 1)
     
     [[ -n "$sock_path" ]] && export VSCODE_IPC_HOOK_CLI="$sock_path"
 fi
@@ -36,7 +36,7 @@ fi
 function code(){
   # if VSCODE_IPC_HOOK_CLI is not set, find the latest vscode ipc hook socket and set it
   if [ -z "$VSCODE_IPC_HOOK_CLI" ]; then
-    export VSCODE_IPC_HOOK_CLI=$(ls -t /tmp/vscode-ipc-* 2>/dev/null | head -n 1)
+    export VSCODE_IPC_HOOK_CLI=$(ls -t /tmp/vscode-ipc-*(N) 2>/dev/null | head -n 1)
   fi
   command code --reuse-window "$@"
 }
@@ -72,7 +72,7 @@ alias pgh="GH_TOKEN=$GH_GIST_TOKEN gh"
 # aliases
 alias gt="turbo generate-types --output-logs errors-only --filter @vanta/web --filter $WC_PKG"
 alias gtc="turbo generate-types --output-logs errors-only --filter $WC_PKG"
-alias syncdot="(cd $DOT_FILES && git pull) && rz"
+alias syncdot="(cd $DOT_FILES && git pull --quiet) && rz"
 
 alias tbr="_run_turbo_task"
 alias jfz="_run_just"

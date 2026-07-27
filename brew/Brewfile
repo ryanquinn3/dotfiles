@@ -18,7 +18,7 @@ brew "glow"
 brew "rtk"
 tap "modem-dev/tap", trusted: true
 brew "hunk"
-
+brew "television"
 # AI tools
 tap "anomalyco/tap", trusted: true
 # requires node and ripgrep, which are installed above / out of band
@@ -38,7 +38,9 @@ if RUBY_PLATFORM =~ /darwin/
   brew "httpie"
   brew "yq"
   brew "jq"
+  brew "git" # update git to latest version (macOS ships with an old version)
   brew "ripgrep"
+
   brew "tree"
   brew "ffmpeg"
   brew "gh"

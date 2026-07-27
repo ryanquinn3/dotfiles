@@ -1,0 +1,47 @@
+[metadata]
+name = "tmux"
+description = "Switch and manage tmux sessions"
+requirements = ["tmux"]
+
+[source]
+command = '''
+zsh -c '
+  current=$(tmux display-message -p "#{session_id}" 2>/dev/null)
+  separator=$(printf "\t")
+
+  tmux list-sessions \
+    -f "#{!=:#{session_id},$current}" \
+    -F "#{?#{@focus_ts},#{@focus_ts},#{session_activity}}${separator}#{session_id}${separator}#{pane_id}${separator}#{?#{@icon},#{@icon},}${separator}#{session_name}" \
+    2>/dev/null |
+  sort -rn
+'
+'''
+display = "{split:\\t:3}  {split:\\t:4}"
+output = "{split:\\t:1}"
+no_sort = true
+
+[preview]
+command = "tmux capture-pane -t '{split:\\t:2}' -ep"
+header = "{split:\\t:4}"
+
+[ui]
+layout = "landscape"
+input_header = "tmux sessions"
+input_prompt = "  "
+
+[ui.preview_panel]
+size = 55
+
+[keybindings]
+enter = "actions:switch"
+ctrl-w = ["actions:kill", "reload_source"]
+
+[actions.switch]
+description = "Switch session"
+command = "tmux switch-client -t '{split:\\t:1}'"
+mode = "execute"
+
+[actions.kill]
+description = "Kill session"
+command = "tmux kill-session -t '{split:\\t:1}'"
+mode = "fork"

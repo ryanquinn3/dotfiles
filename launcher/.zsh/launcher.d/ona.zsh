@@ -73,10 +73,21 @@ _ona_connect() {
 }
 
 _ona_launch() {                        # enter
-  local d; d=$(jq -c .)
   local id short origin
-  id=$(jq -r .id <<<"$d")
-  short=$(jq -r .short <<<"$d")
+  if [[ -n $1 ]]; then
+    id=$1
+    short=${id%%-*}
+  else
+    local d; d=$(jq -c .)
+    id=$(jq -r .id <<<"$d")
+    short=$(jq -r .short <<<"$d")
+  fi
+
+  if tmux has-session -t "=ona-$short" 2>/dev/null; then
+    tmux switch-client -t "=ona-$short"
+    return
+  fi
+
   origin=$(tmux display-message -p '#{session_name}')   # where to return on teardown
   # detached local session whose window connects; ONA_ID + ONA_ORIGIN are read by
   # _ona_connect (the latter for the teardown hop-back on disconnect).

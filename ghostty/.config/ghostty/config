@@ -20,7 +20,7 @@ keybind = super+s=text:\x1b[115;8u
 # cmd+escape => F35 which tmux is wired up to receive
 keybind = super+escape=text:\x1b[1;5P
 
-# cmd+k => custom sequence tmux maps to User0 (fzf window switcher popup)
+# cmd+k => custom sequence tmux maps to User0 (Television session switcher popup)
 keybind = super+k=text:\x1b[5002~
 
 # cmd+e => prefix + Shift-F (C-s F); tmux `bind F` runs the file picker. Sent as

@@ -111,5 +111,8 @@ load_plugin "zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 # if starship is installed, initialize it 
 [ -x "$(command -v starship)" ] && eval "$(starship init zsh)"
 
+# if television is installed, initialize it
+[ -x "$(command -v tv)" ] && eval "$(tv init zsh)"
+
 # print startup profile if ZSHRC_PROFILE was set (see top of file)
 [ -n "$ZSHRC_PROFILE" ] && zprof

@@ -1,0 +1,60 @@
+[metadata]
+name = "ona"
+description = "Manage Ona environments"
+requirements = ["ona", "jq"]
+
+[source]
+command = '''
+ona env list -o json |
+jq -r '
+  sort_by(.metadata.lastStartedAt // "")
+  | reverse[]
+  | [
+      (.metadata.name // .id[0:8]),
+      .id,
+      (.status.content.git.cloneUrl // ""),
+      (.status.content.git.branch // ""),
+      (.status.phase // "" | sub("ENVIRONMENT_PHASE_"; "") | ascii_downcase),
+      (.metadata.lastStartedAt // "" | if . == "" then "never" else (.[0:16] | sub("T"; " ")) + " UTC" end)
+    ]
+  | @tsv
+'
+'''
+display = "{split:\\t:0}"
+output = "{split:\\t:1}"
+no_sort = true
+
+[preview]
+command = '''
+printf '%-14s %s\n' \
+  'Id:'           '{split:\t:1}' \
+  'Name:'         '{split:\t:0}' \
+  'Repository:'   '{split:\t:2}' \
+  'Branch:'       '{split:\t:3}' \
+  'Phase:'        '{split:\t:4}' \
+  'Last started:' '{split:\t:5}'
+'''
+header = "{split:\\t:0}"
+
+[keybindings]
+enter = "actions:launch"
+ctrl-w = ["actions:stop", "reload_source"]
+ctrl-o = "actions:open"
+
+[actions.launch]
+description = "Start and connect"
+command = "zsh -c 'source ~/.zsh/launcher.d/ona.zsh && _ona_launch \"$1\"' _ '{split:\\t:1}'"
+mode = "execute"
+
+[actions.stop]
+description = "Stop environment"
+command = "ona environment stop '{split:\\t:1}'"
+mode = "fork"
+
+[actions.open]
+description = "Open Ona environment in vscode"
+command = "ona environment open '{split:\\t:1}' --editor vscode"
+mode = "execute"
+
+[ui.preview_panel]
+size = 60

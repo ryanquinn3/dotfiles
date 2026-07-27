@@ -8,7 +8,7 @@
 files=$( { fd --type f --hidden; \
            fd --type f --hidden --no-ignore-vcs --full-path '/\.ai-dev/'; } \
          | eza --stdin -r --sort=modified --oneline --icons=never \
-         )
+         )™
 
 echo "$files" | fzf --ansi --reverse --no-sort --inline-info --cycle \
   --border=rounded \

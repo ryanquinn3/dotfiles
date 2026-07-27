@@ -5,6 +5,10 @@ alias cat="bat"
 
 export DOT_FILES=$HOME/repos/dotfiles
 export EDITOR='fresh --wait'
+export PATH="/opt/homebrew/bin:$PATH"
+
+export OPENCODE_DISABLE_CLAUDE_CODE=1
+
 
 # Node tooling
 eval "$(fnm env --use-on-cd --shell zsh)"
