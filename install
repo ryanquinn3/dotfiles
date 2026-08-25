@@ -55,7 +55,6 @@ function setup_oh_my_zsh_plugins() {
 	install_plugin "fzf-tab" "https://github.com/Aloxaf/fzf-tab.git"
 	install_plugin "zsh-yarn-completions" "https://github.com/chrisands/zsh-yarn-completions.git"
 	install_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
-	install_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions.git"
 	
 }
 

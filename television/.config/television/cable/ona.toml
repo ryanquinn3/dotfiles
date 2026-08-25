@@ -1,11 +1,11 @@
 [metadata]
 name = "ona"
 description = "Manage Ona environments"
-requirements = ["ona", "jq"]
+requirements = ["ona", "jq", "bkt"]
 
 [source]
 command = '''
-ona env list -o json |
+bkt --ttl 1d --stale 5m -- ona env list -o json |
 jq -r '
   sort_by(.metadata.lastStartedAt // "")
   | reverse[]
@@ -39,16 +39,32 @@ header = "{split:\\t:0}"
 [keybindings]
 enter = "actions:launch"
 ctrl-w = ["actions:stop", "reload_source"]
+ctrl-d = ["actions:delete", "reload_source"]
 ctrl-o = "actions:open"
 
 [actions.launch]
 description = "Start and connect"
-command = "zsh -c 'source ~/.zsh/launcher.d/ona.zsh && _ona_launch \"$1\"' _ '{split:\\t:1}'"
+command = "zsh -c 'source ~/.zsh/ona.zsh && _ona_launch \"$1\"' _ '{split:\\t:1}'"
 mode = "execute"
 
 [actions.stop]
 description = "Stop environment"
-command = "ona environment stop '{split:\\t:1}'"
+command = '''
+[ '{split:\t:4}' = running ] && {
+  ona environment stop '{split:\t:1}' &&
+  bkt --warm --ttl 1d -- ona env list -o json >/dev/null
+} || true
+'''
+mode = "fork"
+
+[actions.delete]
+description = "Delete stopped environment"
+command = '''
+[ '{split:\t:4}' = stopped ] && {
+  ona environment delete '{split:\t:1}' &&
+  bkt --warm --ttl 1d -- ona env list -o json >/dev/null
+} || true
+'''
 mode = "fork"
 
 [actions.open]

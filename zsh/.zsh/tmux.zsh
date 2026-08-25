@@ -6,9 +6,10 @@ tmux_new_window() {
   tmux new-window -t "$(tmux_current_session)" -n "$1" "$2"
 }
 
-# The fzf window switcher (tmux_fzf_window / tjump) moved to the launcher
-# package: ~/.zsh/launcher.zsh + ~/.zsh/launcher.d/tmux.zsh. `tjump` now aliases
-# the generic launcher there.
+tmux_new_session() {
+    local project_root="${PROJECT_ROOT:-"$HOME/repos"}"
+    tv tmux-new-session "${project_root}"
+}
 
 tmux_rename() {
     # Safety check: Ensure we are actually inside a tmux session

@@ -103,8 +103,6 @@ fi
 # if zoxide is installed, initialize it
 [ -x "$(command -v zoxide)" ] && eval "$(zoxide init zsh)"
 
-ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-load_plugin "zsh-autosuggestions/zsh-autosuggestions.zsh"
 load_plugin "zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 
@@ -113,6 +111,10 @@ load_plugin "zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # if television is installed, initialize it
 [ -x "$(command -v tv)" ] && eval "$(tv init zsh)"
+
+# if deja is installed, initialize it
+export DEJA_CYCLE_KEY=
+[ -x "$(command -v deja)" ] && eval "$(deja init zsh)"
 
 # print startup profile if ZSHRC_PROFILE was set (see top of file)
 [ -n "$ZSHRC_PROFILE" ] && zprof

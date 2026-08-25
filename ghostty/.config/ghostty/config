@@ -9,13 +9,13 @@ macos-option-as-alt = left
 copy-on-select = clipboard
 clipboard-read = allow
 clipboard-write = allow
-
+background-opacity = 0.95
 # tmux remappers
 # ctrl+s = \x13
 
 # macos-titlebar-style = hidden
 
-keybind = super+s=text:\x1b[115;8u
+keybind = "super+s=text:\x1b[115;8u"
 
 # cmd+escape => F35 which tmux is wired up to receive
 keybind = super+escape=text:\x1b[1;5P

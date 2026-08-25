@@ -32,8 +32,7 @@ run_stow_no_fold zsh opencode claude television
 
 
 if [[ $OSTYPE == 'darwin'* ]]; then
-  run_stow aerospace ghostty personal sketchybar docker fresh 
-  run_stow_no_fold launcher
+  run_stow aerospace ghostty personal sketchybar docker fresh plannotator
 fi
 
 if [[ $OSTYPE == 'linux-gnu'* ]]; then

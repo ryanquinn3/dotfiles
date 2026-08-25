@@ -6,60 +6,75 @@
 [[ -o interactive ]] && gen_completion ona
 
 
-# Cache path for `ona env list` (SWR machinery lives below the emit guard).
-# Defined up here so the launch/disconnect helpers can invalidate it: both events
-# change an env's phase, so dropping the cache forces a fresh fetch (and accurate
-# stopped/running state) on the next picker open.
-typeset -g _ONA_CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/launcher-ona.json
-_ona_clear_cache() { rm -f "$_ONA_CACHE"; }
+_ona_refresh_cache() { bkt --warm --ttl 1d -- ona env list -o json >/dev/null; }
 
+# An ssh that exits nonzero this quickly failed during connection setup rather
+# than after a usable remote session.
+typeset -gi _ONA_CONNECT_MIN=10
 
-# fzf-pick an ona environment. Preview shows `ona env get` for the highlighted
-# row; the selected environment id is printed to stdout (so it composes:
-# `ona_set_env "$(ona_pick)"`, `ssh "$(ona_pick).gitpod.environment"`, ...).
-ona_pick() {
-  local rows cache
-  rows=$(ona env list -o json | jq -r '
-    .[] | [
-      .id,
-      .id[0:8],
-      .metadata.name // "[none]",
-      ( .status.phase // "" | sub("ENVIRONMENT_PHASE_"; "") | ascii_downcase ),
-      ( .status.content.git.branch // "?" ),
-      ( .status.content.git.cloneUrl // "" | sub("\\.git$"; "") | split("/") | last ),
-      ( .metadata.createdAt // "" )[0:10],
-      ( .metadata.lastStartedAt // "" )[0:10]
-    ] | join(",")') || return
-  [[ -n $rows ]] || { echo "No ona environments." >&2; return 1; }
+# Runs inside the temporary local ona-<short> tmux session.
+_ona_connect() {
+  local id=${1:-$ONA_ID}
+  local host="${id}.gitpod.environment"
 
-  # Per-session preview cache: `ona env get` is a network call, so memoize each
-  # id to a tempdir for the life of the picker (cursoring back is then a `cat`,
-  # not a refetch). $ONA_PREVIEW_CACHE is read by the preview subshell.
-  cache=$(mktemp -d) || return
-  export ONA_PREVIEW_CACHE=$cache
+  while true; do
+    if [[ $(ona env get "$id" -f phase) != "running" ]]; then
+      gum spin --spinner dot --title "Starting $id" -- ona env start "$id"
+    fi
 
-  # Prepend a header row and render the whole table with `gum table -p` so the
-  # sticky header lines up with the data. `gum table` pads with all-whitespace
-  # lines (top, bottom, and between header and rows); grep drops them so
-  # --header-lines=1 lands on the real header instead of a blank line. Then
-  # --with-nth='2..' hides col 1 (id) from the header and rows; id stays field
-  # {1} for the preview, and `awk` pulls it back out of the selected row.
-  print -r -- "id,id,name,phase,branch,repo,created,started"$'\n'"$rows" \
-   | column -t -s, \
-    | fzf  \
-          --ansi \
-          --header-lines=1 \
-          --with-nth='2..' \
-          --preview 'f="$ONA_PREVIEW_CACHE"/{1}; [ -f "$f" ] || ona env get {1} >"$f" 2>&1; cat "$f"' \
-          --border=rounded \
-          --layout=reverse \
-          --info=inline \
-          --preview-window='nohidden,40%,<50(down,50%,border-rounded)' \
-    | awk '{ print $1 }' | tee >(pbcopy)
+    echo "Connecting to ${host}..."
+    local start=$(date +%s)
+    ssh -tt \
+      -o ServerAliveInterval=15 \
+      -o ServerAliveCountMax=3 \
+      -o ConnectTimeout=5 \
+      "$host" "tmux new-session -A -s main"
+    local ec=$? elapsed=$(( $(date +%s) - start ))
 
-  rm -rf "$cache"; unset ONA_PREVIEW_CACHE
+    (( ec == 0 )) && break
+
+    if (( elapsed < _ONA_CONNECT_MIN )); then
+      print -ru2 -- $'\nCould not connect to '"${host}"$' (ssh exited '"$ec"$' in '"${elapsed}"$'s).\nFix the error above, then close this window or reconnect.'
+      _ona_refresh_cache
+      tmux set-option -u @is_remote 2>/dev/null
+      exec zsh
+    fi
+
+    if [[ $(ona env get "$id" -f phase) == "running" ]]; then
+      print -ru2 -- $'\nlink dropped after '"${elapsed}"$'s, env still up; reconnecting...'
+      sleep 2
+      continue
+    fi
+    break
+  done
+
+  _ona_refresh_cache
+  tmux switch-client -t "=$ONA_ORIGIN" 2>/dev/null || tmux switch-client -l 2>/dev/null
+  tmux kill-session -t "=ona-${id%%-*}"
 }
-alias -g oep="ona_pick"
+
+_ona_launch() {
+  local id=${1:?environment id required}
+  local short=${id%%-*}
+  local origin
+
+  if tmux has-session -t "=ona-$short" 2>/dev/null; then
+    tmux switch-client -t "=ona-$short"
+    return
+  fi
+
+  origin=$(tmux display-message -p '#{session_name}')
+  tmux new-session -d -s "ona-$short" -e "ONA_ID=$id" -e "ONA_ORIGIN=$origin" \
+    'zsh -c "source ~/.zsh/ona.zsh && _ona_connect"'
+  tmux set-option -t "ona-$short" @is_remote 1
+  tmux set-option -t "ona-$short" @icon '󰞶'
+  tmux switch-client -t "=ona-$short"
+  _ona_refresh_cache
+}
+
+
+
+alias -g oep="tv ona"
 
 ona_ssh() {
   local env_id host
@@ -85,19 +100,14 @@ ona_delete() {
   [[ -n "$env_id" ]] || { echo "No ona environment selected." >&2; return 1; }
   echo "Deleting ona environment $env_id..."
   ona environment delete $env_id
-  context_env=$(ona env get -f id)
-  if [[ "$context_env" == "$env_id" ]]; then
-    echo "Deleted environment was the current context. Resetting context to a new environment..."
-    ona_reset_context_env "$env_id"
-  fi
-  _ona_clear_cache
+  _ona_refresh_cache
 }
 
 ona_stop(){
   local env_id="${1:-$(oep)}"
   [[ -n "$env_id" ]] || { echo "No ona environment selected." >&2; return 1; }
   ona environment stop "$env_id"
-  _ona_clear_cache
+  _ona_refresh_cache
 }
 
 # A custom postStart hook. Run only on ona machines
@@ -132,37 +142,7 @@ ona_create(){
     --inactivity-timeout 8h \
     --name "$(random-name)" \
     --logs
-  echo "Created and set new environment as context: $(ona env get -f id). Install brew".
+  echo "Created and set new environment as context: $(ona env get -f id). Installing brew".
   ona environment ssh $(ona env get -f id) -- -t 'zsh -ic "ona_bootstrap"'
-  _ona_clear_cache
-}
-
-# Reset the current ona context to a most recent env. If [env_id] is provided, 
-# it will be excluded from the search for a new context. If no other envs are found, an error is returned.
-# Usage: ona_reset_context_env [env_id]
-ona_reset_context_env() {
-  old_env_id=$1
-  local new_env_id
-  env_ids=$(ona env list -o json | jq -r '.[].id')
-  if [[ -z "$old_env_id" ]]; then
-    echo "No old environment id provided. Resetting context to the first available environment."
-    new_env_id=$(echo "$env_ids" | head -n 1)
-  else
-    new_env_id=$(echo "$env_ids" | grep -v "$old_env_id" | head -n 1)
-  fi
-  if [[ -z "$new_env_id" ]]; then
-    echo "No ona environments found to reset context."
-    return 1
-  fi
-  echo "Resetting context to ona environment $new_env_id..."
-  ona config context modify --current --environment-id $new_env_id
-}
-
-ona_set_env() {
-  ona_env=$(oep)
-  if [[ -z "$ona_env" ]]; then
-    echo "No ona environment selected."
-    return 1
-  fi
-  ona config context modify --current --environment-id $ona_env
+  _ona_refresh_cache
 }

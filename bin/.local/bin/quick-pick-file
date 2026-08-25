@@ -6,7 +6,7 @@
 # '/\.ai-dev/' keeps this pass scoped to .ai-dev only, so no other git-ignored
 # files (dist/, *.log, ...) leak in. The two passes never overlap.
 files=$( { fd --type f --hidden; \
-           fd --type f --hidden --no-ignore-vcs --full-path '/\.ai-dev/'; } \
+           fd --type f --hidden --no-ignore-vcs --full-path '/\.ai-dev|docs/'; } \
          | eza --stdin -r --sort=modified --oneline --icons=never \
          )™
 

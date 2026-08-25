@@ -35,46 +35,47 @@
    mkdir -p "$(dirname "$src")"
    ln -s "$dst" "$src"
  }
-
- # Credentials
- link_to_efs ".ssh"
- link_to_efs ".aws"
- link_to_efs ".awsvault"
- link_to_efs ".npmrc"
- link_to_efs ".terraform.d"
- link_to_efs ".config/gh"
-
- # Tool state
- link_to_efs ".claude.json"
- link_to_efs ".config/Code"
- link_to_efs ".config/lazydocker"
- link_to_efs ".config/turborepo"
- link_to_efs ".config/acli"
- link_to_efs ".config/gsync"
- link_to_efs ".config/ddog"
- link_to_efs ".config/pup"
- link_to_efs ".cache/mcp2cli"
- link_to_efs ".cache/Homebrew"
  
-# opencode
- link_to_efs ".local/share/opencode"
- link_to_efs ".local/state/opencode"
+# symlink targets from home
+dirs_to_link=()
 
- #glean
- link_to_efs ".local/state/glean-cli"
+# Credentials
+dirs_to_link+=(".ssh" ".aws" ".awsvault" ".npmrc" ".terraform.d" ".config/gh")
 
- link_to_efs ".codex"
- link_to_efs ".fx"
- link_to_efs ".ngrok2"
- link_to_efs ".semgrep"
- link_to_efs ".dotnet"
+# repo tools
+dirs_to_link+=(
+  ".claude/json"
+  ".config/Code"
+  ".config/lazydocker" 
+  ".config/turborepo"
+  ".config/acli"
+  ".config/gsync"
+  ".config/ddog"
+  ".config/pup"
+  ".cache/mcp2cli"
+  ".cache/Homebrew"
+  "ai-dev-archives"
+  "tools"
+)
 
- # Shell
- link_to_efs ".zsh_history"
- link_to_efs ".bun"
- link_to_efs ".local/share/zoxide"
+# brew tools 
+dirs_to_link+=(
+  ".local/share/opencode"
+  ".local/state/opencode"
+  ".local/share/deja"
+  ".local/state/glean-cli"
+  ".codex"
+  ".fx"
+  ".ngrok2"
+  ".semgrep"
+  ".dotnet")
 
- # Custom
- link_to_efs "tools"
- link_to_efs "ai-dev-archives"
+# shell tools
+dirs_to_link+=(
+  ".zsh_history"
+  ".bun"
+  ".local/share/zoxide")
 
+for dir in "${dirs_to_link[@]}"; do
+  link_to_efs "$dir"
+done

@@ -1,6 +1,6 @@
 # Place a copy of this config to ~/.aerospace.toml
 # After that, you can edit ~/.aerospace.toml to your liking
-
+config-version = 2
 # You can use it to add commands that run after AeroSpace startup.
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = [
@@ -38,19 +38,6 @@ default-root-container-orientation = 'auto'
 # See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
 # Fallback value (if you omit the key): on-focused-monitor-changed = []
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
-
-
-
-
-# [[on-window-detected]]
-#     if.app-id = 'com.apple.finder'
-#     check-further-callbacks = true
-#     run = 'layout floating'
-
-# [[on-window-detected]]
-#     if.app-id = 'com.apple.MobileSMS'
-#     run = 'layout floating'
-#     check-further-callbacks = true
 
 
 # You can effectively turn off macOS "Hide application" (cmd-h) feature by toggling this flag
@@ -192,12 +179,21 @@ check-further-callbacks = true
 run = "layout floating"
 
 [[on-window-detected]]
+if = 'test %{app-bundle-id} = com.mitchellh.ghostty || test %{app-bundle-id} = com.microsoft.VSCode'
+run = ['layout tiling', 'move-node-to-workspace 2']
+
+[[on-window-detected]]
 if.app-id = 'com.apple.MobileSMS'
 check-further-callbacks = true
 run = "layout floating"
 
 [[on-window-detected]]
 if.app-id = 'com.openai.chat'
+check-further-callbacks = true
+run = "layout floating"
+
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
 check-further-callbacks = true
 run = "layout floating"
 

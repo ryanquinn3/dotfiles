@@ -1,0 +1,11 @@
+[metadata]
+name = "tmux-keys"
+description = "Fuzzy-search tmux key bindings"
+requirements = ["tmux"]
+
+[source]
+command = "tmux list-keys"
+
+[ui]
+input_header = "tmux key bindings"
+input_prompt = "  "

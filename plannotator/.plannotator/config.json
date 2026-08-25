@@ -1,0 +1,14 @@
+{ 
+  "executionMode":"external",
+  "prompts": {
+    "plan": {
+      "approved": "Approved. Please update the plans status to approved. Do not implement."
+    }
+  },
+  "theme": {
+    "mode": "dark",
+    "light": "plannotator",
+    "dark": "cursor-midnight"
+  },
+  "pfmReminder": true
+}

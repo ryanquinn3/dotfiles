@@ -1,0 +1,36 @@
+[metadata]
+name = "tmux-new-session"
+description = "Create new sessions in tmux"
+requirements = ["tmux", "fd", "exa"]
+
+[source]
+display = "{split:\\t:0}"
+output = "{split:\\t:1}"
+
+[[source.command]]
+name = "Default"
+run = '''fd --type dir --max-depth 1 --absolute-path --exec-batch sh -c 'for path do printf "%s\t%s\n" "${path#"$PWD"/}" "$path"; done' sh'''
+
+[[source.command]]
+name = "Hidden"
+run = '''fd --type dir --max-depth 1 --hidden --absolute-path --exec-batch sh -c 'for path do printf "%s\t%s\n" "${path#"$PWD"/}" "$path"; done' sh'''
+
+[preview]
+command = "eza --group-directories-first --icons --long --color=always --icons=always --no-user -a '{split:\\t:1}'"
+
+
+[ui]
+layout = "landscape"
+input_header = "tmux sessions"
+input_prompt = "  "
+
+[ui.preview_panel]
+size = 55
+
+[keybindings]
+enter = "actions:create"
+
+[actions.create]
+description = "Create session"
+command = "tmux new-session -d -s $(basename '{split:\\t:1}') -c '{split:\\t:1}' && tmux switch-client -t $(basename '{split:\\t:1}')"
+mode = "execute"
