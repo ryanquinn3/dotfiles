@@ -45,7 +45,7 @@ if RUBY_PLATFORM =~ /darwin/
   brew "ffmpeg"
   brew "gh"
   brew "uv"
-  brew "oven-sh/bun/bun"
+
   brew "fresh-editor"
   brew "backlog-md"
 
@@ -59,8 +59,9 @@ if RUBY_PLATFORM =~ /darwin/
   
   
   # macOS utilities
-  brew "FelixKratz/formulae/borders", trusted: true
-  brew "felixkratz/formulae/sketchybar", trusted: true
+  tap "FelixKratz/formulae", trusted: true
+  brew "borders"
+  brew "sketchybar"
 
   # casks
   
@@ -81,7 +82,8 @@ if RUBY_PLATFORM =~ /darwin/
  # cask "notion"
  # cask "google-chrome"
   cask "vlc"
-  cask "nikitabobko/tap/aerospace", trusted: true
+  tap "nikitabobko/tap", trusted: true
+  cask "aerospace", trusted: true
   cask "ghostty"
   cask "arc"
   cask "superwhisper"
