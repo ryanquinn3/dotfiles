@@ -99,7 +99,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   echo -e "Updating MacOS UI config... Done"
 fi
 
-if [[ $OSTYPE == 'linux-gnu'* ]]; then
+if [[ $OSTYPE == 'linux-gnu'* && -z "$NO_BREW" ]]; then
 	echo -ne "Installing homebrew...\033[0K\r"
 	install_homebrew_for_linux
 	mkdir -p ~/.fzf/shell

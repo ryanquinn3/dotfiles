@@ -96,7 +96,7 @@ zstyle ':fzf-tab:*' switch-group ',' '.'
 for f in ~/.zsh/*.zsh(N); do source "$f"; done
 if [[ -n "$IS_ON_ONA" ]]; then
   source ~/.zsh/host/cde.zsh
-else
+else if [[ $OSTYPE == 'darwin'* ]]; then
   source ~/.zsh/host/macos.zsh
 fi
 
