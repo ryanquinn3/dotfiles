@@ -85,7 +85,38 @@ function install_homebrew_for_linux(){
 	
 	# gh extension install dlvhdr/gh-dash
 }
+# exe.dev owns the complete setup path: clone the public dotfiles repo, then
+# reuse the normal stow/Oh My Zsh/tmux setup and stop before the Mac/CDE/Linux
+# flows below.
+function setup_exe() {
+  export DOT_FILES="${DOT_FILES:-$HOME/dotfiles}"
 
+  if [ ! -d "$DOT_FILES/.git" ]; then
+    if [ -e "$DOT_FILES" ]; then
+      echo "Cannot clone dotfiles: $DOT_FILES exists and is not a Git repository" >&2
+      return 1
+    fi
+    git clone https://github.com/ryanquinn3/dotfiles.git "$DOT_FILES"
+  fi
+
+  cd "$DOT_FILES"
+  DIR="$DOT_FILES"
+  ./stow.sh
+  setup_tmux
+  setup_oh_my_zsh
+
+  zsh_path=$(command -v zsh)
+  if [ "$SHELL" != "$zsh_path" ]; then
+    sudo chsh -s "$zsh_path" "$USER"
+  fi
+
+  echo "exe.dev dotfiles setup complete. Start a new shell to use zsh."
+}
+
+if [[ "$DOTFILES_PROFILE" == "exe" ]]; then
+  setup_exe
+  exit $?
+fi
 
 setup_tmux
 

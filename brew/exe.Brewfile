@@ -1,6 +1,7 @@
 # Homebrew formulae required by the exe.dev profile.
 # Base-image commands (jq, ripgrep, tree, lsof, and opencode) are intentionally omitted.
 
+brew "zsh"
 brew "stow"
 brew "starship"
 brew "eza"

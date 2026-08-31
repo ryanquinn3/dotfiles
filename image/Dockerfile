@@ -25,6 +25,17 @@ RUN brew bundle install --file=/tmp/exe.Brewfile \
     && rm -rf /home/linuxbrew/.cache /home/exedev/.cache/Homebrew \
               /tmp/exe.Brewfile
 
+# Make the Homebrew zsh the login shell in the image itself. This avoids
+# requiring the first-boot setup to change the shell before dotfiles load.
+USER root
+RUN test -x /home/linuxbrew/.linuxbrew/bin/zsh \
+    && grep -qxF /home/linuxbrew/.linuxbrew/bin/zsh /etc/shells \
+       || echo /home/linuxbrew/.linuxbrew/bin/zsh >> /etc/shells
+RUN usermod --shell /home/linuxbrew/.linuxbrew/bin/zsh exedev
+
+USER exedev
+ENV DOTFILES_PROFILE=exe
+
 # Preserve exe.dev's expected image behavior when this Dockerfile is later
 # rebased onto a different Ubuntu-derived image.
 EXPOSE 8000 9999
