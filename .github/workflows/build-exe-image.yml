@@ -21,7 +21,7 @@ permissions:
   packages: write
 
 env:
-  IMAGE_NAME: ghcr.io/ryanquinn3/dotfiles-exe
+  IMAGE_NAME: ghcr.io/ryanquinn3/exe-base
 
 jobs:
   build:
