@@ -18,12 +18,6 @@ ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}
 RUN NONINTERACTIVE=1 /bin/bash -c \
     "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# These are absent from exeuntu but are needed by the dotfiles setup. They are
-# deliberately installed separately from exe.Brewfile because the latter was
-# derived from the current VM's missing commands and excludes these two tools,
-# which are already manually installed there.
-RUN brew install stow starship
-
 COPY --chown=exedev:exedev brew/exe.Brewfile /tmp/exe.Brewfile
 
 RUN brew bundle install --file=/tmp/exe.Brewfile \
