@@ -27,15 +27,35 @@ function run_stow_no_fold(){
   done
 }
 
-run_stow tmux git-common fd lnav bin starship gh-dash
-run_stow_no_fold zsh opencode claude television
+# Preserve a machine-provisioned .gitconfig, adding this package's includes
+# once while stowing the rest of git-common normally.
+function run_stow_git_common(){
+  if [[ -f "$HOME/.gitconfig" && ! -L "$HOME/.gitconfig" ]]; then
+    if ! grep -Fqx '    path = ~/.config/git/common.gitconfig' "$HOME/.gitconfig"; then
+      if (( ${#STOW_FLAGS[@]} )); then
+        echo "Would append git-common/.gitconfig to $HOME/.gitconfig"
+      else
+        printf '\n' >> "$HOME/.gitconfig"
+        cat git-common/.gitconfig >> "$HOME/.gitconfig"
+      fi
+    fi
+    stow "${STOW_FLAGS[@]}" --ignore='^\.gitconfig$' -t "$HOME" git-common 2>&1 | grep -v '^WARNING: in simulation mode'
+  else
+    run_stow git-common
+  fi
+}
 
+run_stow tmux fd lnav bin starship gh-dash
+run_stow_no_fold zsh opencode claude television
+run_stow_git_common
 
 if [[ $OSTYPE == 'darwin'* ]]; then
   run_stow aerospace ghostty sketchybar docker fresh plannotator
+
 fi
 
 if [[ $OSTYPE == 'linux-gnu'* ]]; then
+
   run_stow codespace
   if [ -f ~/.docker/config.json ]; then
     jq -s '.[0] + .[1]' ~/.docker/config.json $DOT_FILES/docker/.docker/config.json > /tmp/merged_docker_config.json
