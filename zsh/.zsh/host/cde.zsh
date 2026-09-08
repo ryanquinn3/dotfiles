@@ -15,7 +15,7 @@ export DOCKER_CONFIG=$HOME/.docker
 
 # vscode bindings to make separate terminals be able to connect to vscode remote
 function vscode_server_bin_path(){
-  ls -td "$HOME"/.vscode-server/cli/servers/Stable-*/ 2>/dev/null | head -1
+  ls -td "$HOME"/.vscode-server/cli/servers/Stable-*(N) 2>/dev/null | head -1
 }
 
 vscode_server_dir=$(vscode_server_bin_path)
