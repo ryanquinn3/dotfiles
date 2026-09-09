@@ -2,6 +2,7 @@
 # Base-image commands (jq, ripgrep, tree, lsof, and opencode) are intentionally omitted.
 
 brew "zsh"
+brew "tmux"
 brew "stow"
 brew "starship"
 brew "eza"
