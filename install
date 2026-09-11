@@ -135,7 +135,8 @@ if [[ $OSTYPE == 'linux-gnu'* && -z "$NO_BREW" ]]; then
 	install_homebrew_for_linux
 	mkdir -p ~/.fzf/shell
 	ln -sf /usr/share/doc/fzf/examples/key-bindings.zsh ~/.fzf/shell/key-bindings.zsh
-	
+	# Install plannotator
+	curl -fsSL https://plannotator.ai/install.sh | bash
 fi
 
 
