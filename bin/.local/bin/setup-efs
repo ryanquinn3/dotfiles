@@ -49,14 +49,14 @@
    fi
  }
 
-# Pi keeps its downloaded npm packages under .pi/agents/npm. Keep that one
+# Pi keeps its downloaded npm packages under .pi/agent/npm. Keep that one
 # directory local (and move it back out of EFS if an older run linked all of
-# .pi), while linking every other immediate Pi and agents entry to EFS.
+# .pi), while linking every other immediate Pi and agent entry to EFS.
 link_pi_to_efs() {
   local pi_src="$HOME/.pi"
   local pi_dst="$EFS_DIR/.pi"
-  local agent_src="$pi_src/agents"
-  local agent_dst="$pi_dst/agents"
+  local agent_src="$pi_src/agent"
+  local agent_dst="$pi_dst/agent"
   local npm_src="$agent_src/npm"
   local npm_dst="$agent_dst/npm"
   local path name seen
@@ -76,7 +76,7 @@ link_pi_to_efs() {
   for path in "$pi_src"/* "$pi_dst"/*; do
     [ -e "$path" ] || [ -L "$path" ] || continue
     name="${path##*/}"
-    [ "$name" = "agents" ] && continue
+    [ "$name" = "agent" ] && continue
     [[ "$seen" == *"|$name|"* ]] && continue
     seen+="$name|"
     link_to_efs ".pi/$name"
@@ -89,7 +89,7 @@ link_pi_to_efs() {
     [ "$name" = "npm" ] && continue
     [[ "$seen" == *"|$name|"* ]] && continue
     seen+="$name|"
-    link_to_efs ".pi/agents/$name"
+    link_to_efs ".pi/agent/$name"
   done
   shopt -u nullglob dotglob
 
@@ -97,7 +97,7 @@ link_pi_to_efs() {
   [ -L "$npm_src" ] && rm "$npm_src"
   if [ ! -e "$npm_src" ] && [ -e "$npm_dst" ]; then
     mv "$npm_dst" "$npm_src"
-    printf 'local\t.pi/agents/npm\n' >> "$status_file"
+    printf 'local\t.pi/agent/npm\n' >> "$status_file"
   fi
  }
  
