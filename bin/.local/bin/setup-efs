@@ -48,6 +48,58 @@
      printf 'linked\t%s\n' "$name" >> "$status_file"
    fi
  }
+
+# Pi keeps its downloaded npm packages under .pi/agents/npm. Keep that one
+# directory local (and move it back out of EFS if an older run linked all of
+# .pi), while linking every other immediate Pi and agents entry to EFS.
+link_pi_to_efs() {
+  local pi_src="$HOME/.pi"
+  local pi_dst="$EFS_DIR/.pi"
+  local agent_src="$pi_src/agents"
+  local agent_dst="$pi_dst/agents"
+  local npm_src="$agent_src/npm"
+  local npm_dst="$agent_dst/npm"
+  local path name seen
+
+  # Unfold a previous ~/.pi -> ~/efs/.pi link without touching its EFS data.
+  [ -L "$pi_src" ] && rm "$pi_src"
+  mkdir -p "$pi_src" "$pi_dst"
+
+  # A real agent dir is required to make npm a local exception.
+  [ -L "$agent_src" ] && rm "$agent_src"
+  mkdir -p "$agent_src" "$agent_dst"
+
+  # Iterate both locations so this works for both a fresh setup and an
+  # existing full .pi symlink. Avoid processing an entry twice.
+  seen='|'
+  shopt -s nullglob dotglob
+  for path in "$pi_src"/* "$pi_dst"/*; do
+    [ -e "$path" ] || [ -L "$path" ] || continue
+    name="${path##*/}"
+    [ "$name" = "agents" ] && continue
+    [[ "$seen" == *"|$name|"* ]] && continue
+    seen+="$name|"
+    link_to_efs ".pi/$name"
+  done
+
+  seen='|'
+  for path in "$agent_src"/* "$agent_dst"/*; do
+    [ -e "$path" ] || [ -L "$path" ] || continue
+    name="${path##*/}"
+    [ "$name" = "npm" ] && continue
+    [[ "$seen" == *"|$name|"* ]] && continue
+    seen+="$name|"
+    link_to_efs ".pi/agents/$name"
+  done
+  shopt -u nullglob dotglob
+
+  # Migrate npm packages out of EFS once, then leave future installs local.
+  [ -L "$npm_src" ] && rm "$npm_src"
+  if [ ! -e "$npm_src" ] && [ -e "$npm_dst" ]; then
+    mv "$npm_dst" "$npm_src"
+    printf 'local\t.pi/agents/npm\n' >> "$status_file"
+  fi
+ }
  
 # symlink targets from home
 dirs_to_link=()
@@ -80,7 +132,6 @@ dirs_to_link+=(
   ".codex"
   ".agents"
   ".plannotator"
-  ".pi"
   ".fx"
   ".ngrok2"
   ".semgrep"
@@ -96,15 +147,16 @@ dirs_to_link+=(
 # the final line is a compact summary.  Stderr is intentionally left visible so
 # filesystem failures are not hidden.
 export EFS_DIR status_file
-export -f link_to_efs
+export -f link_to_efs link_pi_to_efs
 printf '%s\0' "${dirs_to_link[@]}" | gum spin \
   --spinner dot \
   --title "Syncing ${#dirs_to_link[@]} persistent paths to ~/efs..." \
-  -- bash -c 'while IFS= read -r -d "" name; do link_to_efs "$name"; done'
+  -- bash -c 'while IFS= read -r -d "" name; do link_to_efs "$name"; done; link_pi_to_efs'
 
 migrated=$(grep -c '^migrated' "$status_file" || true)
 linked=$(grep -c '^linked' "$status_file" || true)
 unchanged=$(grep -c '^unchanged' "$status_file" || true)
-summary="EFS ready: ${migrated} migrated, ${linked} linked, ${unchanged} already configured"
+local_only=$(grep -c '^local' "$status_file" || true)
+summary="EFS ready: ${migrated} migrated, ${linked} linked, ${unchanged} already configured, ${local_only} kept local"
 
 gum log --level info "$summary"
