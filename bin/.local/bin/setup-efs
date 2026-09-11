@@ -9,6 +9,9 @@
    exit 0
  fi
 
+ status_file="$(mktemp "${TMPDIR:-/tmp}/setup-efs.XXXXXX")"
+ trap 'rm -f "$status_file"' EXIT
+
  link_to_efs() {
    local name="$1"
    local src="$HOME/$name"
@@ -16,12 +19,16 @@
 
    # Already correct
    if [ -L "$src" ] && [ "$(readlink "$src")" = "$dst" ]; then
+     printf 'unchanged\t%s\n' "$name" >> "$status_file"
      return
    fi
+
+   local migrated=false
 
    # Migrate real file/dir to efs if dst doesn't exist yet
    if [ ! -e "$dst" ] && [ -e "$src" ] && [ ! -L "$src" ]; then
      mv "$src" "$dst"
+     migrated=true
    fi
 
    # Remove stale real file/dir at src
@@ -34,6 +41,12 @@
 
    mkdir -p "$(dirname "$src")"
    ln -s "$dst" "$src"
+
+   if "$migrated"; then
+     printf 'migrated\t%s\n' "$name" >> "$status_file"
+   else
+     printf 'linked\t%s\n' "$name" >> "$status_file"
+   fi
  }
  
 # symlink targets from home
@@ -79,6 +92,19 @@ dirs_to_link+=(
   ".bun"
   ".local/share/zoxide")
 
-for dir in "${dirs_to_link[@]}"; do
-  link_to_efs "$dir"
-done
+# Keep the per-path work quiet: the spinner is the live progress indicator, and
+# the final line is a compact summary.  Stderr is intentionally left visible so
+# filesystem failures are not hidden.
+export EFS_DIR status_file
+export -f link_to_efs
+printf '%s\0' "${dirs_to_link[@]}" | gum spin \
+  --spinner dot \
+  --title "Syncing ${#dirs_to_link[@]} persistent paths to ~/efs..." \
+  -- bash -c 'while IFS= read -r -d "" name; do link_to_efs "$name"; done'
+
+migrated=$(grep -c '^migrated' "$status_file" || true)
+linked=$(grep -c '^linked' "$status_file" || true)
+unchanged=$(grep -c '^unchanged' "$status_file" || true)
+summary="EFS ready: ${migrated} migrated, ${linked} linked, ${unchanged} already configured"
+
+gum log --level info "$summary"
