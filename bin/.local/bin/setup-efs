@@ -148,10 +148,15 @@ dirs_to_link+=(
 # filesystem failures are not hidden.
 export EFS_DIR status_file
 export -f link_to_efs link_pi_to_efs
-printf '%s\0' "${dirs_to_link[@]}" | gum spin \
+if [ command -v gum >/dev/null 2>&1 ]; then
+  printf '%s\0' "${dirs_to_link[@]}" | gum spin \
   --spinner dot \
   --title "Syncing ${#dirs_to_link[@]} persistent paths to ~/efs..." \
   -- bash -c 'while IFS= read -r -d "" name; do link_to_efs "$name"; done; link_pi_to_efs'
+
+else
+  echo "Syncing ${#dirs_to_link[@]} persistent paths to ~/efs..."
+fi
 
 migrated=$(grep -c '^migrated' "$status_file" || true)
 linked=$(grep -c '^linked' "$status_file" || true)
@@ -159,4 +164,8 @@ unchanged=$(grep -c '^unchanged' "$status_file" || true)
 local_only=$(grep -c '^local' "$status_file" || true)
 summary="EFS ready: ${migrated} migrated, ${linked} linked, ${unchanged} already configured, ${local_only} kept local"
 
-gum log --level info "$summary"
+if [ command -v gum >/dev/null 2>&1 ]; then
+  gum log --level info "$summary"
+else
+  echo "$summary"
+fi

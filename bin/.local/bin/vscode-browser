@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Open a URL through the current VS Code remote server.
+# Resolve both values at invocation time because VS Code can replace them while
+# an integrated terminal remains open.
+set -u
+
+servers_dir="$HOME/.vscode-server/cli/servers"
+latest_server=$(
+  find "$servers_dir" -mindepth 1 -maxdepth 1 -type d -name 'Stable-*' \
+    -printf '%T@ %p\n' 2>/dev/null \
+    | sort -nr \
+    | sed -n '1s/^[^ ]* //p'
+)
+
+browser_script=""
+if [[ -n "$latest_server" ]]; then
+  browser_script=$(find "$latest_server" -type f -name browser.sh -print -quit 2>/dev/null)
+fi
+
+ipc_socket=$(ls -t /tmp/vscode-ipc-* 2>/dev/null | head -n 1)
+
+if [[ -z "$browser_script" || -z "$ipc_socket" ]]; then
+  echo "Unable to find the current VS Code server browser or IPC socket" >&2
+  exit 1
+fi
+
+export VSCODE_IPC_HOOK_CLI="$ipc_socket"
+exec "$browser_script" "$@"

@@ -19,18 +19,24 @@ function vscode_server_bin_path(){
 }
 
 vscode_server_dir=$(vscode_server_bin_path)
-if [ -z "$VSCODE_IPC_HOOK_CLI" ]; then
-    sock_path=$(ls -t /tmp/vscode-ipc-*(N) 2>/dev/null | head -n 1)
-    
-    [[ -n "$sock_path" ]] && export VSCODE_IPC_HOOK_CLI="$sock_path"
+# Refresh the IPC socket on every shell startup. VS Code can replace it while
+# an existing terminal is open, so do not preserve an inherited stale value.
+sock_path=$(ls -t /tmp/vscode-ipc-*(N) 2>/dev/null | head -n 1)
+if [[ -n "$sock_path" ]]; then
+  export VSCODE_IPC_HOOK_CLI="$sock_path"
+else
+  unset VSCODE_IPC_HOOK_CLI
 fi
 
 if [[ -n "$vscode_server_dir" ]]; then
   export PATH="${vscode_server_dir}server/bin/remote-cli:$PATH"
-  browser=$(fd 'browser.sh' "$vscode_server_dir")
-  if [[ -n "$browser" ]]; then
-    export BROWSER="$browser"
-  fi
+fi
+
+# Resolve the server and IPC socket at invocation time; both can change while
+# this terminal remains open.
+unset BROWSER
+if (( $+commands[vscode-browser] )); then
+  export BROWSER="$(command -v vscode-browser)"
 fi
 
 function code(){

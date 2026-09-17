@@ -129,6 +129,9 @@ ona_bootstrap() {
   HOMEBREW_BUNDLE_NO_UPGRADE=1 install-apps
   time_end=$(date +%s)
   echo "Brew bundle completed in $((time_end - time_start)) seconds"
+  npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+  curl -fsSL https://plannotator.ai/install.sh | bash -s -- --minimal
+  cat ~/.config/git/ignore > .git/info/exclude
 }
 
 ona_create(){
