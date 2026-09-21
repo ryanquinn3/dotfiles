@@ -49,57 +49,60 @@
    fi
  }
 
-# Pi keeps its downloaded npm packages under .pi/agent/npm. Keep that one
-# directory local (and move it back out of EFS if an older run linked all of
-# .pi), while linking every other immediate Pi and agent entry to EFS.
-link_pi_to_efs() {
-  local pi_src="$HOME/.pi"
-  local pi_dst="$EFS_DIR/.pi"
-  local agent_src="$pi_src/agent"
-  local agent_dst="$pi_dst/agent"
-  local npm_src="$agent_src/npm"
-  local npm_dst="$agent_dst/npm"
-  local path name seen
+# Keep selected entries local while linking all other immediate children of a
+# directory to EFS. This also repairs an older run that folded the directory
+# into a single EFS symlink.
+keep_local() {
+  local relative="$1"
+  local src="$HOME/$relative"
+  local dst="$EFS_DIR/$relative"
 
-  # Unfold a previous ~/.pi -> ~/efs/.pi link without touching its EFS data.
-  [ -L "$pi_src" ] && rm "$pi_src"
-  mkdir -p "$pi_src" "$pi_dst"
+  [ -L "$src" ] && rm "$src"
+  if [ ! -e "$src" ] && [ -e "$dst" ]; then
+    mv "$dst" "$src"
+    printf 'local\t%s\n' "$relative" >> "$status_file"
+  fi
+}
 
-  # A real agent dir is required to make npm a local exception.
-  [ -L "$agent_src" ] && rm "$agent_src"
-  mkdir -p "$agent_src" "$agent_dst"
+link_children_to_efs() {
+  local relative="$1"
+  shift
+  local src="$HOME/$relative"
+  local dst="$EFS_DIR/$relative"
+  local path name seen excluded
 
-  # Iterate both locations so this works for both a fresh setup and an
-  # existing full .pi symlink. Avoid processing an entry twice.
+  # Unfold a previous symlink, but leave its contents in EFS for migration
+  # below. The destination must be real so local exceptions can live in it.
+  [ -L "$src" ] && rm "$src"
+  mkdir -p "$src" "$dst"
+
+  for excluded in "$@"; do
+    keep_local "$relative/$excluded"
+  done
+
   seen='|'
   shopt -s nullglob dotglob
-  for path in "$pi_src"/* "$pi_dst"/*; do
+  for path in "$src"/* "$dst"/*; do
     [ -e "$path" ] || [ -L "$path" ] || continue
     name="${path##*/}"
-    [ "$name" = "agent" ] && continue
     [[ "$seen" == *"|$name|"* ]] && continue
     seen+="$name|"
-    link_to_efs ".pi/$name"
-  done
 
-  seen='|'
-  for path in "$agent_src"/* "$agent_dst"/*; do
-    [ -e "$path" ] || [ -L "$path" ] || continue
-    name="${path##*/}"
-    [ "$name" = "npm" ] && continue
-    [[ "$seen" == *"|$name|"* ]] && continue
-    seen+="$name|"
-    link_to_efs ".pi/agent/$name"
+    # Entries named on the function call are intentionally local.
+    for excluded in "$@"; do
+      [ "$name" = "$excluded" ] && continue 2
+    done
+    link_to_efs "$relative/$name"
   done
   shopt -u nullglob dotglob
+}
 
-  # Migrate npm packages out of EFS once, then leave future installs local.
-  [ -L "$npm_src" ] && rm "$npm_src"
-  if [ ! -e "$npm_src" ] && [ -e "$npm_dst" ]; then
-    mv "$npm_dst" "$npm_src"
-    printf 'local\t.pi/agent/npm\n' >> "$status_file"
-  fi
- }
+# Pi's downloaded npm packages and git repository stay local; other Pi state
+# is persistent across devcontainers.
+link_pi_to_efs() {
+  link_children_to_efs ".pi" agent
+  link_children_to_efs ".pi/agent" npm git
+}
  
 # symlink targets from home
 dirs_to_link=()
@@ -147,15 +150,24 @@ dirs_to_link+=(
 # the final line is a compact summary.  Stderr is intentionally left visible so
 # filesystem failures are not hidden.
 export EFS_DIR status_file
-export -f link_to_efs link_pi_to_efs
-if [ command -v gum >/dev/null 2>&1 ]; then
-  printf '%s\0' "${dirs_to_link[@]}" | gum spin \
-  --spinner dot \
-  --title "Syncing ${#dirs_to_link[@]} persistent paths to ~/efs..." \
-  -- bash -c 'while IFS= read -r -d "" name; do link_to_efs "$name"; done; link_pi_to_efs'
+export -f link_to_efs keep_local link_children_to_efs link_pi_to_efs
+sync_paths() {
+  local name
+  while IFS= read -r -d '' name; do
+    link_to_efs "$name"
+  done
+  link_pi_to_efs
+}
+export -f sync_paths
 
+if command -v gum >/dev/null 2>&1; then
+  printf '%s\0' "${dirs_to_link[@]}" | gum spin \
+    --spinner dot \
+    --title "Syncing ${#dirs_to_link[@]} persistent paths to ~/efs..." \
+    -- bash -c 'sync_paths'
 else
   echo "Syncing ${#dirs_to_link[@]} persistent paths to ~/efs..."
+  printf '%s\0' "${dirs_to_link[@]}" | sync_paths
 fi
 
 migrated=$(grep -c '^migrated' "$status_file" || true)
