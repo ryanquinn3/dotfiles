@@ -56,23 +56,24 @@ alias gci='git_commit_interactive'
 
 # Git commit all with message, retrying if pre-commit hooks fail
 gacm(){
-  commit_message="$1"
-  rest_of_args="${@:2}"
-  if [ -z "$1" ]; then
+  local commit_message="$1"
+
+  if [ -z "$commit_message" ]; then
     echo "Please provide a commit message"
     return 1
   fi
+  shift
 
   echo "Committing code..."
 
   git add --all
 
-  # if this fails, retry
-  git commit -m "$commit_message" $rest_of_args
+  # Preserve each remaining argument (including flags such as -n).
+  git commit -m "$commit_message" "$@"
   if [ $? -ne 0 ]; then
     echo "Pre commit hooks may have failed... retrying..."
     git add --all
-    git commit -m "$commit_message" $rest_of_args
+    git commit -m "$commit_message" "$@"
   fi
 }
 
