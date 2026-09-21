@@ -120,6 +120,7 @@ dirs_to_link+=(
   ".config/gsync"
   ".config/ddog"
   ".config/pup"
+  ".config/slack-vanta"
   ".cache/mcp2cli"
   ".cache/Homebrew"
   "ai-dev-archives"
