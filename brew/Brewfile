@@ -20,6 +20,7 @@ brew "hunk"
 brew "television"
 tap "Giammarco-Ferranti/deja", trusted: true
 brew "deja"
+brew "bkt"
 # AI tools
 tap "anomalyco/tap", trusted: true
 # requires node and ripgrep, which are installed above / out of band

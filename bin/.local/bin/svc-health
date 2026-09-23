@@ -5,7 +5,7 @@ SERVICE="${1:?usage: svc-health <compose-service> [private-port] [path]}"
 PRIVATE_PORT="${2:-80}"
 PATH_SUFFIX="${3:-/health}"
 
-port="$(docker compose port "$SERVICE" "$PRIVATE_PORT" 2>/dev/null | cut -d: -f2)"
+port="$(bkt --ttl 5m --stale 1m --cwd -- docker compose port "$SERVICE" "$PRIVATE_PORT" 2>/dev/null | cut -d: -f2)"
 [[ -z "$port" ]] && exit 1
 
 code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 0.5 "http://127.0.0.1:${port}${PATH_SUFFIX}" 2>/dev/null || echo 000)
