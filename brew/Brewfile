@@ -30,7 +30,8 @@ brew "tmux" # tmux in ona is old version
 
 if RUBY_PLATFORM =~ /linux/
   # linux specific formulas
-
+  tap "gleanwork/tap", trusted: true
+  brew "glean-cli"
 end
 
 # macos 
