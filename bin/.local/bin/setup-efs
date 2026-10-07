@@ -114,6 +114,7 @@ dirs_to_link+=(".ssh" ".aws" ".awsvault" ".npmrc" ".terraform.d" ".config/gh")
 dirs_to_link+=(
   ".claude/json"
   ".config/Code"
+  ".config/inc"
   ".config/lazydocker" 
   ".config/turborepo"
   ".config/acli"
