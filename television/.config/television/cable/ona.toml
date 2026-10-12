@@ -44,7 +44,7 @@ ctrl-o = "actions:open"
 
 [actions.launch]
 description = "Start and connect"
-command = "zsh -c 'source ~/.zsh/ona.zsh && _ona_launch \"$1\"' _ '{split:\\t:1}'"
+command = "zsh -c 'source ~/.zsh/ona.zsh && _ona_launch \"$1\" \"$2\"' _ '{split:\\t:1}' '{split:\\t:0}'"
 mode = "execute"
 
 [actions.stop]

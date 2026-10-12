@@ -235,11 +235,12 @@ function _run_just(){
   just $recipe
 }
 
+# Save workspace archives locally (DEV_ARCHIVE_DIR is persisted on EFS).
 function dev-workspace-archive(){
-  mkdir -p "$DEV_ARCHIVE_DIR"
+  mkdir -p "$DEV_ARCHIVE_DIR" || return 1
 
   (
-    cd /workspaces/obsidian
+    cd /workspaces/obsidian || return 1
     local dirs=()
     while IFS= read -r d; do
       dirs+=("$d")
@@ -251,6 +252,7 @@ function dev-workspace-archive(){
     fi
 
     zmodload zsh/stat
+    zmodload zsh/datetime
     local latest_mtime=0
     local m
     while IFS= read -r -d '' f; do
@@ -260,18 +262,24 @@ function dev-workspace-archive(){
     local timestamp=$(strftime '%Y-%m-%dT%H-%M-%S' "$latest_mtime")
     local archive="$DEV_ARCHIVE_DIR/${timestamp}.tar.gz"
 
-    if [[ -f "$archive" ]]; then
-      echo "$archive"
-      return 0
+    if [[ ! -f "$archive" ]]; then
+      tar czf "$archive" --exclude="node_modules" "${dirs[@]}" || {
+        rm -f "$archive"
+        return 1
+      }
     fi
 
-    tar czf "$archive" --exclude="node_modules" "${dirs[@]}"
-    ln -sf "$archive" "$DEV_ARCHIVE_DIR/latest"
+    ln -sf "$archive" "$DEV_ARCHIVE_DIR/latest" || return 1
     echo "$archive"
   )
 }
 
 function dev-workspace-push(){
+  dev-workspace-archive
+}
+
+# Optional off-box backup; the normal push/pull workflow does not use S3.
+function dev-workspace-backup(){
   local archive
   archive=$(dev-workspace-archive)
   if [[ $? -ne 0 ]]; then
@@ -284,21 +292,14 @@ function dev-workspace-push(){
 }
 
 function dev-workspace-pull(){
-  mkdir -p "$DEV_ARCHIVE_DIR"
-
-  local latest_key
-  latest_key=$(aws-vault exec devadmin -- aws s3 ls "$DEV_S3_ARCHIVE_PREFIX/" | sort | tail -1 | awk '{print $4}')
-  if [[ -z "$latest_key" ]]; then
-    echo "No archives found in S3"
+  local archive="$DEV_ARCHIVE_DIR/latest"
+  if [[ ! -f "$archive" ]]; then
+    echo "No latest archive found in $DEV_ARCHIVE_DIR"
     return 1
   fi
 
-  local dest="$DEV_ARCHIVE_DIR/$latest_key"
-  aws-vault exec devadmin -- aws s3 cp "$DEV_S3_ARCHIVE_PREFIX/$latest_key" "$dest"
-  ln -sf "$dest" "$DEV_ARCHIVE_DIR/latest"
-
-  (cd /workspaces/obsidian && tar xzf "$dest")
-  echo "Restored from $latest_key"
+  (cd /workspaces/obsidian && tar xzf "$archive") || return 1
+  echo "Restored from $archive"
 }
 
 # Archive a directory to EFS so it survives box recreation.

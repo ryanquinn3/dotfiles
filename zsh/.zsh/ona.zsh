@@ -12,9 +12,10 @@ _ona_refresh_cache() { bkt --warm --ttl 1d -- ona env list -o json >/dev/null; }
 # than after a usable remote session.
 typeset -gi _ONA_CONNECT_MIN=10
 
-# Runs inside the temporary local ona-<short> tmux session.
+# Runs inside the temporary local ona-<name> tmux session.
 _ona_connect() {
   local id=${1:-$ONA_ID}
+  local session=${ONA_SESSION:?Ona tmux session name required}
   local host="${id}.gitpod.environment"
 
   while true; do
@@ -50,25 +51,33 @@ _ona_connect() {
 
   _ona_refresh_cache
   tmux switch-client -t "=$ONA_ORIGIN" 2>/dev/null || tmux switch-client -l 2>/dev/null
-  tmux kill-session -t "=ona-${id%%-*}"
+  tmux kill-session -t "=$session"
 }
 
 _ona_launch() {
   local id=${1:?environment id required}
-  local short=${id%%-*}
+  local name=$2
   local origin
 
-  if tmux has-session -t "=ona-$short" 2>/dev/null; then
-    tmux switch-client -t "=ona-$short"
+  if [[ -z "$name" ]]; then
+    name=$(ona env get "$id" -f name) || return 1
+  fi
+  # Fall back for unnamed environments; tmux disallows dots and colons.
+  name=${name:-${id%%-*}}
+  local session="ona-${name//[.:]/_}"
+
+  if tmux has-session -t "=$session" 2>/dev/null; then
+    tmux switch-client -t "=$session"
     return
   fi
 
   origin=$(tmux display-message -p '#{session_name}')
-  tmux new-session -d -s "ona-$short" -e "ONA_ID=$id" -e "ONA_ORIGIN=$origin" \
-    'zsh -c "source ~/.zsh/ona.zsh && _ona_connect"'
-  tmux set-option -t "ona-$short" @is_remote 1
-  tmux set-option -t "ona-$short" @icon '󰞶'
-  tmux switch-client -t "=ona-$short"
+  tmux new-session -d -s "$session" -e "ONA_ID=$id" -e "ONA_ORIGIN=$origin" \
+    -e "ONA_SESSION=$session" \
+    'zsh -c "source ~/.zsh/ona.zsh && _ona_connect"' || return 1
+  tmux set-option -t "=$session" @is_remote 1
+  tmux set-option -t "=$session" @icon '󰞶'
+  tmux switch-client -t "=$session"
   _ona_refresh_cache
 }
 
@@ -119,6 +128,9 @@ ona_bootstrap() {
   echo "Setting up efs symlinks"
   setup-efs
 
+  echo "Restoring dev workspace"
+  dev-workspace-pull
+
   echo "Restoring brew prefix"
   brew-prefix-restore
 
@@ -130,7 +142,7 @@ ona_bootstrap() {
   time_end=$(date +%s)
   echo "Brew bundle completed in $((time_end - time_start)) seconds"
   npm install -g --ignore-scripts @earendil-works/pi-coding-agent
-  curl -fsSL https://plannotator.ai/install.sh | bash -s -- --minimal
+  echo "Restoring git ignore"
   cat ~/.config/git/ignore > .git/info/exclude
 }
 
