@@ -1,18 +1,49 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# Run vscode remote cli from separate terminal session outside of the vscode integrated terminal
+# Run the VS Code remote CLI from a separate terminal session, outside the
+# integrated terminal.
 
 find_latest_vscode_ipc() {
   local file
-  file=$(ls -t /tmp/vscode-ipc-* 2>/dev/null | head -n 1)
-  if [[ -n "$file" ]]; then
-    echo "$file"
-  else
-    echo "No matching files found." >&2
-    return 1
-  fi
+  local -a sockets=()
+  shopt -s nullglob
+  sockets=(/tmp/vscode-ipc-*)
+  shopt -u nullglob
+  ((${#sockets[@]})) || return 1
+  ls -t -- "${sockets[@]}" 2>/dev/null | head -n 1
 }
 
-VSCODE_BIN=$(eza -r --sort=accessed --oneline --icons=never $(fd --glob --full-path '**/bin/remote-cli/code' ~/.vscode-server) | head -n 1)
+find_vscode_cli() {
+  local candidate
+  local -a candidates=()
+  shopt -s nullglob
+  candidates=(
+    "$HOME"/.vscode-server/cli/servers/*/server/bin/remote-cli/code
+    "$HOME"/.vscode-server/bin/*/bin/remote-cli/code
+    "$HOME"/.vscode-server-insiders/cli/servers/*/server/bin/remote-cli/code
+    "$HOME"/.vscode-server-insiders/bin/*/bin/remote-cli/code
+  )
+  shopt -u nullglob
 
-VSCODE_IPC_HOOK_CLI="$(find_latest_vscode_ipc)" $VSCODE_BIN --reuse-window $@
+  # Prefer the most recently installed server CLI when multiple versions exist.
+  if ((${#candidates[@]})); then
+    ls -t -- "${candidates[@]}" 2>/dev/null | head -n 1
+    return
+  fi
+
+  # Fall back to a code command already available on PATH.
+  command -v code || true
+}
+
+VSCODE_BIN="$(find_vscode_cli)"
+if [[ -z "$VSCODE_BIN" || ! -x "$VSCODE_BIN" ]]; then
+  printf 'gcode: VS Code remote CLI not found in standard VS Code Server locations or PATH.\n' >&2
+  exit 127
+fi
+
+if VSCODE_IPC_HOOK_CLI="$(find_latest_vscode_ipc)"; then
+  export VSCODE_IPC_HOOK_CLI
+fi
+
+exec "$VSCODE_BIN" --reuse-window --wait "$@"
