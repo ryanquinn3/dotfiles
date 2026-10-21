@@ -37,7 +37,13 @@ _ona_connect() {
     if (( elapsed < _ONA_CONNECT_MIN )); then
       print -ru2 -- $'\nCould not connect to '"${host}"$' (ssh exited '"$ec"$' in '"${elapsed}"$'s).\nFix the error above, then close this window or reconnect.'
       _ona_refresh_cache
-      tmux set-option -u @is_remote 2>/dev/null
+      tmux set-option -t "$session" -u @is_remote 2>/dev/null
+      # This pane is becoming a local shell; leave remote passthrough mode.
+      local option
+      for option in prefix key-table status pane-border-status; do
+        tmux set-option -t "$session" -u "$option"
+      done
+      tmux refresh-client -S
       exec zsh
     fi
 
@@ -75,8 +81,9 @@ _ona_launch() {
   tmux new-session -d -s "$session" -e "ONA_ID=$id" -e "ONA_ORIGIN=$origin" \
     -e "ONA_SESSION=$session" \
     'zsh -c "source ~/.zsh/ona.zsh && _ona_connect"' || return 1
-  tmux set-option -t "=$session" @is_remote 1
-  tmux set-option -t "=$session" @icon '󰞶'
+  # set-option does not support the exact-match '=' target used by switch-client.
+  tmux set-option -t "$session" @is_remote 1
+  tmux set-option -t "$session" @icon '󰞶'
   tmux switch-client -t "=$session"
   _ona_refresh_cache
 }

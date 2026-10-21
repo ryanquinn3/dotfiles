@@ -7,6 +7,9 @@
 [checkout]
 		workers = 8
 
+[fetch]
+	tagOpt = --no-tags
+
 [credential "https://github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
