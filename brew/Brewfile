@@ -32,6 +32,7 @@ if RUBY_PLATFORM =~ /linux/
   # linux specific formulas
   tap "gleanwork/tap", trusted: true
   brew "glean-cli"
+  cask "devin-cli"
 end
 
 # macos 

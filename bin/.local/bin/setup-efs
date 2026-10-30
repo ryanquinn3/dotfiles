@@ -115,6 +115,7 @@ dirs_to_link+=(
   ".claude/json"
   ".config/Code"
   ".config/inc"
+  ".config/devin"
   ".config/lazydocker" 
   ".config/turborepo"
   ".config/acli"
